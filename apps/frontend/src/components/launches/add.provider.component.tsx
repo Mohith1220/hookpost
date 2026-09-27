@@ -24,9 +24,10 @@ import { useUser } from '@hookpost/frontend/components/layout/user.context';
 // Channels a new account cannot use yet, with the reason shown instead of
 // starting an OAuth flow that is guaranteed to fail. 13 free workspaces had
 // connected zero channels by 27 Sep 2026; an Instagram tile that errors after
-// the consent screen is the likeliest first click. Platform admins can still
-// connect them (they hold roles on the Meta app). Keep in step with
-// app/(landing)/channels/channel-specs.ts; delete an entry the day it opens.
+// the consent screen is the likeliest first click. Platform admins and
+// @hookstep.in accounts (incl. Meta's reviewer login) can still connect
+// them. Keep in step with app/(landing)/channels/channel-specs.ts; delete
+// an entry the day it opens.
 const NOT_AVAILABLE_YET: Record<string, string> = {
   instagram:
     'Instagram is waiting on Meta app review. Facebook Pages, X, LinkedIn and YouTube work today.',
@@ -429,7 +430,12 @@ export const AddProviderComponent: FC<{
   const { isGeneral, extensionId } = useVariables();
   const toaster = useToaster();
   const user = useUser();
-  const canUseBlocked = !!(user as any)?.admin;
+  // Platform admins, plus our own @hookstep.in accounts: Meta's App Review
+  // team logs in as meta-reviewer@hookstep.in and must be able to connect
+  // Instagram and Threads to review them.
+  const canUseBlocked =
+    !!(user as any)?.admin ||
+    /@hookstep\.in$/i.test(((user as any)?.email || '').trim());
   const router = useRouter();
   const fetch = useFetch();
   const modal = useModals();

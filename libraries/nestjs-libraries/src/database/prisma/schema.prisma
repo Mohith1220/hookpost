@@ -1049,3 +1049,55 @@ model CouponRedemption {
   @@unique([couponId, organizationId])
   @@index([organizationId])
 }
+
+// Affiliate programme. Anyone signed in can join and gets a referral code; a
+// visitor who arrives on ?ref=CODE and creates a workspace within the cookie
+// window is attributed to that affiliate, and every Razorpay charge on that
+// workspace for the first `commissionMonths` earns `commissionPercent`.
+// Payouts are made by hand (UPI or bank transfer), so a commission only moves
+// PENDING -> PAID (or VOID on a refund) when an admin records it. Like the
+// coupon tables there is no relation to Organization or User on purpose:
+// adding these tables must not alter existing ones (see deploy.sh on db push).
+model Affiliate {
+  id                String                @id @default(uuid())
+  userId            String                @unique
+  organizationId    String
+  code              String                @unique
+  name              String
+  email             String
+  payoutDetails     String?
+  commissionPercent Int                   @default(30)
+  commissionMonths  Int                   @default(12)
+  active            Boolean               @default(true)
+  createdAt         DateTime              @default(now())
+  referrals         AffiliateReferral[]
+  commissions       AffiliateCommission[]
+}
+
+model AffiliateReferral {
+  id             String    @id @default(uuid())
+  affiliateId    String
+  organizationId String    @unique
+  createdAt      DateTime  @default(now())
+  affiliate      Affiliate @relation(fields: [affiliateId], references: [id])
+
+  @@index([affiliateId])
+}
+
+model AffiliateCommission {
+  id             String    @id @default(uuid())
+  affiliateId    String
+  organizationId String
+  paymentId      String    @unique
+  amount         Int
+  commission     Int
+  currency       String
+  status         String    @default("PENDING")
+  paidAt         DateTime?
+  paidNote       String?
+  createdAt      DateTime  @default(now())
+  affiliate      Affiliate @relation(fields: [affiliateId], references: [id])
+
+  @@index([affiliateId])
+  @@index([organizationId])
+}

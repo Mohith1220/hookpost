@@ -31,6 +31,7 @@ import { RealIP } from 'nestjs-real-ip';
 import { UserAgent } from '@hookpost/nestjs-libraries/user/user.agent';
 import { TrackEnum } from '@hookpost/nestjs-libraries/user/track.enum';
 import { TrackService } from '@hookpost/nestjs-libraries/track/track.service';
+import { AffiliateService } from '@hookpost/nestjs-libraries/database/prisma/affiliates/affiliate.service';
 import { makeId } from '@hookpost/nestjs-libraries/services/make.is';
 import {
   AuthorizationActions,
@@ -46,7 +47,8 @@ export class UsersController {
     private _authService: AuthService,
     private _orgService: OrganizationService,
     private _userService: UsersService,
-    private _trackService: TrackService
+    private _trackService: TrackService,
+    private _affiliateService: AffiliateService
   ) {}
 
   @Get('/chatbase-token')
@@ -108,6 +110,18 @@ export class UsersController {
     }
 
     const impersonate = req.cookies.impersonate || req.headers.impersonate;
+
+    // Credit the affiliate whose ?ref= link brought this visitor in. Every
+    // signed-in page load hits this endpoint, whichever way they registered.
+    // Skipped while impersonating so an admin's session never attributes.
+    if (req.cookies.hp_ref && !impersonate) {
+      await this._affiliateService.attribute(
+        req.cookies.hp_ref,
+        organization,
+        user
+      );
+    }
+
     // @ts-ignore
     return {
       ...user,

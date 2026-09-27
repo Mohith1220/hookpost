@@ -15,6 +15,7 @@ export const metadata = {
 import { ReactNode } from 'react';
 import Link from 'next/link';
 import { GoogleOneTap } from '@hookpost/frontend/components/auth/google-one-tap';
+import { RefCapture } from '@hookpost/frontend/components/affiliates/ref-capture';
 import loadDynamic from 'next/dynamic';
 import { TestimonialComponent } from '@hookpost/frontend/components/auth/testimonial.component';
 import { LogoTextComponent } from '@hookpost/frontend/components/ui/logo-text.component';
@@ -31,6 +32,7 @@ export default async function AuthLayout({
       {/*<style>{`html, body {overflow-x: hidden;}`}</style>*/}
       <ReturnUrlComponent />
       <GoogleOneTap autoSelect />
+      <RefCapture />
       <div className="flex flex-col py-[40px] px-[20px] flex-1 lg:w-[600px] lg:flex-none rounded-[12px] text-white p-[12px] bg-[#1A1919]">
         <div className="w-full max-w-[440px] mx-auto justify-center gap-[20px] h-full flex flex-col text-white">
           <Link href="/" aria-label="Hookpost home" className="inline-block w-fit">

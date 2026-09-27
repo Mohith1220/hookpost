@@ -41,6 +41,7 @@ import {
 import { AnnouncementsController } from '@hookpost/backend/api/routes/announcements.controller';
 import { MetaCallbacksController } from '@hookpost/backend/api/routes/meta.callbacks.controller';
 import { AdminController } from '@hookpost/backend/api/routes/admin.controller';
+import { AffiliatesController } from '@hookpost/backend/api/routes/affiliates.controller';
 import { AuthProviderManager } from '@hookpost/backend/services/auth/providers/providers.manager';
 import { GithubProvider } from '@hookpost/backend/services/auth/providers/github.provider';
 import { GoogleProvider } from '@hookpost/backend/services/auth/providers/google.provider';
@@ -69,6 +70,7 @@ const authenticatedController = [
   OAuthAuthorizedController,
   AnnouncementsController,
   AdminController,
+  AffiliatesController,
 ];
 @Module({
   imports: [UploadModule],

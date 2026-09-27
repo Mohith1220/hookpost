@@ -15,6 +15,7 @@ import { UsersService } from '@hookpost/nestjs-libraries/database/prisma/users/u
 import { TrackService } from '@hookpost/nestjs-libraries/track/track.service';
 import { TrackEnum } from '@hookpost/nestjs-libraries/user/track.enum';
 import { RazorpayClient } from '@hookpost/nestjs-libraries/services/razorpay.client';
+import { AffiliateService } from '@hookpost/nestjs-libraries/database/prisma/affiliates/affiliate.service';
 import {
   scheduledCancelAt,
   LIVE_STATES,
@@ -52,7 +53,8 @@ export class RazorpayService {
     private _subscriptionService: SubscriptionService,
     private _organizationService: OrganizationService,
     private _userService: UsersService,
-    private _trackService: TrackService
+    private _trackService: TrackService,
+    private _affiliateService: AffiliateService
   ) {}
 
   // ---------------------------------------------------------------------------
@@ -84,6 +86,17 @@ export class RazorpayService {
       case 'subscription.charged': {
         const result = await this.createSubscription(subscription, payment);
         await this.recordCouponRedemption(subscription);
+        // Only a charge carries money; authenticated/activated have no payment.
+        // Gated on notes.service like everything else on this shared account.
+        if (
+          type === 'subscription.charged' &&
+          subscription?.notes?.service === 'hookpost'
+        ) {
+          await this._affiliateService.recordCommission(
+            subscription.notes.orgId,
+            payment
+          );
+        }
         return result;
       }
       case 'subscription.updated':

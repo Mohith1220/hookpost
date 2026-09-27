@@ -6,6 +6,8 @@ import { UsersService } from '@hookpost/nestjs-libraries/database/prisma/users/u
 import { UsersRepository } from '@hookpost/nestjs-libraries/database/prisma/users/users.repository';
 import { SubscriptionService } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/subscription.service';
 import { SubscriptionRepository } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/subscription.repository';
+import { AffiliateService } from '@hookpost/nestjs-libraries/database/prisma/affiliates/affiliate.service';
+import { AffiliateRepository } from '@hookpost/nestjs-libraries/database/prisma/affiliates/affiliate.repository';
 import { NotificationService } from '@hookpost/nestjs-libraries/database/prisma/notifications/notification.service';
 import { IntegrationService } from '@hookpost/nestjs-libraries/database/prisma/integrations/integration.service';
 import { IntegrationRepository } from '@hookpost/nestjs-libraries/database/prisma/integrations/integration.repository';
@@ -59,6 +61,8 @@ import { AdminStatsService } from '@hookpost/nestjs-libraries/database/prisma/ad
     OrganizationRepository,
     SubscriptionService,
     SubscriptionRepository,
+    AffiliateService,
+    AffiliateRepository,
     NotificationService,
     NotificationsRepository,
     WebhooksRepository,

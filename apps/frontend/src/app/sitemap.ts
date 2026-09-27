@@ -71,6 +71,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/tools/bluesky-character-counter', UPDATED.landing2, 0.75, 'monthly'),
     page('/tools/linkedin-character-counter', UPDATED.landing2, 0.75, 'monthly'),
     page('/tools/thread-splitter', UPDATED.landing2, 0.75, 'monthly'),
+    page('/affiliates', UPDATED.landing2, 0.6, 'monthly'),
     ...PAIRS.map((pair) => page(`/compare/${pair}`, UPDATED.landing2, 0.7, 'monthly')),
   ];
 

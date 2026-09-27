@@ -147,6 +147,9 @@ export async function proxy(request: NextRequest) {
     nextUrl.pathname.startsWith('/integrations/n8n') ||
     nextUrl.pathname.startsWith('/social-media-scheduling-api') ||
     nextUrl.pathname.startsWith('/open-source-social-media-scheduler') ||
+    // Public affiliate terms. The signed-in dashboard is /affiliate (singular)
+    // and stays behind auth.
+    nextUrl.pathname.startsWith('/affiliates') ||
     nextUrl.pathname === '/sitemap.xml' ||
     nextUrl.pathname === '/robots.txt' ||
     nextUrl.pathname === '/manifest.json'

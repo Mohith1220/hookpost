@@ -79,6 +79,7 @@ const COMPANY: LinkGroup = [
   [
     ['About', '/about'],
     ['Contact', '/contact'],
+    ['Affiliates (earn 30%)', '/affiliates'],
     ['Privacy', '/privacy'],
     ['Terms', '/terms'],
   ],

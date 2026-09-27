@@ -1,3 +1,4 @@
+import { AffiliateRepository } from '@hookpost/nestjs-libraries/database/prisma/affiliates/affiliate.repository';
 import { Injectable } from '@nestjs/common';
 import { pricing } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/pricing';
 import { SubscriptionRepository } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/subscription.repository';
@@ -12,7 +13,8 @@ export class SubscriptionService {
   constructor(
     private readonly _subscriptionRepository: SubscriptionRepository,
     private readonly _integrationService: IntegrationService,
-    private readonly _organizationService: OrganizationService
+    private readonly _organizationService: OrganizationService,
+    private readonly _affiliateRepository: AffiliateRepository
   ) {}
 
   getSubscriptionByOrganizationId(organizationId: string) {
@@ -291,6 +293,21 @@ export class SubscriptionService {
         coupon.maxRedemptions
     ) {
       return { ok: false as const, reason: 'This coupon has been fully used.' };
+    }
+    // An affiliate's code is a coupon for their audience, not for themselves.
+    if (coupon.note?.startsWith('affiliate:')) {
+      const affiliate = await this._affiliateRepository.findById(
+        coupon.note.slice('affiliate:'.length)
+      );
+      if (!affiliate?.active) {
+        return { ok: false as const, reason: 'This coupon code is not valid.' };
+      }
+      if (affiliate.organizationId === organizationId) {
+        return {
+          ok: false as const,
+          reason: 'Your own affiliate code is for the people you refer.',
+        };
+      }
     }
     if (
       await this._subscriptionRepository.hasRedeemedCoupon(

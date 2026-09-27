@@ -129,16 +129,17 @@ function LayoutContextInner(params: { children: ReactNode }) {
       }
 
       if (response.status === 402) {
+        const body = await response.json().catch(() => ({}) as any);
         if (
           await deleteDialog(
-            (
-              await response.json()
-            ).message,
-            'Move to billing',
-            'Payment Required'
+            body?.message || 'You have reached a limit of your plan.',
+            // The backend sets trial=true for a Free workspace that has not
+            // used its Standard trial yet.
+            body?.trial ? 'Start 7-day free trial' : 'See plans',
+            'Upgrade to keep going'
           )
         ) {
-          window.open('/billing', '_blank');
+          window.location.href = '/billing';
           return false;
         }
         return true;

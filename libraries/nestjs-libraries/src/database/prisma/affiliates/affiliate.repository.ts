@@ -6,11 +6,33 @@ export class AffiliateRepository {
   constructor(
     private _affiliate: PrismaRepository<'affiliate'>,
     private _referral: PrismaRepository<'affiliateReferral'>,
-    private _commission: PrismaRepository<'affiliateCommission'>
+    private _commission: PrismaRepository<'affiliateCommission'>,
+    private _coupon: PrismaRepository<'coupon'>
   ) {}
+
+  /** Coupon codes are stored upper-case (see SubscriptionService.validateCoupon). */
+  findCoupon(code: string) {
+    return this._coupon.model.coupon.findUnique({
+      where: { code: code.toUpperCase() },
+    });
+  }
+
+  createCoupon(code: string, percentOff: number, affiliateId: string) {
+    return this._coupon.model.coupon.create({
+      data: {
+        code: code.toUpperCase(),
+        percentOff,
+        note: `affiliate:${affiliateId}`,
+      },
+    });
+  }
 
   findByUser(userId: string) {
     return this._affiliate.model.affiliate.findUnique({ where: { userId } });
+  }
+
+  findById(id: string) {
+    return this._affiliate.model.affiliate.findUnique({ where: { id } });
   }
 
   findByCode(code: string) {

@@ -5,6 +5,12 @@ import { AffiliateRepository } from '@hookpost/nestjs-libraries/database/prisma/
 
 /** How long after a workspace is created a referral can still be attached. */
 const ATTRIBUTION_WINDOW_DAYS = 7;
+/**
+ * Every affiliate code is also a checkout coupon for their audience, so a
+ * buyer who types it (or arrives on their link, which pre-fills it) gets this
+ * much off and the affiliate is credited even if the cookie was lost.
+ */
+export const AFFILIATE_COUPON_PERCENT = 10;
 /** Codes are lowercase letters, digits and dashes, as typed into a ?ref= link. */
 const CODE_RE = /^[a-z0-9-]{3,40}$/;
 
@@ -43,8 +49,14 @@ export class AffiliateService {
 
     for (let attempt = 0; attempt < 20; attempt++) {
       const code = `${base}${Math.floor(100 + Math.random() * 900)}`;
-      if (await this._affiliateRepository.findByCode(code)) continue;
-      return this._affiliateRepository.create({
+      // The code doubles as a coupon, so it must be free in both tables.
+      if (
+        (await this._affiliateRepository.findByCode(code)) ||
+        (await this._affiliateRepository.findCoupon(code))
+      ) {
+        continue;
+      }
+      const affiliate = await this._affiliateRepository.create({
         userId: user.id,
         organizationId: org.id,
         code,
@@ -52,6 +64,12 @@ export class AffiliateService {
         email: user.email,
         payoutDetails: payoutDetails?.trim().slice(0, 500) || null,
       });
+      await this._affiliateRepository.createCoupon(
+        code,
+        AFFILIATE_COUPON_PERCENT,
+        affiliate.id
+      );
+      return affiliate;
     }
     throw new Error('Could not allocate an affiliate code');
   }
@@ -85,6 +103,7 @@ export class AffiliateService {
 
     return {
       code: affiliate.code,
+      couponPercent: AFFILIATE_COUPON_PERCENT,
       active: affiliate.active,
       commissionPercent: affiliate.commissionPercent,
       commissionMonths: affiliate.commissionMonths,
@@ -134,6 +153,42 @@ export class AffiliateService {
     } catch (e) {
       // A unique-index race (two tabs loading at once) lands here too.
       this.logger.warn(`Affiliate attribution skipped: ${(e as Error).message}`);
+    }
+  }
+
+  /**
+   * A buyer used an affiliate's code as a coupon at checkout. That is an
+   * explicit choice, so unlike the cookie it has no workspace-age limit, but
+   * it still never overrides an existing referral and never pays an affiliate
+   * for their own workspace. `memberUserIds` are the workspace's users.
+   * Called from the subscription webhook before the first charge, so the
+   * commission on that charge is recorded. Never throws.
+   */
+  async attributeByCoupon(
+    rawCode: string | undefined,
+    orgId: string | undefined,
+    memberUserIds: string[]
+  ) {
+    try {
+      const code = normaliseAffiliateCode(rawCode);
+      if (!code || !orgId) return;
+      if (await this._affiliateRepository.findReferral(orgId)) return;
+
+      const affiliate = await this._affiliateRepository.findByCode(code);
+      if (!affiliate || !affiliate.active) return;
+      if (
+        affiliate.organizationId === orgId ||
+        memberUserIds.includes(affiliate.userId)
+      ) {
+        return;
+      }
+
+      await this._affiliateRepository.createReferral(affiliate.id, orgId);
+      this.logger.log(`Workspace ${orgId} referred by coupon ${code}`);
+    } catch (e) {
+      this.logger.warn(
+        `Affiliate coupon attribution skipped: ${(e as Error).message}`
+      );
     }
   }
 

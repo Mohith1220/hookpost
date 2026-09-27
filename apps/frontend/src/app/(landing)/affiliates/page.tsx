@@ -11,6 +11,8 @@ const PERCENT = 30;
 const MONTHS = 12;
 const COOKIE_DAYS = 60;
 const MIN_PAYOUT = 1000;
+// AFFILIATE_COUPON_PERCENT in affiliate.service.ts.
+const COUPON_PERCENT = 10;
 const { STANDARD, PRO } = pricingINR;
 const perYear = (monthly: number) =>
   Math.round(monthly * (PERCENT / 100) * MONTHS).toLocaleString('en-IN');
@@ -23,6 +25,10 @@ const FAQ = [
   {
     q: 'How long does the referral cookie last?',
     a: `${COOKIE_DAYS} days. If someone clicks your link and creates their Hookpost account within ${COOKIE_DAYS} days, they are yours. If they click several affiliates' links, the last click counts.`,
+  },
+  {
+    q: 'Do the people I refer get a discount?',
+    a: `Yes. Your affiliate code is also a coupon: it gives them ${COUPON_PERCENT}% off any paid plan, for as long as they stay subscribed. It is applied automatically when they arrive on your link, and anyone who types it at checkout is credited to you even without the link.`,
   },
   {
     q: 'When and how do I get paid?',
@@ -121,7 +127,7 @@ export default function AffiliatesPage() {
             {[
               [`${PERCENT}%`, `of every payment, for ${MONTHS} months`],
               [`₹${perYear(STANDARD.month_price)}`, `per Standard customer per year`],
-              [`${COOKIE_DAYS} days`, 'cookie window, last click wins'],
+              [`${COUPON_PERCENT}% off`, 'for your audience, with your code'],
               [`₹${MIN_PAYOUT.toLocaleString('en-IN')}`, 'minimum payout, sent monthly'],
             ].map(([big, small]) => (
               <li key={small} className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">

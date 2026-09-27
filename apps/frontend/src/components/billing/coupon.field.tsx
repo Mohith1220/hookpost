@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import { useFetch } from '@hookpost/helpers/utils/custom.fetch';
 import { useT } from '@hookpost/react/translation/get.transation.service.client';
@@ -56,6 +56,34 @@ export const CouponField: FC<{
   const [code, setCode] = useState('');
   const [checking, setChecking] = useState(false);
   const [error, setError] = useState('');
+
+  // A visitor who came in on an affiliate's ?ref= link has their code in the
+  // hp_ref cookie (see affiliates/ref-capture.tsx), and every affiliate code
+  // is also a coupon. Apply it once, silently: an invalid or expired code just
+  // leaves the field as it was, with no error shown to someone who never typed.
+  const triedRef = useRef(false);
+  useEffect(() => {
+    if (applied || triedRef.current) return;
+    triedRef.current = true;
+    const ref = document.cookie
+      .split('; ')
+      .find((c) => c.startsWith('hp_ref='))
+      ?.slice('hp_ref='.length);
+    if (!ref || !/^[a-z0-9-]{3,40}$/i.test(ref)) return;
+    fetch(`/billing/coupon/validate?code=${encodeURIComponent(ref)}`)
+      .then((r) => r.json())
+      .then((res) => {
+        if (res?.valid) {
+          onChange({
+            code: res.code,
+            percentOff: res.percentOff,
+            freeMonths: res.freeMonths,
+          });
+        }
+      })
+      .catch(() => undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const apply = useCallback(async () => {
     const value = code.trim();

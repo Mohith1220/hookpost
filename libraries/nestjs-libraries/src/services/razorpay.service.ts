@@ -139,6 +139,13 @@ export class RazorpayService {
         orgId,
         subscription.id
       );
+      // An affiliate's code is also a coupon: credit them for this workspace.
+      const team = await this._organizationService.getTeam(orgId);
+      await this._affiliateService.attributeByCoupon(
+        code,
+        orgId,
+        (team?.users || []).map((u: any) => u.user?.id).filter(Boolean)
+      );
     } catch (e) {
       this.logger.warn(
         `Coupon ${code} redemption for ${subscription.id} failed: ${(e as Error).message}`

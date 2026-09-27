@@ -11,6 +11,7 @@ type Money = Record<string, number>;
 
 interface Affiliate {
   code: string;
+  couponPercent: number;
   active: boolean;
   commissionPercent: number;
   commissionMonths: number;
@@ -143,7 +144,7 @@ export const AffiliateComponent: FC = () => {
         <ul className="grid gap-[10px] sm:grid-cols-3 text-[14px]">
           {[
             ['Free to join', 'Any Hookpost account, free plan included.'],
-            ['60-day cookie', 'They can sign up up to 60 days after the click.'],
+            ['10% off for them', 'Your code is also a coupon for your audience.'],
             ['Paid monthly', 'By UPI or bank transfer, once you pass ₹1,000.'],
           ].map(([t, d]) => (
             <li
@@ -218,6 +219,29 @@ export const AffiliateComponent: FC = () => {
             {SITE}/compare?ref={affiliate.code}
           </code>
         </div>
+      </div>
+
+      <div className="rounded-[10px] border border-newTableBorder bg-newBgColorInner p-[16px] flex flex-wrap items-center gap-[12px] justify-between">
+        <div className="text-[14px]">
+          <div className="font-[600] text-white">
+            Your coupon code: {affiliate.code.toUpperCase()}
+          </div>
+          <div className="opacity-70 mt-[2px]">
+            Gives your audience {affiliate.couponPercent}% off any paid plan,
+            and credits you even if they never clicked your link. It is
+            applied automatically for anyone who arrives on your link.
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            copy(affiliate.code.toUpperCase());
+            toaster.show('Code copied', 'success');
+          }}
+          className="h-[38px] px-[16px] rounded-[8px] bg-white/10 border border-newTableBorder text-white font-[600]"
+        >
+          Copy code
+        </button>
       </div>
 
       <div className="flex gap-[12px] flex-wrap">

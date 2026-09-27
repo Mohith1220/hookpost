@@ -105,7 +105,7 @@ export default function AffiliatesPage() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              href="/auth/register"
+              href="/auth"
               prefetch={false}
               className="inline-flex h-12 items-center rounded-xl bg-[#FF4CE2] px-6 font-bold text-white"
             >

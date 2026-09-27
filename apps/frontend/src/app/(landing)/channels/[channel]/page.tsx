@@ -4,6 +4,9 @@ import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { SectionFaq } from '../../SectionFaq';
+import { pricingINR } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/pricing';
+
+const { FREE } = pricingINR;
 
 interface ChannelConfig {
   name: string;
@@ -312,7 +315,11 @@ export default async function ChannelLandingPage({ params }: { params: Promise<{
         name: `Can I schedule posts to ${data.name} automatically with Hookpost?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: `Yes. Hookpost connects directly to official ${data.name} APIs to allow seamless single and bulk post scheduling without manual confirmation notifications.`,
+          // Structured data is read as a factual answer, so it must follow the
+          // channel's real status: a pending channel cannot publish yet.
+          text: pending
+            ? `Not yet. ${CHANNEL_SPECS[data.slug].pending}`
+            : `Yes. Hookpost connects directly to official ${data.name} APIs to allow seamless single and bulk post scheduling without manual confirmation notifications.`,
         },
       },
       {
@@ -320,7 +327,9 @@ export default async function ChannelLandingPage({ params }: { params: Promise<{
         name: `Is ${data.name} scheduling supported on the free plan?`,
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Hookpost offers a permanent $0 Starter plan that includes multi-network scheduling with no credit card required.",
+          text: pending
+            ? `Not yet: ${data.name} is not publishing on any plan until it opens. Hookpost's free plan covers ${FREE.channel} channels and ${FREE.posts_per_month} posts a month on the networks that are live, with no card required.`
+            : `Yes. Hookpost's free plan includes ${FREE.channel} channels and ${FREE.posts_per_month} posts a month, forever, with no card required.`,
         },
       },
     ],

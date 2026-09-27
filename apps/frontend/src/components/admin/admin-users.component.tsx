@@ -188,7 +188,7 @@ const UserJourneyModal: FC<{
                     {data.summary.hasActiveSubscription ? (
                       <span className="text-emerald-300">Paid Plan</span>
                     ) : data.summary.isTrailing ? (
-                      <span className="text-amber-300">Free Trial</span>
+                      <span className="text-amber-300">Free Plan (never subscribed)</span>
                     ) : (
                       <span className="opacity-70">Free Tier</span>
                     )}
@@ -572,11 +572,11 @@ export const AdminUsersComponent: FC = () => {
             subtext="Paying & lifetime tiers"
           />
           <MetricCard
-            title="Active Free Trials"
+            title="Free Plan (never paid)"
             value={data.metrics.activeTrials}
             icon="⏳"
             color="text-amber-400"
-            subtext="In onboarding trial"
+            subtext="Signed up, no subscription yet"
           />
           <MetricCard
             title="Connected Channels"
@@ -619,7 +619,7 @@ export const AdminUsersComponent: FC = () => {
                 }`}
               >
                 {filter === 'ALL' && 'All Users'}
-                {filter === 'TRIAL' && '⏳ Free Trial'}
+                {filter === 'TRIAL' && 'Free Plan'}
                 {filter === 'PAID' && '💎 Paid / Lifetime'}
                 {filter === 'ADMIN' && '🛡️ Admins'}
               </button>
@@ -766,9 +766,15 @@ export const AdminUsersComponent: FC = () => {
                         ) : mainOrg?.isTrailing ? (
                           <div className="flex flex-col gap-[2px]">
                             <span className="inline-flex items-center gap-[4px] px-[8px] py-[2px] rounded-full text-[11px] font-[700] bg-amber-500/20 text-amber-300 border border-amber-500/40 w-max">
-                              ⏳ FREE TRIAL
+                              FREE PLAN
                             </span>
-                            <span className="text-[10px] opacity-60">Trial Active</span>
+                            {/* isTrailing is set on every new workspace and only
+                                cleared by a subscription, so it means "never
+                                subscribed", not a 7-day trial. The Free plan
+                                itself never expires. */}
+                            <span className="text-[10px] opacity-60">
+                              Never subscribed · {dayjs().diff(dayjs(u.createdAt), 'day')}d since signup
+                            </span>
                           </div>
                         ) : (
                           <span className="px-[8px] py-[2px] rounded-full text-[11px] font-[600] bg-white/10 text-white/70 w-max">

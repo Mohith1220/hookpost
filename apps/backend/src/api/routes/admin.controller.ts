@@ -469,7 +469,9 @@ export class AdminController {
         type: 'WORKSPACE',
         title: `Workspace: ${org.name}`,
         description: `Member role: ${uo.role}. ${
-          org.isTrailing ? 'Status: 7-day trial active.' : 'Status: Active.'
+          org.isTrailing
+            ? 'Status: Free plan, never subscribed.'
+            : 'Status: Active.'
         }`,
         timestamp: org.createdAt,
         status: 'info',

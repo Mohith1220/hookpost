@@ -1,5 +1,5 @@
 import { CHANNEL_DEEP } from '../channel-deep';
-import { CHANNEL_SPECS } from '../channel-specs';
+import { CHANNEL_SPECS, META_PENDING } from '../channel-specs';
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -7,6 +7,14 @@ import { SectionFaq } from '../../SectionFaq';
 import { pricingINR } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/pricing';
 
 const { FREE } = pricingINR;
+
+// Instagram and Threads only wait on Meta's App Review (resubmitted 27 Sep
+// 2026). A search engine takes weeks to pick up a page change, so marketing
+// copy is written for the state they will be in by then: live. The on-page
+// notice below still tells a visitor today that new accounts cannot connect
+// yet. Pinterest and Medium are not about to open, so they keep their status.
+const listedAsLive = (slug: string) =>
+  !CHANNEL_SPECS[slug]?.pending || CHANNEL_SPECS[slug]?.pending === META_PENDING;
 
 interface ChannelConfig {
   name: string;
@@ -278,7 +286,7 @@ export async function generateMetadata({ params }: { params: Promise<{ channel: 
     // characters and got truncated. The tagline already appears in the
     // description, so it does not need to be in both.
     // Pending channels do not promise a free scheduler they cannot deliver yet.
-    title: CHANNEL_SPECS[data.slug]?.pending
+    title: !listedAsLive(data.slug)
       ? `${data.name} Scheduler: Coming Soon | Hookpost`
       : `Schedule ${data.name} ${CONTENT_NOUN[data.slug] || 'Posts'}: Free ${data.name} Scheduler | Hookpost`,
     description: data.description,
@@ -292,9 +300,8 @@ export async function generateMetadata({ params }: { params: Promise<{ channel: 
 export default async function ChannelLandingPage({ params }: { params: Promise<{ channel: string }> | { channel: string } }) {
   const resolved = await Promise.resolve(params);
   const data = getChannelData(resolved.channel || '');
-  // The title already said "Coming Soon" for a pending channel while the badge
-  // and H1 below sold it as a live scheduler. All three follow the spec now.
-  const pending = Boolean(CHANNEL_SPECS[data.slug]?.pending);
+  // Title, badge, H1 and FAQ schema all follow listedAsLive, so they agree.
+  const pending = !listedAsLive(data.slug);
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",

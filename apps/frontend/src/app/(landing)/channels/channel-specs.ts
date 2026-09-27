@@ -15,7 +15,7 @@ const MEDIUM_PENDING =
 // is not in PUBLISH_PENDING (that map also badges the composer, and would warn
 // users whose channel publishes fine). Delete it the day Meta approves the
 // Instagram and Threads permissions.
-const META_PENDING =
+export const META_PENDING =
   'Hookpost supports this network, but connecting a new account is waiting on Meta\'s review of the Instagram and Threads permissions. Until that lands, new accounts cannot connect it. Facebook Pages, X, LinkedIn, YouTube, Bluesky and the other channels work today.';
 
 // Only channels a signed-up user can actually connect appear here.

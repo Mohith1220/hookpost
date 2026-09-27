@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Social Media Scheduler for Fitness Coaches | Hookpost',
   description:
-    'Schedule YouTube Shorts, X and LinkedIn posts, with Instagram and Facebook once Meta approves. For personal trainers, gym owners and wellness creators.',
+    'Schedule YouTube Shorts, X, LinkedIn and Facebook Page posts, with Instagram once Meta approves. For personal trainers, gym owners and wellness creators.',
   keywords: [
     'fitness social media scheduler',
     'instagram reels scheduler for personal trainers',
@@ -40,7 +40,7 @@ export default function FitnessCoachesLandingPage() {
         name: "Can fitness trainers schedule recurring workout tips and transformation videos?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Coaches can schedule weeks of workout videos and nutrition tips in one sitting and set a post to repeat on an interval from daily to monthly. YouTube publishes today; Instagram and Facebook Reels follow once Meta approves the Hookpost app.",
+          text: "Yes. Coaches can schedule weeks of workout videos and nutrition tips in one sitting and set a post to repeat on an interval from daily to monthly. YouTube and Facebook Pages publish today; Instagram Reels follow once Meta approves the Hookpost app.",
         },
       },
       {
@@ -55,7 +55,7 @@ export default function FitnessCoachesLandingPage() {
   };
 
   const features = [
-    { title: '🎬 Multi-Platform Video Auto-Publish', desc: 'Shoot one workout demo or transformation video and schedule it to YouTube Shorts, X and LinkedIn in 1 click. Instagram and Facebook Reels join once Meta approves the app.' },
+    { title: '🎬 Multi-Platform Video Auto-Publish', desc: 'Shoot one workout demo or transformation video and schedule it to YouTube Shorts, X, LinkedIn and your Facebook Page in 1 click. Instagram Reels join once Meta approves the app.' },
     { title: '📅 Visual Content & Challenge Calendar', desc: 'Map out 30-day fitness challenges, client shoutouts, and nutrition tips weeks in advance so you can focus on training clients.' },
     { title: '🤖 AI Workout & Caption Writer', desc: 'Generate captions, workout breakdowns, rep-set guides and calls-to-action to book coaching calls with the AI assistant (Standard and Pro).' },
     { title: '📨 Telegram & Discord Community Posts', desc: 'Send daily workout tips to your Telegram channel or Discord server on the same schedule as your social posts.' },
@@ -114,7 +114,7 @@ export default function FitnessCoachesLandingPage() {
           <span className="text-[#10b981]">On Complete Autopilot.</span>
         </h1>
         <p className="text-lg sm:text-xl text-neutral-300 max-w-[800px] mx-auto mb-10 leading-relaxed">
-          Stop spending 3 hours a day reposting videos across apps. Hookpost publishes your YouTube Shorts, X and LinkedIn posts together with captions tuned per network. Instagram and Facebook Reels follow once Meta approves the app.
+          Stop spending 3 hours a day reposting videos across apps. Hookpost publishes your YouTube Shorts, X, LinkedIn and Facebook Page posts together with captions tuned per network. Instagram Reels follow once Meta approves the app.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

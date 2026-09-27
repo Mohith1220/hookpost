@@ -538,7 +538,7 @@ export default function McpPage() {
                 </tr>
                 <tr className="hover:bg-white/[0.02]">
                   <td className="p-4 text-neutral-400">Supported Social Platforms</td>
-                  <td className="p-4 text-white font-semibold">{PUBLISHABLE_CHANNEL_COUNT} networks today (X, LinkedIn, YouTube, Bluesky, Discord, Slack, Telegram, WordPress, Dev.to...). Instagram, Facebook and Threads await Meta approval.</td>
+                  <td className="p-4 text-white font-semibold">{PUBLISHABLE_CHANNEL_COUNT} networks today (X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Slack, Telegram, WordPress, Dev.to...). Instagram and Threads await Meta approval.</td>
                 </tr>
                 <tr className="hover:bg-white/[0.02]">
                   <td className="p-4 text-neutral-400">Open-Source License</td>

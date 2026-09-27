@@ -16,7 +16,7 @@ const inr = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 // billed yearly ($25 monthly), 1 user, 8 profiles (Instagram, Facebook, TikTok,
 // Pinterest, LinkedIn, YouTube, Threads, Snapchat), 30 posts per profile per
 // month, no free plan, 14-day trial, billed in USD. No X/Twitter or Bluesky.
-const BEST_LATER_ANSWER = `Hookpost is a strong alternative to Later if you post to X, LinkedIn, YouTube, Bluesky or developer and community channels. Later has no free plan (14-day trial), its Starter plan is $18.75/month billed yearly ($25 month-to-month) for one user, and it does not support X/Twitter. Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks today, including X, with a free plan (${FREE.channel} channels, ${FREE.posts_per_month} posts a month) and Standard at ${inr(STD_INR.month_price)} ($${STD_USD.month_price}) a month. If Instagram, Facebook, Threads or TikTok are your main channels, note that Hookpost cannot publish to them yet - Instagram, Facebook and Threads await Meta approval. Later pricing checked 26 September 2026.`;
+const BEST_LATER_ANSWER = `Hookpost is a strong alternative to Later if you post to X, LinkedIn, YouTube, Bluesky or developer and community channels. Later has no free plan (14-day trial), its Starter plan is $18.75/month billed yearly ($25 month-to-month) for one user, and it does not support X/Twitter. Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks today, including X, with a free plan (${FREE.channel} channels, ${FREE.posts_per_month} posts a month) and Standard at ${inr(STD_INR.month_price)} ($${STD_USD.month_price}) a month. If Instagram, Threads or TikTok are your main channels, note that Hookpost cannot publish to them yet - Instagram and Threads await Meta approval. Facebook Pages publish today. Later pricing checked 26 September 2026.`;
 
 export const metadata: Metadata = {
   title: "Hookpost vs Later (2026): Best Visual Scheduler Alternative",
@@ -185,7 +185,7 @@ export default function LaterAlternativePage() {
               <tbody className="divide-y divide-[#262626]">
                   <tr className="hover:bg-white/[0.02] transition-colors">
                     <td className="p-4 sm:p-5 font-medium text-white">Supported Networks</td>
-                    <td className="p-4 sm:p-5 text-white bg-[#FF4CE2]/5 font-semibold">{PUBLISHABLE_CHANNEL_COUNT} publishing today, incl. X, LinkedIn, YouTube, Bluesky; Instagram, Facebook &amp; Threads await Meta approval</td>
+                    <td className="p-4 sm:p-5 text-white bg-[#FF4CE2]/5 font-semibold">{PUBLISHABLE_CHANNEL_COUNT} publishing today, incl. X, LinkedIn, YouTube, Facebook Pages, Bluesky; Instagram &amp; Threads await Meta approval</td>
                     <td className="p-4 sm:p-5 text-[#888]">8: Instagram, Facebook, TikTok, Pinterest, LinkedIn, YouTube, Threads, Snapchat. No X/Twitter</td>
                     <td className="p-4 sm:p-5">
                       <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-white/10 text-white">

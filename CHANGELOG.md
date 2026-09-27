@@ -8,7 +8,7 @@ First tagged release of Hookpost, an open-source social media scheduler built on
 
 ### Publishing
 - Schedule and publish to X (posts and threads), LinkedIn (personal profiles), YouTube (videos and Shorts), Bluesky, Discord, Slack, Telegram, WordPress, Hashnode, Dev.to, Lemmy, Nostr and Listmonk.
-- Instagram, Facebook and Threads providers are included; on the hosted version they wait on Meta app approval. Pinterest connects but cannot publish until Pinterest grants Standard API access. Medium works only for accounts that already hold an integration token (Medium no longer issues new ones).
+- Instagram, Facebook and Threads providers are included; on the hosted version Facebook Pages connect and publish for any account, while Instagram and Threads still wait on Meta app approval. Pinterest connects but cannot publish until Pinterest grants Standard API access. Medium works only for accounts that already hold an integration token (Medium no longer issues new ones).
 - Per-network validation (character limits, media rules) before a post is queued; repeat posting on supported channels.
 
 ### AI and automation

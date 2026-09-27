@@ -40,7 +40,7 @@ export default function HootsuiteAlternativePage() {
     // $99/user/mo billed annually, 10 channels, 14-day trial, no free plan.
     // Indian visitors are shown Rs 1,999/user/mo, so it is not dollars-only.
     { feature: "Starting Monthly Price", hookpost: `Free / ${inr(STD_INR.month_price)} ($${STD_USD.month_price}/mo) Standard`, hootsuite: "$99 / user / month billed annually (₹1,999 in India); no free plan, 14-day trial", winner: "Hookpost" },
-    { feature: "Supported Social Channels", hookpost: `${PUBLISHABLE_CHANNEL_COUNT} publishing today (X, LinkedIn, YouTube, Bluesky, Discord, Telegram...); Instagram, Facebook & Threads await Meta approval`, hootsuite: "11 networks, incl. Instagram, Facebook, TikTok, WhatsApp, X", winner: "Depends" },
+    { feature: "Supported Social Channels", hookpost: `${PUBLISHABLE_CHANNEL_COUNT} publishing today (X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Telegram...); Instagram & Threads await Meta approval`, hootsuite: "11 networks, incl. Instagram, Facebook, TikTok, WhatsApp, X", winner: "Depends" },
     { feature: "Self-Hostable (Docker / Local)", hookpost: "✅ Open source (AGPL-3.0) & self-hostable", hootsuite: "❌ Closed Proprietary SaaS Only", winner: "Hookpost" },
     { feature: "Payment Methods", hookpost: "✅ Razorpay (UPI, NetBanking, Cards)", hootsuite: "INR prices shown in India; UPI not listed", winner: "Hookpost" },
     { feature: "Teams", hookpost: `Team members on Pro, flat ${inr(PRO_INR.month_price)} ($${PRO_USD.month_price}/mo) for ${PRO_USD.channel} channels`, hootsuite: "Priced per user: $99 / user / month on Standard", winner: "Hookpost" },

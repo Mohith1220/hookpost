@@ -145,7 +145,7 @@ export default async function ComparePairPage({
     },
     {
       q: `Is there a cheaper alternative to ${A.name} and ${B.name}?`,
-      a: `Hookpost has a free plan (${FREE.channel} channels, ${FREE.posts_per_month} posts a month) and a flat ₹${STANDARD.month_price} a month plan for ${STANDARD.channel} channels, billed in rupees with UPI Autopay. It publishes to X, LinkedIn, YouTube, Bluesky, Discord, Telegram and more; Instagram and Facebook are waiting on Meta approval.`,
+      a: `Hookpost has a free plan (${FREE.channel} channels, ${FREE.posts_per_month} posts a month) and a flat ₹${STANDARD.month_price} a month plan for ${STANDARD.channel} channels, billed in rupees with UPI Autopay. It publishes to X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Telegram and more; Instagram and Threads are waiting on Meta approval.`,
     },
   ];
 
@@ -211,7 +211,7 @@ export default async function ComparePairPage({
                 <th scope="row" className="py-4 pe-4 font-semibold text-white">Networks</th>
                 <td className="py-4 pe-4">{A.networks.join(', ') || 'Not stated'}</td>
                 <td className="py-4 pe-4">{B.networks.join(', ') || 'Not stated'}</td>
-                <td className="py-4">X, LinkedIn, YouTube, Bluesky, Discord, Slack, Telegram, WordPress, Dev.to and more (Instagram, Facebook, Threads awaiting Meta approval)</td>
+                <td className="py-4">X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Slack, Telegram, WordPress, Dev.to and more (Instagram and Threads awaiting Meta approval)</td>
               </tr>
             </tbody>
           </table>
@@ -236,8 +236,8 @@ export default async function ComparePairPage({
           <p className="mt-3 max-w-[70ch] text-white/70">
             If you are in India, post mainly to X, LinkedIn, YouTube or community channels, and would rather pay one flat
             rupee price than a fee per channel, Hookpost is worth a look. It is open source, has a free plan, and ships an
-            MCP server so an AI assistant can schedule for you. If you need Instagram or Facebook today, choose {A.name} or{' '}
-            {B.name} for now: Hookpost&apos;s Meta integration is waiting on approval.
+            MCP server so an AI assistant can schedule for you. If you need Instagram today, choose {A.name} or{' '}
+            {B.name} for now: Hookpost&apos;s Instagram connection is waiting on Meta approval (Facebook Pages work today).
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/free-social-media-scheduler" className="rounded-full bg-[#FF4CE2] px-5 py-2.5 font-semibold text-black hover:opacity-90">

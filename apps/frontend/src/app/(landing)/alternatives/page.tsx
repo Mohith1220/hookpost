@@ -108,7 +108,7 @@ const ALTERNATIVES = [
     slug: "later",
     name: "Later",
     tagline: "Visual social planner",
-    hookpostAdvantage: "Hookpost publishes to X and Bluesky, which Later's plans don't include. Hookpost's Instagram, Facebook, Threads and Pinterest publishing are not available to new accounts yet.",
+    hookpostAdvantage: "Hookpost publishes to X and Bluesky, which Later's plans don't include. Hookpost's Instagram, Threads and Pinterest publishing are not available to new accounts yet; Facebook Pages work today.",
     priceDiff: `Later has no free plan; Starter is $18.75/mo billed annually ($25 monthly). Hookpost: free plan, Standard $${STD_USD.month_price}/mo.`,
     badge: "Multi-Channel Alternative",
   },
@@ -634,7 +634,7 @@ export default function AlternativesHubPage() {
               </div>
               <h3 className="text-base font-bold text-white">1-Click Channel OAuth</h3>
               <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
-                Log into Hookpost and authorize your social accounts (X, LinkedIn, YouTube, Bluesky, Telegram and more). Instagram, Facebook, Threads and Pinterest are not available to new accounts yet.
+                Log into Hookpost and authorize your social accounts (X, LinkedIn, YouTube, Facebook Pages, Bluesky, Telegram and more). Instagram, Threads and Pinterest are not available to new accounts yet.
               </p>
             </div>
             <div className="bg-[#111] border border-white/10 rounded-2xl p-6 space-y-3">

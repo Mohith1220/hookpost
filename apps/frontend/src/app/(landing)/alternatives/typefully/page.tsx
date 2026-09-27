@@ -47,7 +47,7 @@ const ROWS: [string, string, string][] = [
   ['AI writing', 'Creator and Business', 'Standard and Pro'],
   ['Cheapest paid plan', 'Creator, $99 a year, annual billing only, 1,000 posts a month', `Standard, ${inr(STD_INR.month_price)} or $${STD_USD.month_price} a month, ${STD_INR.channel} channels, ${STD_INR.posts_per_month} posts`],
   ['Next plan up', 'Business, $18 per social set a month billed yearly, $20 monthly', `Pro, ${inr(PRO_INR.month_price)} or $${PRO_USD.month_price} a month, ${PRO_INR.channel} channels, ${PRO_INR.posts_per_month.toLocaleString('en-US')} posts`],
-  ['Networks', 'X, LinkedIn, Threads, Bluesky, Mastodon, Substack Notes', 'X, LinkedIn profiles, YouTube, Bluesky, Discord, Slack, Telegram, WordPress, Hashnode, Dev.to, Lemmy, Nostr, Listmonk'],
+  ['Networks', 'X, LinkedIn, Threads, Bluesky, Mastodon, Substack Notes', 'X, LinkedIn profiles, YouTube, Facebook Pages, Bluesky, Discord, Slack, Telegram, WordPress, Hashnode, Dev.to, Lemmy, Nostr, Listmonk'],
   ['Currency from India', 'US dollars', 'Rupees'],
 ];
 
@@ -66,7 +66,7 @@ const FAQ = [
   },
   {
     q: 'Can Hookpost post to Mastodon or Threads?',
-    a: 'Mastodon, no. Threads is built but waiting on Meta app approval, so new accounts cannot connect it yet. The same applies to Instagram and Facebook. Typefully supports both Mastodon and Threads today.',
+    a: 'Mastodon, no. Threads is built but waiting on Meta app approval, so new accounts cannot connect it yet. The same applies to Instagram, though Facebook Pages publish today. Typefully supports both Mastodon and Threads today.',
   },
   {
     q: 'Does Hookpost have an API and MCP server?',
@@ -222,7 +222,7 @@ export default function TypefullyAlternativePage() {
             <ul className="mt-5 flex flex-col gap-3 text-white/75 list-disc ps-6">
               <li>Its free plan includes the API and MCP server. Hookpost&apos;s free plan does not.</li>
               <li>Mastodon and Substack Notes. Hookpost publishes to neither.</li>
-              <li>Threads works today. Hookpost&apos;s Threads, Instagram and Facebook are waiting on Meta app approval.</li>
+              <li>Threads works today. Hookpost&apos;s Threads and Instagram are waiting on Meta app approval.</li>
               <li>X analytics, a writing assistant built around threads, and shared drafts with comments.</li>
               <li>Business has unlimited users. For one writer on X and LinkedIn, Creator at $99 a year is cheaper than Hookpost Standard.</li>
             </ul>

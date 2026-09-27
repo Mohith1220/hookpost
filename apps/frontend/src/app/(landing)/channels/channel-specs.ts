@@ -1,18 +1,22 @@
 import { PUBLISH_PENDING } from '@hookpost/nestjs-libraries/integrations/social/publish-caveats';
 
-// Marketing-only, unlike PUBLISH_PENDING: the Meta app is unpublished, so only
-// accounts with a role on the app can connect. Accounts already connected keep
-// working, which is why this is not in PUBLISH_PENDING (that map also badges
-// the composer, and would warn users whose channel publishes fine). Delete it
-// the day the Meta app goes Live.
 // Medium no longer issues integration tokens (help.medium.com
 // "API/Importing"), so only an account that already holds an older token can
 // connect. Not a platform approval we are waiting on - it may never lift.
 const MEDIUM_PENDING =
   'Medium no longer issues new API integration tokens. Accounts that already have a token from before then can connect; new Medium accounts cannot. WordPress, Hashnode and Dev.to publish articles today.';
 
+// Marketing-only, unlike PUBLISH_PENDING. The Meta app "Hookpost Social" was
+// published on 27 Sep 2026 with the Facebook Page permissions approved, so any
+// account can connect a Facebook Page and 'facebook' no longer carries this.
+// The Instagram and Threads permissions were rejected on 25 Sep 2026 (over the
+// review screencast) and re-submission is pending, so new accounts still cannot
+// connect those two. Accounts already connected keep working, which is why this
+// is not in PUBLISH_PENDING (that map also badges the composer, and would warn
+// users whose channel publishes fine). Delete it the day Meta approves the
+// Instagram and Threads permissions.
 const META_PENDING =
-  'Hookpost supports this network, but connecting a new account is waiting on Meta app approval. Until that lands, new accounts cannot connect it. X, LinkedIn, YouTube, Bluesky and the other channels work today.';
+  'Hookpost supports this network, but connecting a new account is waiting on Meta\'s review of the Instagram and Threads permissions. Until that lands, new accounts cannot connect it. Facebook Pages, X, LinkedIn, YouTube, Bluesky and the other channels work today.';
 
 // Only channels a signed-up user can actually connect appear here.
 //
@@ -60,7 +64,7 @@ export const CHANNEL_SPECS: Record<string, ChannelSpec> = {
   'pinterest': { limit: '500 characters', auth: 'Connect once with OAuth', pending: PUBLISH_PENDING.pinterest, rules: ["At least one image or video per Pin", "Up to 5 media items", "Video Pins need a cover image as the second item"] },
   'youtube': { limit: '5,000 characters', auth: 'Connect once with OAuth', rules: ["One video per upload", "Title and visibility set per post", "Video only — images are not accepted"] },
   'linkedin': { limit: '3,000 characters', auth: 'Connect once with OAuth', rules: ["Carousels need 2+ images and no video", "One media item when posting video", "Comments are text only"] },
-  'facebook': { pending: META_PENDING, limit: '63,206 characters', auth: 'Connect once with OAuth', rules: ["Stories require at least one media item", "Posts to a Page, not a personal profile"] },
+  'facebook': { limit: '63,206 characters', auth: 'Connect once with OAuth', rules: ["Stories require at least one media item", "Posts to a Page, not a personal profile"] },
   'threads': { pending: META_PENDING, limit: '500 characters', auth: 'Connect once with OAuth', rules: ["Text, image or video"] },
   'x': { limit: '280 characters (4,000 on a Premium account)', auth: 'Connect once with OAuth', rules: ["Threads supported", "Articles accept images only"] },
   'bluesky': { limit: '300 characters', auth: 'Connect with your own credentials', rules: ["Up to 4 images per post", "One video per post", "Connects with an App Password, not your account password"] },

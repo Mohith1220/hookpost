@@ -28,9 +28,9 @@ A free, self-hostable alternative to **Buffer**, **Hootsuite**, **Later** and **
 
 ### 🌐 Networks that publish today
 
-X (Twitter) · LinkedIn (personal profiles) · YouTube (videos and Shorts) · Bluesky · Discord · Slack · Telegram · WordPress · Hashnode · Dev.to · Lemmy · Nostr · Listmonk (email)
+X (Twitter) · LinkedIn (personal profiles) · YouTube (videos and Shorts) · Facebook Pages · Bluesky · Discord · Slack · Telegram · WordPress · Hashnode · Dev.to · Lemmy · Nostr · Listmonk (email)
 
-Instagram, Facebook and Threads are built and waiting on Meta app approval for the cloud version. Pinterest connects but cannot publish until Pinterest grants Standard API access. Medium no longer issues new API tokens, so only accounts with an existing token can connect.
+Instagram and Threads are built and waiting on Meta app approval for the cloud version. Pinterest connects but cannot publish until Pinterest grants Standard API access. Medium no longer issues new API tokens, so only accounts with an existing token can connect.
 
 ### 🌟 Features
 

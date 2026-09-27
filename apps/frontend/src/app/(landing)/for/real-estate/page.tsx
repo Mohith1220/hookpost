@@ -41,7 +41,7 @@ export default function RealEstateLandingPage() {
         name: "Can realtors auto-post property video tours and open house flyers?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Realtors can schedule video walkthroughs to YouTube, listing photo carousels to LinkedIn, and open house dates to X. New accounts cannot connect Facebook or Instagram until Meta approves the Hookpost app.",
+          text: "Yes. Realtors can schedule video walkthroughs to YouTube, listing photo carousels to LinkedIn, and open house dates to X and your Facebook Page. New accounts cannot connect Instagram until Meta approves the Hookpost app.",
         },
       },
       {
@@ -56,9 +56,9 @@ export default function RealEstateLandingPage() {
   };
 
   const features = [
-    { title: '🏡 "Just Listed" & "Open House" Multi-Publishing', desc: 'Promote new listings across LinkedIn, X and Bluesky simultaneously with property photos and walkthrough videos. Instagram and Facebook join once Meta approves the app.' },
+    { title: '🏡 "Just Listed" & "Open House" Multi-Publishing', desc: 'Promote new listings across LinkedIn, X, Bluesky and your Facebook Page simultaneously with property photos and walkthrough videos. Instagram joins once Meta approves the app.' },
     { title: '📸 Multi-Photo Carousel Previews', desc: 'Showcase floorplans, exterior architecture, and interior shots in LinkedIn image carousels.' },
-    { title: '🎥 Vertical Video Tours for Reels & Shorts', desc: 'Auto-publish walkthrough video tours to YouTube Shorts. Instagram and Facebook Reels join once Meta approves the app.' },
+    { title: '🎥 Vertical Video Tours for Reels & Shorts', desc: 'Auto-publish walkthrough video tours to YouTube Shorts and your Facebook Page. Instagram Reels join once Meta approves the app.' },
     { title: '🤖 AI Real Estate Property Description Writer', desc: 'Turn basic MLS property bullet points into buyer-focused social copy with the AI assistant (Standard and Pro).' },
     { title: '📅 Weekend Open House Blast Schedules', desc: 'Set up recurring reminders on Thursday, Friday, and Saturday mornings to maximize weekend open house turnout.' },
     { title: '👔 Professional LinkedIn Thought Leadership', desc: 'Schedule market updates and neighborhood guides to LinkedIn to position yourself as the local market expert.' },

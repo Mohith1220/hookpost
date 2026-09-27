@@ -18,7 +18,7 @@ const HOOKPOST_PLANS = `Hookpost's free plan covers ${FREE.channel} channels and
 const PLANOLY_CHECKED = '26 September 2026';
 const PLANOLY_SOURCE = 'https://www.planoly.com/pricing';
 
-const BEST_ALTERNATIVE_ANSWER = `Planoly is built around Instagram and Pinterest planning, and Hookpost cannot publish to either for a new account yet: Instagram (with Facebook and Threads) is awaiting Meta approval, and Pinterest publishing is not available. If those are your main channels, Hookpost is not a replacement today. Hookpost fits if you publish mainly to YouTube, X, LinkedIn, Bluesky and similar networks; it publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks for a new account. Planoly's plans start at $14 a month (Starter: 1 social set, 1 user), with a 14-day trial and a free plan on its mobile app limited to 10 uploads a month. ${HOOKPOST_PLANS} Planoly prices checked ${PLANOLY_CHECKED}.`;
+const BEST_ALTERNATIVE_ANSWER = `Planoly is built around Instagram and Pinterest planning, and Hookpost cannot publish to either for a new account yet: Instagram (with Threads) is awaiting Meta approval, and Pinterest publishing is not available. If those are your main channels, Hookpost is not a replacement today. Hookpost fits if you publish mainly to YouTube, X, LinkedIn, Facebook Pages, Bluesky and similar networks; it publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks for a new account. Planoly's plans start at $14 a month (Starter: 1 social set, 1 user), with a 14-day trial and a free plan on its mobile app limited to 10 uploads a month. ${HOOKPOST_PLANS} Planoly prices checked ${PLANOLY_CHECKED}.`;
 
 export const metadata: Metadata = {
   title: "Hookpost vs Planoly (2026): Visual Planner Alternative",

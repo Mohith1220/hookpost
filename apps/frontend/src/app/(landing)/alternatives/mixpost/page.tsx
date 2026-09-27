@@ -62,7 +62,7 @@ export default function MixpostAlternativePage() {
   const comparisonData = [
     {
       feature: "Supported Social Networks",
-      hookpost: `${PUBLISHABLE_CHANNEL_COUNT} networks for new accounts (X, LinkedIn, YouTube, Bluesky, Discord, Slack, Telegram, WordPress...); Instagram, Facebook, Threads and Pinterest not yet`,
+      hookpost: `${PUBLISHABLE_CHANNEL_COUNT} networks for new accounts (X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Slack, Telegram, WordPress...); Instagram, Threads and Pinterest not yet`,
       mixpost: "12 networks on Pro, including Instagram, TikTok, Pinterest, Threads, Mastodon and Pixelfed; Lite covers Facebook Pages, X and Mastodon only",
       winner: "Tie",
     },
@@ -141,7 +141,7 @@ export default function MixpostAlternativePage() {
     {
       name: "Does Hookpost support more networks than Mixpost?",
       acceptedAnswer: {
-        text: `Not across the board. Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks for a new account, including X, LinkedIn, YouTube, Bluesky, Discord, Telegram, WordPress, Nostr and Lemmy. Instagram, Facebook and Threads are awaiting Meta approval and Pinterest publishing is not available yet. Mixpost Pro lists 12 networks, including Instagram, TikTok, Pinterest, Threads, Mastodon and Pixelfed, which Hookpost does not publish to today.`,
+        text: `Not across the board. Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks for a new account, including X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Telegram, WordPress, Nostr and Lemmy. Instagram and Threads are awaiting Meta approval and Pinterest publishing is not available yet. Mixpost Pro lists 12 networks, including Instagram, TikTok, Pinterest, Threads, Mastodon and Pixelfed, which Hookpost does not publish to today.`,
       },
     },
     {

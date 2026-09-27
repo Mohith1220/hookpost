@@ -127,7 +127,7 @@ export default function StudentsYoungCreatorsPage() {
             <div className="text-3xl mb-4">⚡</div>
             <h2 className="text-xl font-bold mb-2">Cross-Post Short Form Video</h2>
             <p className="text-neutral-400 text-sm leading-relaxed">
-              Upload your video once and schedule it to YouTube Shorts, X and Bluesky together. Instagram and Facebook Reels join once Meta approves the app.
+              Upload your video once and schedule it to YouTube Shorts, X, Bluesky and your Facebook Page together. Instagram Reels join once Meta approves the app.
             </p>
           </div>
           <div className="bg-neutral-950 border border-neutral-800 p-8 rounded-2xl">

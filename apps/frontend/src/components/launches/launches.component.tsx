@@ -586,20 +586,35 @@ export const LaunchesComponent = () => {
               {sortedIntegrations.length === 0 && collapseMenu === '0' && (
                 <div className="flex-1 max-h-[500px] justify-center items-center flex">
                   <div className="flex flex-col gap-[12px] text-center">
-                    <img
-                      src={
-                        mode === 'dark'
-                          ? '/no-channels.svg'
-                          : '/no-channels-colors.svg'
-                      }
-                      alt="No channels"
-                      className="mx-auto min-w-[100%]"
-                    />
+                    {/* Was an illustration of Reddit and Instagram - one we
+                        don't support and one waiting on Meta review - on the
+                        screen every new user sees first. Show channels a new
+                        account can actually connect today. */}
+                    <div className="mx-auto flex items-center gap-[10px]">
+                      {['x', 'linkedin', 'youtube', 'facebook'].map((id) => (
+                        <img
+                          key={id}
+                          src={
+                            id === 'youtube'
+                              ? '/icons/platforms/youtube.svg'
+                              : `/icons/platforms/${id}.png`
+                          }
+                          alt={id}
+                          className="w-[36px] h-[36px] rounded-full"
+                        />
+                      ))}
+                    </div>
                     <div className="font-[600] text-[20px]">
                       {t('no_channels', 'No channels yet')}
                     </div>
                     <div className="text-[14px]">
                       {t('connect_your_accounts')}
+                    </div>
+                    <div className="text-[13px] opacity-70">
+                      {t(
+                        'first_channel_hint',
+                        'Start with X, LinkedIn, YouTube or a Facebook Page - click Add Channel above.'
+                      )}
                     </div>
                   </div>
                 </div>

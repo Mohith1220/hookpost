@@ -205,7 +205,7 @@ export default function MetricoolAlternativePage() {
                   </tr>
                   <tr className="hover:bg-white/[0.02] transition-colors">
                     <td className="p-4 sm:p-5 font-medium text-white">Supported Networks</td>
-                    <td className="p-4 sm:p-5 text-white bg-[#FF4CE2]/5 font-semibold">{PUBLISHABLE_CHANNEL_COUNT} publishing today (X, LinkedIn, YouTube, Bluesky, Discord, Telegram...); Instagram, Facebook &amp; Threads await Meta approval</td>
+                    <td className="p-4 sm:p-5 text-white bg-[#FF4CE2]/5 font-semibold">{PUBLISHABLE_CHANNEL_COUNT} publishing today (X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Telegram...); Instagram &amp; Threads await Meta approval</td>
                     <td className="p-4 sm:p-5 text-[#888]">12, incl. Instagram, Facebook, TikTok, LinkedIn, Pinterest; X is a paid add-on</td>
                     <td className="p-4 sm:p-5">
                       <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-white/10 text-white">

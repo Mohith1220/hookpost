@@ -14,13 +14,14 @@ const FREE = pricingINR.FREE;
 const STANDARD = pricingINR.STANDARD;
 const inr = (v: number) => `₹${v.toLocaleString('en-IN')}`;
 
-// Networks a brand-new user can connect and publish to today. Instagram,
-// Facebook and Threads are left out on purpose while the Meta app is
-// unpublished - see channel-specs.ts for the full list and its caveats.
+// Networks a brand-new user can connect and publish to today. Instagram and
+// Threads are left out on purpose while their Meta permissions are in
+// review - see channel-specs.ts for the full list and its caveats.
 const FREE_NETWORKS = [
   ['X (Twitter)', '/channels/x'],
   ['LinkedIn', '/channels/linkedin'],
   ['YouTube', '/channels/youtube'],
+  ['Facebook Pages', '/channels/facebook'],
   ['Bluesky', '/channels/bluesky'],
   ['Discord', '/channels/discord'],
   ['Slack', '/channels/slack'],
@@ -81,7 +82,7 @@ const FAQ = [
   },
   {
     q: 'Which networks can I schedule for free?',
-    a: 'X, LinkedIn, YouTube, Bluesky, Discord, Slack, Telegram, WordPress, Dev.to, Hashnode, Lemmy, Nostr and Listmonk. Instagram, Facebook and Threads are built and waiting on Meta app approval, so new accounts cannot connect them yet.',
+    a: 'X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Slack, Telegram, WordPress, Dev.to, Hashnode, Lemmy, Nostr and Listmonk. Instagram and Threads are built and waiting on Meta app approval, so new accounts cannot connect them yet.',
   },
   {
     q: 'What happens when I need more than the free plan?',
@@ -202,7 +203,7 @@ export default function FreeSchedulerPage() {
           ))}
         </ul>
         <p className="mt-4 max-w-[70ch] text-sm text-white/55">
-          Instagram, Facebook and Threads are built and waiting on Meta app approval, so new accounts cannot connect them yet.
+          Instagram and Threads are built and waiting on Meta app approval, so new accounts cannot connect them yet.
           We would rather say so here than have you find out after signing up.
         </p>
       </section>

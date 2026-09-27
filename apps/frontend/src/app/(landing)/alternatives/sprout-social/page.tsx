@@ -12,7 +12,7 @@ const { STANDARD: STD_USD, PRO: PRO_USD } = pricingUSD;
 const inr = (n: number) => n.toLocaleString('en-IN');
 // One sentence on Hookpost's sold plans, read from pricing.ts so it cannot drift.
 const HOOKPOST_PLANS = `Hookpost's free plan covers ${FREE.channel} channels and ${FREE.posts_per_month} posts a month (no AI or API). Standard is ₹${inr(STD_INR.month_price)} or $${STD_USD.month_price} a month for ${STD_INR.channel} channels and ${STD_INR.posts_per_month} posts, with AI, API and MCP. Pro is ₹${inr(PRO_INR.month_price)} or $${PRO_USD.month_price} a month for ${PRO_INR.channel} channels, ${inr(PRO_INR.posts_per_month)} posts and up to ${PRO_INR.team_member_limit} team members.`;
-const HOOKPOST_NETWORKS = `Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks for a new account today; Instagram, Facebook and Threads are awaiting Meta approval and Pinterest publishing is not available yet.`;
+const HOOKPOST_NETWORKS = `Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks for a new account today, including Facebook Pages; Instagram and Threads are awaiting Meta approval and Pinterest publishing is not available yet.`;
 const SPROUT = COMPETITOR_FACTS['sprout-social'];
 
 const BEST_ALTERNATIVE_ANSWER = `Hookpost is an open-source alternative to Sprout Social with flat plans instead of per-seat pricing. Sprout Social has no free plan (30-day trial); its Essentials plan is $79 per seat per month billed annually ($99 billed monthly) with 5 channels, and Standard is $199 per seat billed annually. Sprout's API is on its Advanced plan, and its MCP server works with ChatGPT for TikTok data only. ${HOOKPOST_PLANS} ${HOOKPOST_NETWORKS} Sprout Social prices checked ${FACTS_CHECKED}.`;
@@ -224,7 +224,7 @@ export default function SproutSocialAlternativePage() {
                   </tr>
                   <tr className="hover:bg-white/[0.02] transition-colors">
                     <td className="p-4 sm:p-5 font-medium text-white">Supported Networks</td>
-                    <td className="p-4 sm:p-5 text-white bg-[#FF4CE2]/5 font-semibold">{PUBLISHABLE_CHANNEL_COUNT} networks publishable for new accounts (Instagram, Facebook, Threads and Pinterest not yet)</td>
+                    <td className="p-4 sm:p-5 text-white bg-[#FF4CE2]/5 font-semibold">{PUBLISHABLE_CHANNEL_COUNT} networks publishable for new accounts, including Facebook Pages (Instagram, Threads and Pinterest not yet)</td>
                     <td className="p-4 sm:p-5 text-[#888]">7 networks on its pricing page, including Instagram, Facebook and TikTok</td>
                     <td className="p-4 sm:p-5">
                       <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-white/10 text-white">

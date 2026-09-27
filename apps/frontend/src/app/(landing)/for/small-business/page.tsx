@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Social Media Management for Small Businesses | Hookpost',
   description:
-    'Schedule posts to X, LinkedIn, YouTube and more in minutes; Facebook and Instagram once Meta approves. Simple social media for shops, clinics and cafes.',
+    'Schedule posts to X, LinkedIn, YouTube, Facebook Pages and more in minutes; Instagram once Meta approves. Simple social media for shops, clinics and cafes.',
   keywords: [
     'social media for small business',
     'easy social media scheduler',
@@ -56,7 +56,7 @@ export default function SmallBusinessLandingPage() {
   };
 
   const features = [
-    { title: '📍 Local Offers on Every Channel', desc: 'Publish special offers, opening-hours changes and photos to X, LinkedIn and Bluesky on a schedule. Your Facebook Page and Instagram can be added once Meta approves the Hookpost app.' },
+    { title: '📍 Local Offers on Every Channel', desc: 'Publish special offers, opening-hours changes and photos to X, LinkedIn, Bluesky and your Facebook Page on a schedule. Instagram can be added once Meta approves the Hookpost app.' },
     { title: '⚡ 1-Click Multi-Posting', desc: 'Publish one post to several channels at once, with per-network tweaks where you need them.' },
     { title: '🤖 AI Copywriter for Busy Owners', desc: 'No marketing degree needed. Type what you sell, and the AI assistant writes captions, offers and hashtags for you (Standard and Pro).' },
     { title: '⏰ Set-and-Forget Weekly Scheduling', desc: 'Dedicate 20 minutes on Monday morning to schedule all your weekly promos, then focus 100% on running your business.' },

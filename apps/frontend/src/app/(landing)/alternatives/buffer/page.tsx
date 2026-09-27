@@ -81,7 +81,7 @@ export default function BufferAlternativePage() {
     // Buffer's AI assistant is on every plan including Free, and its MCP
     // server is too (buffer.com/pricing, buffer.com/mcp, 26 Sep 2026).
     { feature: "AI Assistant & MCP Server", hookpost: "AI on Standard and Pro (not on Free); MCP server", buffer: "✅ AI assistant and MCP server on every plan, including Free", winner: "Buffer" },
-    { feature: "Supported Networks", hookpost: `${PUBLISHABLE_CHANNEL_COUNT} publishing today (X, LinkedIn, YouTube, Bluesky, Discord, Telegram...); Instagram, Facebook & Threads await Meta approval`, buffer: "12, incl. Instagram, Facebook, TikTok, Pinterest, Threads, X", winner: "Depends" },
+    { feature: "Supported Networks", hookpost: `${PUBLISHABLE_CHANNEL_COUNT} publishing today (X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Telegram...); Instagram & Threads await Meta approval`, buffer: "12, incl. Instagram, Facebook, TikTok, Pinterest, Threads, X", winner: "Depends" },
     // Scoring "Buffer: Foreign Credit Card Only" as a Hookpost win read exactly
     // backwards to the buyer this page is for - an ordinary credit card is what
     // they want. Stated as fact, with no winner claimed.
@@ -334,7 +334,7 @@ export default function BufferAlternativePage() {
           <div className="bg-[#141414] border border-[#262626] rounded-2xl p-6 space-y-3">
             <h3 className="text-xl font-bold text-white">⚡ {PUBLISHABLE_CHANNEL_COUNT} Networks Today</h3>
             <p className="text-sm text-[#888]">
-              Post to X, LinkedIn, YouTube, Bluesky, Discord, Slack, Telegram, WordPress, Hashnode, Dev.to, Lemmy, Nostr and Listmonk. Instagram, Facebook and Threads are waiting on Meta approval.
+              Post to X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Slack, Telegram, WordPress, Hashnode, Dev.to, Lemmy, Nostr and Listmonk. Instagram and Threads are waiting on Meta approval.
             </p>
           </div>
           <div className="bg-[#141414] border border-[#262626] rounded-2xl p-6 space-y-3">

@@ -237,7 +237,9 @@ export const FirstBillingComponent = () => {
           <LogoTextComponent />
         </div>
         <div className="flex items-center">
-          <div className="flex gap-[20px] text-textItemBlur">
+          {/* 375px wide, six header items overflowed and cut off the logout
+              icon. Tighter gap on mobile, and feedback/developer icons hidden. */}
+          <div className="flex items-center gap-[20px] mobile:gap-[12px] text-textItemBlur">
             <OrganizationSelector />
             <div className="hover:text-newTextColor">
               <ModeComponent />
@@ -245,8 +247,10 @@ export const FirstBillingComponent = () => {
             <div className="w-[1px] h-[20px] bg-blockSeparator" />
             <LanguageComponent />
             <div className="w-[1px] h-[20px] bg-blockSeparator" />
-            <AttachToFeedbackIcon />
-            <DeveloperIconComponent />
+            <div className="contents mobile:hidden">
+              <AttachToFeedbackIcon />
+              <DeveloperIconComponent />
+            </div>
             {/*<NotificationComponent />*/}
             <div className="hover:text-newTextColor">
               {user?.tier.current === 'FREE' && (
@@ -261,6 +265,38 @@ export const FirstBillingComponent = () => {
           <div className="block tablet:hidden">
             <JoinOver />
           </div>
+          {/* The Free plan used to be a 14px grey link ~1,100px down the page,
+              below the fold on desktop and mobile, and none of the 13 free
+              workspaces had connected a channel. Offer it up front, next to
+              the trial, so a visitor who only wants to try it is not stuck on
+              a payment screen. Same behaviour as the link in RazorpayBilling. */}
+          {!data?.blocked && (
+            <div className="mt-[24px] flex flex-wrap items-center gap-x-[16px] gap-y-[8px] rounded-[14px] border border-newColColor p-[16px]">
+              <div className="flex-1 min-w-[200px] text-[14px]">
+                <div className="font-[600]">
+                  {t('billing_free_headline', 'Just want to try it first?')}
+                </div>
+                <div className="text-textItemBlur">
+                  {t(
+                    'billing_free_sub',
+                    'The Free plan is 2 channels and 30 posts a month, no card and no time limit.'
+                  )}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  localStorage.setItem('hookpost_continue_free', 'true');
+                  document.cookie =
+                    'hookpost_continue_free=true; path=/; max-age=31536000; SameSite=Lax';
+                  window.location.href = '/launches';
+                }}
+                className="h-[40px] shrink-0 rounded-[10px] border border-[#FC69FF]/60 px-[16px] text-[14px] font-[600] text-[#FC69FF] transition-colors hover:bg-[#FC69FF]/10"
+              >
+                {t('billing_start_free', 'Start free')}
+              </button>
+            </div>
+          )}
           {data?.blocked ? (
             <div className="mt-[24px] p-[24px] rounded-[20px] border-[1.5px] border-newColColor text-[16px] font-[500]">
               {t(

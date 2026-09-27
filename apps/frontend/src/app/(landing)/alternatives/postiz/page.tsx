@@ -86,7 +86,7 @@ export const metadata: Metadata = {
 
 export default function PostizAlternativePage() {
   const comparisonData = [
-    { feature: "Supported Platforms", hookpost: `${PUBLISHABLE_CHANNEL_COUNT} publishing today (X, LinkedIn, YouTube, Bluesky, Discord, Telegram...); Instagram, Facebook & Threads await Meta approval`, postiz: "30 listed, incl. Instagram, Facebook, TikTok, Reddit, Pinterest", winner: "Postiz" },
+    { feature: "Supported Platforms", hookpost: `${PUBLISHABLE_CHANNEL_COUNT} publishing today (X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Telegram...); Instagram & Threads await Meta approval`, postiz: "30 listed, incl. Instagram, Facebook, TikTok, Reddit, Pinterest", winner: "Postiz" },
     { feature: "Global & Indian Payment Gateways", hookpost: "✅ Razorpay (INR, UPI, Cards, NetBanking)", postiz: "❌ USD pricing; no INR or UPI listed", winner: "Hookpost" },
     { feature: "Open Source & Self-Hostable", hookpost: "✅ AGPL-3.0, built on Postiz", postiz: "✅ AGPL-3.0, ~36k GitHub stars", winner: "Tie" },
     // This row claimed Postiz was "Web AI Copilot Only". That is false and
@@ -170,7 +170,7 @@ export default function PostizAlternativePage() {
         name: "What makes Hookpost the best open-source alternative to Postiz?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: `Hookpost is built on Postiz's open-source (AGPL-3.0) code, so scheduling works much the same way and both ship an MCP server for Claude and other AI agents. The differences are billing and the entry price: Hookpost bills in INR through Razorpay (UPI, NetBanking, Indian cards), has a hosted free plan (${FREE.channel} channels, ${FREE.posts_per_month} posts a month), and Standard is ${inr(STD_INR.month_price)} ($${STD_USD.month_price}) a month for ${STD_USD.channel} channels. Postiz's hosted service has no free plan (7-day trial), and its Standard plan is $${POSTIZ_STD_MONTHLY}/month, or $${POSTIZ_STD_YEARLY}/month billed yearly, for 5 channels. Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks today; Postiz lists more, including Instagram, Facebook and TikTok.`,
+          text: `Hookpost is built on Postiz's open-source (AGPL-3.0) code, so scheduling works much the same way and both ship an MCP server for Claude and other AI agents. The differences are billing and the entry price: Hookpost bills in INR through Razorpay (UPI, NetBanking, Indian cards), has a hosted free plan (${FREE.channel} channels, ${FREE.posts_per_month} posts a month), and Standard is ${inr(STD_INR.month_price)} ($${STD_USD.month_price}) a month for ${STD_USD.channel} channels. Postiz's hosted service has no free plan (7-day trial), and its Standard plan is $${POSTIZ_STD_MONTHLY}/month, or $${POSTIZ_STD_YEARLY}/month billed yearly, for 5 channels. Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks today; Postiz lists more, including Instagram, Threads and TikTok.`,
         },
       },
       {
@@ -345,7 +345,7 @@ export default function PostizAlternativePage() {
             Hookpost is built on Postiz's open-source (AGPL-3.0) code, so the two share their scheduling engine and both ship an MCP server. Hookpost adds Razorpay UPI and card billing in rupees and a hosted free plan, and publishes to {PUBLISHABLE_CHANNEL_COUNT} networks today.
           </p>
           <p className="text-sm text-white/50 pt-1">
-            Hookpost publishes to X, LinkedIn, YouTube, Bluesky, Discord, Slack, Telegram, WordPress, Hashnode, Dev.to, Lemmy, Nostr and Listmonk. Instagram, Facebook and Threads are waiting on Meta approval, so Postiz is the better fit today if those are your main channels.
+            Hookpost publishes to X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Slack, Telegram, WordPress, Hashnode, Dev.to, Lemmy, Nostr and Listmonk. Instagram and Threads are waiting on Meta approval, so Postiz is the better fit today if those are your main channels.
           </p>
         </section>
 
@@ -555,7 +555,7 @@ export default function PostizAlternativePage() {
               <div className="w-8 h-8 rounded-full bg-[#FF4CE2] text-black font-black flex items-center justify-center text-sm">2</div>
               <h3 className="font-bold text-white text-base">Channel OAuth Re-linking</h3>
               <p className="text-xs sm:text-sm text-white/70 leading-relaxed">
-                Connect your accounts in Hookpost - OAuth for X, LinkedIn, YouTube and most others, your own credentials for a few such as Bluesky. Instagram, Facebook and Threads are waiting on Meta approval.
+                Connect your accounts in Hookpost - OAuth for X, LinkedIn, YouTube, Facebook Pages and most others, your own credentials for a few such as Bluesky. Instagram and Threads are waiting on Meta approval.
               </p>
             </div>
             <div className="bg-[#161616] border border-white/5 rounded-xl p-5 space-y-3">

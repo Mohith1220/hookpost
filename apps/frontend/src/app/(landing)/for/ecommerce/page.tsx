@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Social Media Automation for E-Commerce Brands | Hookpost',
   description:
-    'Schedule product launches to YouTube, X, Telegram, Discord and your Listmonk email list from one calendar. Instagram and Facebook follow once Meta approves the app.',
+    'Schedule product launches to YouTube, X, your Facebook Page, Telegram, Discord and your Listmonk email list from one calendar. Instagram follows once Meta approves the app.',
   keywords: [
     'social media scheduler for ecommerce',
     'shopify social media automation',
@@ -40,7 +40,7 @@ export default function EcommerceLandingPage() {
         name: "Does Hookpost support product carousels and Pinterest pins?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Partly, today. LinkedIn image carousels, X image posts and YouTube videos publish now. Pinterest can be connected but cannot publish until Pinterest grants Standard API access, and new accounts cannot connect Instagram or Facebook until Meta approves the Hookpost app.",
+          text: "Partly, today. LinkedIn image carousels, X image posts, Facebook Page photo posts and YouTube videos publish now. Pinterest can be connected but cannot publish until Pinterest grants Standard API access, and new accounts cannot connect Instagram until Meta approves the Hookpost app.",
         },
       },
       {
@@ -55,7 +55,7 @@ export default function EcommerceLandingPage() {
   };
 
   const features = [
-    { title: '🛍️ Flash Sale & Drop Countdown Scheduling', desc: 'Pre-schedule multi-day flash sale announcement sequences across X, Telegram and Discord. Instagram and Facebook join once Meta approves the app.' },
+    { title: '🛍️ Flash Sale & Drop Countdown Scheduling', desc: 'Pre-schedule multi-day flash sale announcement sequences across X, your Facebook Page, Telegram and Discord. Instagram joins once Meta approves the app.' },
     { title: '🎬 YouTube Product Demos', desc: 'Schedule product demos and unboxing videos to YouTube, including Shorts, from the same calendar as your social posts.' },
     { title: '📧 Drop Emails via Listmonk', desc: 'Send the same drop announcement to your Listmonk mailing list from the calendar that schedules your social posts.' },
     { title: '🤖 AI High-Converting Product Copywriter', desc: 'Turn product feature lists into benefit-driven copy, discount announcements and hashtags with the AI assistant (Standard and Pro).' },
@@ -116,7 +116,7 @@ export default function EcommerceLandingPage() {
           </span>
         </h1>
         <p className="text-lg sm:text-xl text-neutral-400 max-w-[800px] mx-auto mb-10 leading-relaxed">
-          Stop manually posting product links. Hookpost schedules your YouTube demos, X and Telegram announcements and flash sale emails from one calendar. Instagram, Facebook and Pinterest follow once those platforms approve the app.
+          Stop manually posting product links. Hookpost schedules your YouTube demos, X, Facebook Page and Telegram announcements and flash sale emails from one calendar. Instagram and Pinterest follow once those platforms approve the app.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link href="/auth" className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#FF4CE2] text-black font-bold text-lg hover:scale-105 transition-all">

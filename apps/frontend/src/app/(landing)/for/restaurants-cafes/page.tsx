@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Social Media Scheduler for Restaurants & Cafes | Hookpost',
   description:
-    'Schedule daily specials, menu videos and event posts from one calendar, with Facebook and Instagram once Meta approves the app. For restaurants, cafes, and bars.',
+    'Schedule daily specials, menu videos and event posts to your Facebook Page and more from one calendar, with Instagram once Meta approves the app. For restaurants, cafes, and bars.',
   keywords: [
     'restaurant social media scheduler',
     'cafe instagram marketing tool',
@@ -56,8 +56,8 @@ export default function RestaurantsCafesLandingPage() {
   };
 
   const features = [
-    { title: '📍 Daily Specials, Every Day', desc: 'Queue daily menu specials, happy hour times and holiday hours for X and Telegram today, and your Facebook Page and Instagram once Meta approves the app.' },
-    { title: '🍔 Visual Food & Drink Reels Scheduler', desc: 'Publish kitchen prep videos and cocktail creation clips to YouTube Shorts. Instagram and Facebook Reels join once Meta approves the app.' },
+    { title: '📍 Daily Specials, Every Day', desc: 'Queue daily menu specials, happy hour times and holiday hours for X, Telegram and your Facebook Page today, and Instagram once Meta approves the app.' },
+    { title: '🍔 Visual Food & Drink Reels Scheduler', desc: 'Publish kitchen prep videos and cocktail creation clips to YouTube Shorts and your Facebook Page. Instagram Reels join once Meta approves the app.' },
     { title: '⏰ Day-Part & Weekend Specials Automation', desc: 'Schedule lunch specials at 11:00 AM and weekend brunch promotions on Thursday evening on recurring automated slots.' },
     { title: '🤖 AI Menu & Event Description Assistant', desc: 'Generate appetizing captions for new seasonal dishes, wine tastings, and live music nights with the AI assistant (Standard and Pro).' },
     { title: '👥 Multi-Location Channel Groups', desc: 'Group each branch as a customer and filter the calendar by location. Pro covers 20 channels and up to 15 team members.' },

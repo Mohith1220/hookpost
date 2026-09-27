@@ -12,7 +12,7 @@ const { STANDARD: STD_USD, PRO: PRO_USD } = pricingUSD;
 const inr = (n: number) => n.toLocaleString('en-IN');
 // One sentence on Hookpost's sold plans, read from pricing.ts so it cannot drift.
 const HOOKPOST_PLANS = `Hookpost's free plan covers ${FREE.channel} channels and ${FREE.posts_per_month} posts a month (no AI or API). Standard is ₹${inr(STD_INR.month_price)} or $${STD_USD.month_price} a month for ${STD_INR.channel} channels and ${STD_INR.posts_per_month} posts, with AI, API and MCP. Pro is ₹${inr(PRO_INR.month_price)} or $${PRO_USD.month_price} a month for ${PRO_INR.channel} channels, ${inr(PRO_INR.posts_per_month)} posts and up to ${PRO_INR.team_member_limit} team members.`;
-const HOOKPOST_NETWORKS = `Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks for a new account today; Instagram, Facebook and Threads are awaiting Meta approval and Pinterest publishing is not available yet.`;
+const HOOKPOST_NETWORKS = `Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks for a new account today, including Facebook Pages; Instagram and Threads are awaiting Meta approval and Pinterest publishing is not available yet.`;
 const PUB = COMPETITOR_FACTS.publer;
 
 const BEST_ALTERNATIVE_ANSWER = `Hookpost is an open-source alternative to Publer with flat plans instead of per-account pricing. Publer's Professional plan is $4 per social account per month billed annually, and its API and MCP access are on the Business plan ($8 per account per month billed annually). Publer's free plan covers 3 accounts with 10 scheduled posts each and no X. ${HOOKPOST_PLANS} ${HOOKPOST_NETWORKS} Publer prices checked ${FACTS_CHECKED}.`;

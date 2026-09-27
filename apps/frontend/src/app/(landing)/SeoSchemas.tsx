@@ -54,11 +54,12 @@ export default function SeoSchemas() {
           'Multi-channel visual content calendar',
           `${CHANNEL_COUNT} supported social platforms`,
           // Only channels a new account can publish to today. Instagram,
-          // Facebook, Threads and Pinterest return once their platform
-          // approvals land - see channel-specs.ts.
+          // Threads and Pinterest return once their platform approvals
+          // land - see channel-specs.ts.
           'X post and thread scheduling',
           'LinkedIn profile publishing',
           'YouTube video and Shorts auto-publishing',
+          'Facebook Page publishing',
           'Bluesky, Telegram, Discord and Slack publishing',
           'AI caption and hashtag generation',
           'Team workspace and role management',

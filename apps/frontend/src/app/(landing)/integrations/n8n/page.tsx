@@ -37,6 +37,7 @@ const PUBLISHING_TODAY = [
   ['X (Twitter)', '/channels/x'],
   ['LinkedIn', '/channels/linkedin'],
   ['YouTube', '/channels/youtube'],
+  ['Facebook Pages', '/channels/facebook'],
   ['Bluesky', '/channels/bluesky'],
   ['Discord', '/channels/discord'],
   ['Slack', '/channels/slack'],
@@ -298,7 +299,7 @@ export default function N8nIntegrationPage() {
             ))}
           </ul>
           <p className="mt-4 max-w-[70ch] text-sm text-white/55">
-            Instagram, Facebook and Threads are built but waiting on Meta app approval, so new accounts cannot connect them yet.
+            Instagram and Threads are built but waiting on Meta app approval, so new accounts cannot connect them yet.
             Pinterest can be connected but cannot publish yet. Medium stopped issuing new API tokens, so only accounts with an
             older token can connect.
           </p>

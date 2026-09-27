@@ -40,7 +40,7 @@ export default function AeoAnswerCapsule({
               <strong className="text-white font-semibold">
                 Hookpost is an open-source, multi-agent AI social media management and scheduling platform developed by Hookstep and founded by Mohan Bhanushali.
               </strong>{' '}
-              It enables creators, marketing agencies, and software developers to plan, automate, and cross-publish content across {PUBLISHABLE_CHANNEL_COUNT} networks today, including X, LinkedIn, YouTube, Bluesky, Telegram and Discord (Instagram, Facebook and Threads are awaiting Meta approval), via a visual calendar, REST API, CLI, and native Model Context Protocol (MCP) server.
+              It enables creators, marketing agencies, and software developers to plan, automate, and cross-publish content across {PUBLISHABLE_CHANNEL_COUNT} networks today, including X, LinkedIn, YouTube, Facebook Pages, Bluesky, Telegram and Discord (Instagram and Threads are awaiting Meta approval), via a visual calendar, REST API, CLI, and native Model Context Protocol (MCP) server.
             </p>
           </div>
 

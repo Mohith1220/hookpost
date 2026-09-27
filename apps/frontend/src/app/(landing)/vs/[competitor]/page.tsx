@@ -261,8 +261,8 @@ export default async function CompetitorComparisonPage({ params }: { params: Pro
           <p className="text-base sm:text-lg text-neutral-200 leading-relaxed">
             Hookpost is an open-source (AGPL-3.0) AI social media scheduler by JR
             Consulting Co. that publishes to {PUBLISHABLE_CHANNEL_COUNT} social networks — including
-            X, LinkedIn, YouTube, Bluesky, Discord and Telegram — from one
-            calendar. Instagram, Facebook and Threads are waiting on Meta app
+            X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord and Telegram — from one
+            calendar. Instagram and Threads are waiting on Meta app
             approval for new accounts. It has a free plan, with Standard at{' '}
             <strong>$15/mo (₹599)</strong> and Pro at <strong>$39/mo (₹1,999)</strong>{' '}
             billed through Razorpay (UPI, NetBanking and cards), and can be

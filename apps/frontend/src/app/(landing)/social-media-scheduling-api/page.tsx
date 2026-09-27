@@ -32,6 +32,7 @@ const PUBLISHING_TODAY = [
   ['X (Twitter)', '/channels/x'],
   ['LinkedIn', '/channels/linkedin'],
   ['YouTube', '/channels/youtube'],
+  ['Facebook Pages', '/channels/facebook'],
   ['Bluesky', '/channels/bluesky'],
   ['Discord', '/channels/discord'],
   ['Slack', '/channels/slack'],
@@ -103,7 +104,7 @@ const FAQ = [
   },
   {
     q: 'Which networks can the API post to?',
-    a: 'X, LinkedIn, YouTube, Bluesky, Discord, Slack, Telegram, WordPress, Hashnode, Dev.to, Lemmy, Nostr and Listmonk, for any account connected today. Instagram, Facebook and Threads are waiting on Meta app approval, Pinterest cannot publish yet, and Medium no longer issues new API tokens.',
+    a: 'X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord, Slack, Telegram, WordPress, Hashnode, Dev.to, Lemmy, Nostr and Listmonk, for any account connected today. Instagram and Threads are waiting on Meta app approval, Pinterest cannot publish yet, and Medium no longer issues new API tokens.',
   },
   {
     q: 'What are the API rate limits?',
@@ -280,7 +281,7 @@ export default function SchedulingApiPage() {
             ))}
           </ul>
           <p className="mt-4 max-w-[70ch] text-sm text-white/55">
-            Instagram, Facebook and Threads are built but waiting on Meta app approval, so new accounts cannot connect them yet.
+            Instagram and Threads are built but waiting on Meta app approval, so new accounts cannot connect them yet.
             Pinterest can be connected but cannot publish yet. Medium stopped issuing new API tokens, so only accounts with an
             older token can connect.
           </p>

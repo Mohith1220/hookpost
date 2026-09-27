@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Social Media Management for Healthcare Clinics | Hookpost',
   description:
-    'Share patient education across LinkedIn, YouTube and X, with Instagram and Facebook once Meta approves the app. Scheduling for clinics, dentists, therapists.',
+    'Share patient education across LinkedIn, YouTube, X and your Facebook Page, with Instagram once Meta approves the app. Scheduling for clinics, dentists, therapists.',
   keywords: [
     'healthcare social media scheduler',
     'medical practice social media tool',
@@ -58,7 +58,7 @@ export default function HealthcareClinicsLandingPage() {
   const features = [
     { title: '🩺 Patient Education & Wellness Tips', desc: 'Pre-schedule weekly preventative care guides, dental hygiene tips, and clinic announcements across all channels.' },
     { title: '🔒 Drafts & Review Links', desc: 'Save posts as drafts and share a preview link so a lead physician or practice manager can review and comment before anything is scheduled.' },
-    { title: '📍 Clinic Hours & Practitioner Updates', desc: 'Share seasonal clinic hours, flu shot availability, and new practitioner introductions on LinkedIn and X, and on your Facebook Page and Instagram once Meta approves the app.' },
+    { title: '📍 Clinic Hours & Practitioner Updates', desc: 'Share seasonal clinic hours, flu shot availability, and new practitioner introductions on LinkedIn, X and your Facebook Page, and on Instagram once Meta approves the app.' },
     { title: '🤖 AI Medical & Wellness Explainer Prompts', desc: 'Turn clinic FAQs and study summaries into clear, patient-friendly social posts with the AI assistant (Standard and Pro).' },
     { title: '🏥 Multi-Specialty & Branch Management', desc: 'Group each department or branch (e.g. Pediatrics, Dermatology, Orthopedics) as a customer and filter the calendar to one at a time.' },
     { title: '📚 Blog and Social Together', desc: 'Publish a long-form article to WordPress and schedule the social posts that point to it from the same calendar.' },
@@ -115,7 +115,7 @@ export default function HealthcareClinicsLandingPage() {
           <span className="text-[#06b6d4]">Across Your Social Channels.</span>
         </h1>
         <p className="text-lg sm:text-xl text-neutral-300 max-w-[800px] mx-auto mb-10 leading-relaxed">
-          Provide valuable health guidance to your local community with zero marketing stress. Hookpost schedules your clinic's patient outreach on LinkedIn, YouTube and X, with Instagram and Facebook to follow once Meta approves the app.
+          Provide valuable health guidance to your local community with zero marketing stress. Hookpost schedules your clinic's patient outreach on LinkedIn, YouTube, X and your Facebook Page, with Instagram to follow once Meta approves the app.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

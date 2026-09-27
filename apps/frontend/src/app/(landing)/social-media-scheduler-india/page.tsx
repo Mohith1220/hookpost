@@ -213,7 +213,7 @@ export default function IndiaSchedulerPage() {
             <li className="rounded-2xl border border-white/10 p-5"><strong className="text-white">Telegram channels and groups.</strong> Broadcast to a Telegram channel on the same schedule as everything else.</li>
           </ul>
           <p className="mt-6 max-w-[70ch] text-sm text-white/55">
-            Instagram, Facebook and Threads are built and waiting on Meta app approval, so new accounts cannot connect them yet.
+            Facebook Pages connect and publish today. Instagram and Threads are built and waiting on Meta app approval, so new accounts cannot connect them yet.
           </p>
           <p className="mt-6 text-white/60">
             Who uses it:{' '}

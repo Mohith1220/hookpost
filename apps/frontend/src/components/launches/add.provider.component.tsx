@@ -19,6 +19,26 @@ import { useT } from '@hookpost/react/translation/get.transation.service.client'
 import clsx from 'clsx';
 import copy from 'copy-to-clipboard';
 import { capitalize } from 'lodash';
+import { useUser } from '@hookpost/frontend/components/layout/user.context';
+
+// Channels a new account cannot use yet, with the reason shown instead of
+// starting an OAuth flow that is guaranteed to fail. 13 free workspaces had
+// connected zero channels by 27 Sep 2026; an Instagram tile that errors after
+// the consent screen is the likeliest first click. Platform admins can still
+// connect them (they hold roles on the Meta app). Keep in step with
+// app/(landing)/channels/channel-specs.ts; delete an entry the day it opens.
+const NOT_AVAILABLE_YET: Record<string, string> = {
+  instagram:
+    'Instagram is waiting on Meta app review. Facebook Pages, X, LinkedIn and YouTube work today.',
+  'instagram-standalone':
+    'Instagram is waiting on Meta app review. Facebook Pages, X, LinkedIn and YouTube work today.',
+  threads:
+    'Threads is waiting on Meta app review. X, Bluesky and LinkedIn work today.',
+  pinterest:
+    'Pinterest can connect but cannot publish until Pinterest grants Standard API access.',
+  medium:
+    'Medium no longer issues API tokens to new accounts. Dev.to, Hashnode and WordPress publish articles today.',
+};
 const resolver = classValidatorResolver(ApiKeyDto);
 
 export const useAddProvider = (update?: () => void, invite?: boolean) => {
@@ -408,6 +428,8 @@ export const AddProviderComponent: FC<{
   const { update, social, article, onboarding, isMobile } = props;
   const { isGeneral, extensionId } = useVariables();
   const toaster = useToaster();
+  const user = useUser();
+  const canUseBlocked = !!(user as any)?.admin;
   const router = useRouter();
   const fetch = useFetch();
   const modal = useModals();
@@ -708,17 +730,30 @@ export const AddProviderComponent: FC<{
                 !item.customFields
               );
             })
-            .map((item) => (
+            // Channels that work today first, the unavailable ones last.
+            .sort(
+              (a, b) =>
+                Number(!!NOT_AVAILABLE_YET[a.identifier] && !canUseBlocked) -
+                Number(!!NOT_AVAILABLE_YET[b.identifier] && !canUseBlocked)
+            )
+            .map((item) => {
+              const blocked =
+                !canUseBlocked && NOT_AVAILABLE_YET[item.identifier];
+              return (
               <div
                 key={item.identifier}
-                onClick={getSocialLink(
-                  props.invite,
-                  item.identifier,
-                  item.isExternal,
-                  item.isWeb3,
-                  item.isChromeExtension,
-                  item.customFields
-                )}
+                onClick={
+                  blocked
+                    ? () => toaster.show(blocked, 'warning')
+                    : getSocialLink(
+                        props.invite,
+                        item.identifier,
+                        item.isExternal,
+                        item.isWeb3,
+                        item.isChromeExtension,
+                        item.customFields
+                      )
+                }
                 {...(!!item.toolTip
                   ? {
                       'data-tooltip-id': 'tooltip',
@@ -729,9 +764,15 @@ export const AddProviderComponent: FC<{
                   isMobile
                     ? 'flex-row h-[72px] p-[16px]'
                     : 'flex-col p-[10px] h-[100px] justify-center',
-                  'w-full text-[14px] rounded-[8px] bg-newTableHeader text-textColor relative items-center flex gap-[10px] cursor-pointer'
+                  'w-full text-[14px] rounded-[8px] bg-newTableHeader text-textColor relative items-center flex gap-[10px] cursor-pointer',
+                  blocked && 'opacity-50'
                 )}
               >
+                {blocked && (
+                  <span className="absolute top-[6px] start-[6px] rounded-[4px] bg-white/10 px-[5px] py-[1px] text-[10px] font-[600] text-white/80">
+                    {t('not_available_yet', 'Soon')}
+                  </span>
+                )}
                 <div>
                   {item.identifier === 'youtube' ? (
                     <img src={`/icons/platforms/youtube.svg`} />
@@ -774,7 +815,8 @@ export const AddProviderComponent: FC<{
                   )}
                 </div>
               </div>
-            ))}
+              );
+            })}
         </div>
       </div>
     </div>

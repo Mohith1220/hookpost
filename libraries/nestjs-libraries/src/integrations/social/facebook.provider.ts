@@ -147,11 +147,16 @@ export class FacebookProvider extends SocialAbstract implements SocialProvider {
   // asking for it buys nothing and breaks the flow for anyone holding a role
   // on the app. Cost: comment() cannot post comments on Facebook Page posts -
   // it would have failed at runtime anyway without the grant.
+  // Only permissions Meta has APPROVED for this app. read_insights was
+  // rejected in the 25 Sep 2026 review (screencast), and checkScopes() throws
+  // NotEnoughScopes when a required scope is missing - so keeping it here would
+  // make every non-role user's Facebook connect fail once the app is published.
+  // Page analytics degrade to empty (the insights calls already tolerate an
+  // error response). Add it back after read_insights is approved.
   scopes = [
     'pages_show_list',
     'pages_manage_posts',
     'pages_read_engagement',
-    'read_insights',
   ];
   override maxConcurrentJob = 500; // Facebook has reasonable rate limits
   editor = 'normal' as const;

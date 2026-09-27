@@ -130,7 +130,7 @@ export default function ClaudeMcpGuidePage() {
         </div>
       </header>
 
-      <main className="max-w-[860px] mx-auto px-6 pt-10 pb-24 space-y-12">
+      <div className="max-w-[860px] mx-auto px-6 pt-10 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
@@ -271,20 +271,8 @@ export default function ClaudeMcpGuidePage() {
             Start Free for $0 &rarr;
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/for" className="hover:underline text-[#888]">All Solutions</Link>
-        </div>
-      </footer>
     </div>
   );
 }

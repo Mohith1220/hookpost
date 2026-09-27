@@ -18,7 +18,7 @@ const SP = COMPETITOR_FACTS.socialpilot;
 const BEST_ALTERNATIVE_ANSWER = `Hookpost is an open-source alternative to SocialPilot with a free plan. SocialPilot has no free plan (14-day trial); its Essentials plan is $25.50 a month billed annually ($30 billed monthly) for 7 channels and 1 user, and Indian visitors are shown INR prices. SocialPilot includes an MCP server on all paid plans, but its API is Enterprise-only. ${HOOKPOST_PLANS} ${HOOKPOST_NETWORKS} SocialPilot prices checked ${FACTS_CHECKED}.`;
 
 export const metadata: Metadata = {
-  title: "Hookpost vs SocialPilot (2026): Agency Alternative",
+  title: "SocialPilot Alternative (2026): Free Plan, Open Source | Hookpost",
   description: `Hookpost vs SocialPilot: a free plan, open source, and Standard at ₹${inr(STD_INR.month_price)} or $${STD_USD.month_price}/mo vs SocialPilot Essentials at $25.50/mo (annual).`,
   keywords: ["socialpilot alternative","socialpilot competitors","socialpilot vs hookpost","social media tool for teams","socialpilot pricing"],
   alternates: {
@@ -121,7 +121,7 @@ export default function SocialpilotAlternativePage() {
         </div>
       </header>
 
-      <main className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
+      <div className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li>
@@ -269,20 +269,8 @@ export default function SocialpilotAlternativePage() {
             Start Free for $0
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">All Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/compare" className="hover:underline text-[#888]">Compare Tools</Link>
-        </div>
-      </footer>
     </div>
   );
 }

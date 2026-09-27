@@ -143,9 +143,6 @@ export default function HealthcareClinicsLandingPage() {
 
 
 
-      <footer className="w-full border-t border-neutral-800 py-12 text-center text-neutral-500 text-sm">
-        <p>© {new Date().getFullYear()} Hookpost • The AI Social Media Copilot for Healthcare Practices Worldwide.</p>
-      </footer>
     </div>
   );
 }

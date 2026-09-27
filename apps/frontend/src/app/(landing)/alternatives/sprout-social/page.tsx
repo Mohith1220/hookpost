@@ -18,7 +18,7 @@ const SPROUT = COMPETITOR_FACTS['sprout-social'];
 const BEST_ALTERNATIVE_ANSWER = `Hookpost is an open-source alternative to Sprout Social with flat plans instead of per-seat pricing. Sprout Social has no free plan (30-day trial); its Essentials plan is $79 per seat per month billed annually ($99 billed monthly) with 5 channels, and Standard is $199 per seat billed annually. Sprout's API is on its Advanced plan, and its MCP server works with ChatGPT for TikTok data only. ${HOOKPOST_PLANS} ${HOOKPOST_NETWORKS} Sprout Social prices checked ${FACTS_CHECKED}.`;
 
 export const metadata: Metadata = {
-  title: "Hookpost vs Sprout Social (2026): Open-Source Alternative",
+  title: "Sprout Social Alternative (2026): Flat Team Pricing | Hookpost",
   description: `Sprout Social Essentials is $79 per seat/mo (annual). Hookpost Pro is $${PRO_USD.month_price}/mo flat for up to ${PRO_INR.team_member_limit} team members, plus a free plan.`,
   keywords: ["sprout social alternative","cheaper sprout social alternative","sprout social competitors","sprout social vs hookpost","open source sprout social"],
   alternates: {
@@ -121,7 +121,7 @@ export default function SproutSocialAlternativePage() {
         </div>
       </header>
 
-      <main className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
+      <div className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li>
@@ -269,20 +269,8 @@ export default function SproutSocialAlternativePage() {
             Start Free for $0
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">All Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/compare" className="hover:underline text-[#888]">Compare Tools</Link>
-        </div>
-      </footer>
     </div>
   );
 }

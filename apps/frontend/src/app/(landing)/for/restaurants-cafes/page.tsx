@@ -143,9 +143,6 @@ export default function RestaurantsCafesLandingPage() {
 
 
 
-      <footer className="w-full border-t border-neutral-800 py-12 text-center text-neutral-500 text-sm">
-        <p>© {new Date().getFullYear()} Hookpost • The Open-Source Social Media Copilot for Hospitality Businesses Worldwide.</p>
-      </footer>
     </div>
   );
 }

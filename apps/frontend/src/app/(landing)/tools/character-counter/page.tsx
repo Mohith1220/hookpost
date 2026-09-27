@@ -92,8 +92,8 @@ export default function CharacterCounterPage() {
           Social media character counter
         </h1>
         <p className="mt-4 max-w-[70ch] text-lg text-white/70">
-          Type or paste a post to see how many characters you have left on every network at once. X is counted the way X
-          counts it: links as 23 characters and emoji as 2.
+          This character counter shows how many characters you have left on every network at once: type or paste a post
+          to see it. X is counted the way X counts it: links as 23 characters and emoji as 2.
         </p>
       </section>
 

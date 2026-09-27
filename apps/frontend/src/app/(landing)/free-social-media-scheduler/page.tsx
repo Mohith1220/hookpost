@@ -165,7 +165,7 @@ export default function FreeSchedulerPage() {
           A free social media scheduler that includes X and LinkedIn
         </h1>
         <p className="mt-5 max-w-[70ch] text-lg text-white/75">
-          Hookpost&apos;s Free plan lets you schedule <strong className="text-white">{FREE.posts_per_month} posts a month</strong> across{' '}
+          Hookpost is a free social media scheduler: its Free plan lets you schedule <strong className="text-white">{FREE.posts_per_month} posts a month</strong> across{' '}
           <strong className="text-white">{FREE.channel} channels</strong> for {inr(0)}, with no time limit and no card. You plan
           everything on one visual calendar and Hookpost publishes at the time you pick.
         </p>

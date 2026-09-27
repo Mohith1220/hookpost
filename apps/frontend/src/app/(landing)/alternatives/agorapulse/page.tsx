@@ -18,7 +18,7 @@ const AGORA = COMPETITOR_FACTS.agorapulse;
 const BEST_ALTERNATIVE_ANSWER = `Hookpost is an open-source alternative to Agorapulse with flat plans instead of per-user pricing. Agorapulse's Standard plan is $79 per user per month billed annually ($99 billed monthly) with 10 social profiles per user and a 30-day trial; no free plan is listed on its pricing page. Agorapulse also includes a self-hosted MCP connector for ChatGPT or Claude from Standard. ${HOOKPOST_PLANS} ${HOOKPOST_NETWORKS} Agorapulse prices checked ${FACTS_CHECKED}.`;
 
 export const metadata: Metadata = {
-  title: "Hookpost vs Agorapulse (2026): Modern Agency Alternative",
+  title: "Agorapulse Alternative (2026): Flat Team Pricing | Hookpost",
   description: `Compare Hookpost vs Agorapulse: Agorapulse Standard is $79 per user/mo billed annually; Hookpost has a free plan and Pro at $${PRO_USD.month_price}/mo flat for up to ${PRO_INR.team_member_limit} team members.`,
   keywords: ["agorapulse alternative","agorapulse competitors","agorapulse vs hookpost","social media inbox alternative","agorapulse pricing"],
   alternates: {
@@ -121,7 +121,7 @@ export default function AgorapulseAlternativePage() {
         </div>
       </header>
 
-      <main className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
+      <div className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li>
@@ -269,20 +269,8 @@ export default function AgorapulseAlternativePage() {
             Start Free for $0
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">All Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/compare" className="hover:underline text-[#888]">Compare Tools</Link>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -24,7 +24,7 @@ const SAVE_LOW_PCT = Math.round((SAVE_LOW / BUFFER_10CH_YEARLY) * 100);
 const SAVE_HIGH_PCT = Math.round((SAVE_HIGH / BUFFER_10CH_MONTHLY) * 100);
 
 export const metadata: Metadata = {
-  title: "Hookpost vs Buffer (2026): Open-Source Alternative",
+  title: "Buffer Alternative (2026): No Per-Channel Pricing | Hookpost",
   description:
     "Compare Hookpost and Buffer on pricing and channel coverage: bundled plans instead of per-channel billing, an AI copilot, and a $0 free tier.",
   keywords: [
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     canonical: "https://hookpost.hookstep.in/alternatives/buffer",
   },
   openGraph: {
-    title: "Hookpost vs Buffer (2026): Open-Source Alternative",
+    title: "Buffer Alternative (2026): No Per-Channel Pricing | Hookpost",
     description:
       `Compare Hookpost vs Buffer. No per-channel billing: ${STD_USD.channel} channels on Standard, ${PRO_USD.channel} on Pro, publishing to ${PUBLISHABLE_CHANNEL_COUNT} networks today.`,
     url: "https://hookpost.hookstep.in/alternatives/buffer",
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hookpost vs Buffer (2026): Open-Source Alternative",
+    title: "Buffer Alternative (2026): No Per-Channel Pricing | Hookpost",
     description: "Compare Hookpost vs Buffer. Buffer bills per channel ($5/mo each billed yearly, $6 month-to-month); Hookpost bundles channels into flat plans from $0.",
     images: ["https://hookpost.hookstep.in/og-image.png"],
   },
@@ -244,7 +244,7 @@ export default function BufferAlternativePage() {
         </div>
       </header>
 
-      <main className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
+      <div className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li>
@@ -264,11 +264,11 @@ export default function BufferAlternativePage() {
             Buffer Alternative 2026
           </div>
           <h1 className="text-[36px] sm:text-[60px] font-black tracking-tight text-white leading-[1.15]">
-            Tired of Buffer's Per-Channel Pricing? <br />
-            Switch to <span className="text-[#FF4CE2]">Hookpost</span>
+            The <span className="text-[#FF4CE2]">Buffer Alternative</span> <br />
+            Without Per-Channel Pricing
           </h1>
           <p className="text-[#aaa] text-lg sm:text-xl max-w-[760px] mx-auto leading-relaxed">
-            Buffer charges you for every connected account. Hookpost bundles channels into flat plans - {STD_USD.channel} on Standard, {PRO_USD.channel} on Pro - with a free plan for {FREE.channel}.
+            Looking for a Buffer alternative? Buffer charges you for every connected account. Hookpost bundles channels into flat plans - {STD_USD.channel} on Standard, {PRO_USD.channel} on Pro - with a free plan for {FREE.channel}.
           </p>
           <div className="pt-4 flex justify-center gap-4">
             <Link
@@ -368,20 +368,8 @@ export default function BufferAlternativePage() {
             Start Free for $0
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">All Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives/postiz" className="hover:underline text-[#888]">Postiz Alternative</Link>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { SiteNav } from '../site-nav';
 
 // LandingFaq has always linked "engineering guides" at /guides, and there was
 // no page there - it 404'd. Three guides existed, reachable only if you knew
@@ -133,6 +134,7 @@ const RESOURCES = [
 export default function GuidesIndex() {
   return (
     <div className="min-h-screen bg-black text-white font-dm">
+      <SiteNav />
       <div className="mx-auto w-full max-w-[900px] px-5 py-20 sm:px-10 sm:py-28">
         <Link
           href="/"

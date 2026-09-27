@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { ContactForm } from './contact-form';
+import { SiteNav } from '../site-nav';
 
 // There was no contact page at all - /contact 307'd to the login screen. The
 // support address existed only inside the terms, privacy and data-deletion
@@ -69,6 +70,7 @@ export default function ContactPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <SiteNav />
 
       <div className="mx-auto w-full max-w-[900px] px-5 py-20 sm:px-10 sm:py-28">
         <Link

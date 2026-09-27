@@ -289,6 +289,9 @@ export async function generateMetadata({ params }: { params: Promise<{ channel: 
 export default async function ChannelLandingPage({ params }: { params: Promise<{ channel: string }> | { channel: string } }) {
   const resolved = await Promise.resolve(params);
   const data = getChannelData(resolved.channel || '');
+  // The title already said "Coming Soon" for a pending channel while the badge
+  // and H1 below sold it as a live scheduler. All three follow the spec now.
+  const pending = Boolean(CHANNEL_SPECS[data.slug]?.pending);
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -365,7 +368,7 @@ export default async function ChannelLandingPage({ params }: { params: Promise<{
       </header>
 
       {/* Hero Section */}
-      <main className="max-w-[1200px] mx-auto px-6 pt-10 pb-24 text-center">
+      <div className="max-w-[1200px] mx-auto px-6 pt-10 pb-24 text-center">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50 mb-8">
           <ol className="flex items-center justify-center space-x-2">
             <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
@@ -378,7 +381,7 @@ export default async function ChannelLandingPage({ params }: { params: Promise<{
 
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[#FF4CE2] text-sm font-medium mb-8">
           <span className="w-2 h-2 rounded-full bg-[#FF4CE2] animate-pulse"></span>
-          Direct {data.name} API Integration Live
+          {pending ? `${data.name} integration not publishing yet` : `Direct ${data.name} API Integration Live`}
         </div>
 
         {/*
@@ -389,7 +392,21 @@ export default async function ChannelLandingPage({ params }: { params: Promise<{
           (text-4xl 36px and sm:text-6xl 60px, both at leading-tight 1.25).
         */}
         <h1 className="text-4xl sm:text-6xl font-black tracking-tight max-w-4xl mx-auto leading-tight mb-6 min-h-[5.625rem] sm:min-h-[9.375rem]">
-          The Ultimate <span className="text-[#FF4CE2]">{data.name} Scheduler</span> &amp; AI Copilot
+          {pending && data.slug === 'medium' ? (
+            // Not "coming": Medium stopped issuing tokens and may never resume
+            // (see MEDIUM_PENDING in channel-specs.ts).
+            <>
+              <span className="text-[#FF4CE2]">{data.name} publishing</span> needs an existing Medium API token
+            </>
+          ) : pending ? (
+            <>
+              <span className="text-[#FF4CE2]">{data.name} scheduling</span> is coming to Hookpost
+            </>
+          ) : (
+            <>
+              The Ultimate <span className="text-[#FF4CE2]">{data.name} Scheduler</span> &amp; AI Copilot
+            </>
+          )}
         </h1>
 
         <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -597,22 +614,8 @@ export default async function ChannelLandingPage({ params }: { params: Promise<{
             Get Started Free (No Card Needed)
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/channels" className="hover:underline text-[#888]">All Channels</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/for" className="hover:underline text-[#888]">Solutions</Link>
-        </div>
-      </footer>
     </div>
   );
 }

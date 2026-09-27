@@ -14,7 +14,7 @@ const PRO_INR = pricingINR.PRO;
 const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 
 export const metadata: Metadata = {
-  title: "Hookpost vs Hootsuite (2026): #1 Open-Source Alternative",
+  title: "Hootsuite Alternative (2026): Free Plan, Open Source | Hookpost",
   description:
     `Compare Hookpost and Hootsuite on price and coverage: publishing to ${PUBLISHABLE_CHANNEL_COUNT} networks and a free plan, against Hootsuite's $99 per user per month.`,
   keywords: [
@@ -126,7 +126,7 @@ export default function HootsuiteAlternativePage() {
         </div>
       </header>
 
-      <main className="max-w-[1100px] mx-auto px-6 py-12 text-center space-y-12">
+      <div className="max-w-[1100px] mx-auto px-6 py-12 text-center space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50 text-left">
           <ol className="flex items-center space-x-2">
             <li>
@@ -146,9 +146,9 @@ export default function HootsuiteAlternativePage() {
             The Modern Hootsuite Alternative
           </div>
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.1] mb-6">
-            Everything you love about Hootsuite. <br className="hidden sm:block" />
+            The Hootsuite alternative <br className="hidden sm:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF4CE2] via-[#a855f7] to-[#06b6d4]">
-              Without the $99-per-user price tag.
+              without the $99-per-user price tag.
             </span>
           </h1>
           <p className="text-lg text-white/70 max-w-2xl mx-auto mb-8">
@@ -203,20 +203,8 @@ export default function HootsuiteAlternativePage() {
 
 
         <SectionFaq items={faqSchema.mainEntity} />
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">All Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/compare" className="hover:underline text-[#888]">Compare Tools</Link>
-        </div>
-      </footer>
     </div>
   );
 }

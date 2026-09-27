@@ -18,7 +18,7 @@ const PUB = COMPETITOR_FACTS.publer;
 const BEST_ALTERNATIVE_ANSWER = `Hookpost is an open-source alternative to Publer with flat plans instead of per-account pricing. Publer's Professional plan is $4 per social account per month billed annually, and its API and MCP access are on the Business plan ($8 per account per month billed annually). Publer's free plan covers 3 accounts with 10 scheduled posts each and no X. ${HOOKPOST_PLANS} ${HOOKPOST_NETWORKS} Publer prices checked ${FACTS_CHECKED}.`;
 
 export const metadata: Metadata = {
-  title: "Hookpost vs Publer (2026): Open-Source Alternative",
+  title: "Publer Alternative (2026): Flat Plans, Not Per Account | Hookpost",
   description: `Compare Hookpost vs Publer: flat plans from $0 (Standard ₹${inr(STD_INR.month_price)} or $${STD_USD.month_price}/mo for ${STD_INR.channel} channels) vs Publer's $4 per account, Docker self-hosting, and Razorpay UPI billing.`,
   keywords: ["publer alternative","publer competitors","publer vs hookpost","free publer alternative","publer pricing 2026"],
   alternates: {
@@ -121,7 +121,7 @@ export default function PublerAlternativePage() {
         </div>
       </header>
 
-      <main className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
+      <div className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li>
@@ -269,20 +269,8 @@ export default function PublerAlternativePage() {
             Start Free for $0
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">All Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/compare" className="hover:underline text-[#888]">Compare Tools</Link>
-        </div>
-      </footer>
     </div>
   );
 }

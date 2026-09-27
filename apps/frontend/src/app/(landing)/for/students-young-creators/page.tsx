@@ -95,7 +95,7 @@ export default function StudentsYoungCreatorsPage() {
         </div>
       </header>
 
-      <main className="max-w-[1200px] mx-auto px-6 sm:px-12 pt-16 pb-24">
+      <div className="max-w-[1200px] mx-auto px-6 sm:px-12 pt-16 pb-24">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="inline-block px-4 py-1.5 rounded-full bg-[#FF4CE2]/10 border border-[#FF4CE2]/30 text-[#FF4CE2] text-xs font-bold uppercase tracking-widest mb-6">
             For Students, Gamers & Young Creators
@@ -147,7 +147,7 @@ export default function StudentsYoungCreatorsPage() {
         </div>
         <SectionFaq items={faqSchema.mainEntity} />
 
-      </main>
+      </div>
     </div>
   );
 }

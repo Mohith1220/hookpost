@@ -114,8 +114,10 @@ export async function generateMetadata({ params }: { params: Promise<{ competito
   return {
     // Kept under the ~60/~160 character limits so neither gets truncated in
     // results. The old pair ran to 88 and 199 characters, so the tail of both
-    // — including the differentiators — was being cut off.
-    title: `Hookpost vs ${comp.name}: Open-Source Alternative (2026)`,
+    // — including the differentiators — was being cut off. Leads with
+    // "<name> Alternative", the phrase people search; 64 characters at the
+    // longest name (Zoho Social).
+    title: `${comp.name} Alternative (2026): Open-Source Scheduler | Hookpost`,
     description: `Compare Hookpost and ${comp.name} on pricing, channel coverage, and self-hosting: ${PUBLISHABLE_CHANNEL_COUNT} networks, AI drafting, and a Docker image you can run yourself.`,
     keywords: [
       `${competitor} alternative`,
@@ -222,7 +224,7 @@ export default async function CompetitorComparisonPage({ params }: { params: Pro
         </div>
       </header>
 
-      <main className="max-w-[1200px] mx-auto px-6 sm:px-12 pt-8 pb-24">
+      <div className="max-w-[1200px] mx-auto px-6 sm:px-12 pt-8 pb-24">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50 mb-8">
           <ol className="flex items-center space-x-2">
             <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
@@ -238,7 +240,7 @@ export default async function CompetitorComparisonPage({ params }: { params: Pro
             2026 Comparison Guide
           </span>
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight leading-[1.1] mb-6">
-            Looking for a Better Alternative to <span className="text-[#FF4CE2]">{comp.name}?</span>
+            Looking for a <span className="text-[#FF4CE2]">{comp.name} Alternative</span>?
           </h1>
           <p className="text-lg sm:text-xl text-neutral-400 leading-relaxed mb-8">
             Hookpost publishes to {PUBLISHABLE_CHANNEL_COUNT} social networks from one calendar, with AI writing from $15 / ₹599 a month and up to 15 team members on Pro.
@@ -332,24 +334,8 @@ export default async function CompetitorComparisonPage({ params }: { params: Pro
         </div>
 
         <SectionFaq items={faqSchema.mainEntity} />
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/about" className="hover:underline text-[#888]">About</Link>
-          <span>&bull;</span>
-          <Link href="/channels" className="hover:underline text-[#888]">Channels</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/for" className="hover:underline text-[#888]">Solutions</Link>
-        </div>
-      </footer>
     </div>
   );
 }

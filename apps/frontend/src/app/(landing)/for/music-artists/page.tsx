@@ -143,9 +143,6 @@ export default function MusicArtistsLandingPage() {
 
 
 
-      <footer className="w-full border-t border-neutral-800 py-12 text-center text-neutral-500 text-sm">
-        <p>© {new Date().getFullYear()} Hookpost • The AI Social Media Copilot for Music Creators Worldwide.</p>
-      </footer>
     </div>
   );
 }

@@ -34,7 +34,7 @@ export default function DataDeletionPage() {
         </Link>
       </header>
 
-      <main className="pt-12 sm:pt-16 pb-24 sm:pb-32">
+      <div className="pt-12 sm:pt-16 pb-24 sm:pb-32">
         <div className="max-w-[840px] mx-auto px-5 sm:px-8 text-[#d1d1d1] text-[17px] sm:text-[18px] leading-[1.8] space-y-6">
           <h1 className="text-[36px] sm:text-[54px] font-black text-white tracking-tight leading-[1.15]">
             User Data Deletion Instructions
@@ -76,11 +76,8 @@ export default function DataDeletionPage() {
             </div>
           </div>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-8 text-center text-xs text-[#666]">
-        &copy; 2026 Hookstep / Hookpost. All rights reserved. &bull; <Link href="/privacy" className="text-[#888] hover:underline">Privacy Policy</Link>
-      </footer>
     </div>
   );
 }

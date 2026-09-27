@@ -1,11 +1,12 @@
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { PUBLISHABLE_CHANNEL_COUNT } from '../../channels/channel-count';
 
 export const metadata: Metadata = {
   title: 'Hookpost Public API Reference | Hookpost',
   description:
-    'Official Hookpost Public API reference. Authenticate with an API key and create, list and delete scheduled social posts across 18 networks over plain HTTP.',
+    `Official Hookpost Public API reference. Authenticate with an API key and create, list and delete scheduled social posts across ${PUBLISHABLE_CHANNEL_COUNT} networks over plain HTTP.`,
   keywords: [
     'hookpost api',
     'social media scheduling api',
@@ -100,7 +101,7 @@ export default function PublicApiDocsPage() {
     '@type': 'TechArticle',
     headline: 'Hookpost Public API Reference',
     description:
-      'Authenticate with an API key and create, list and delete scheduled social posts across 18 networks over plain HTTP.',
+      `Authenticate with an API key and create, list and delete scheduled social posts across ${PUBLISHABLE_CHANNEL_COUNT} networks over plain HTTP.`,
     image: 'https://hookpost.hookstep.in/brand-logo.png',
     mainEntityOfPage: 'https://hookpost.hookstep.in/docs/public-api',
     publisher: {
@@ -117,7 +118,7 @@ export default function PublicApiDocsPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
 
       <div className="w-full bg-[#FF4CE2] text-black text-center font-medium text-sm py-1.5 px-4 font-sans">
-        ⚡ Developer Docs — Schedule to 18 social networks over plain HTTP
+        ⚡ Developer Docs — Schedule to {PUBLISHABLE_CHANNEL_COUNT} social networks over plain HTTP
       </div>
 
       <header className="flex justify-between items-center w-full max-w-[1440px] mx-auto h-[70px] px-6 sm:px-12">
@@ -143,7 +144,7 @@ export default function PublicApiDocsPage() {
         </div>
       </header>
 
-      <main className="max-w-[860px] mx-auto px-6 pt-10 pb-24 space-y-12">
+      <div className="max-w-[860px] mx-auto px-6 pt-10 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
@@ -336,7 +337,7 @@ export default function PublicApiDocsPage() {
             for an API key.
           </p>
         </section>
-      </main>
+      </div>
     </div>
   );
 }

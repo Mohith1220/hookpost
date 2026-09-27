@@ -77,11 +77,14 @@ export default async function HomePage() {
             </span>
 
             <h1 className="mt-6 text-[38px] font-extrabold leading-[1.08] tracking-tight sm:text-[54px] font-jakarta text-balance">
-              Schedule social posts from a calendar — or from your AI agent
+              The open-source social media scheduler your AI agent can use
             </h1>
 
+            {/* The H1 and this paragraph are the first text a crawler weighs,
+                and neither said "social media scheduler" - the phrase the
+                page's title and schema are built around. */}
             <p className="mt-6 max-w-[54ch] text-[17px] leading-relaxed text-white/70">
-              Hookpost publishes to {PUBLISHABLE_CHANNEL_COUNT} networks from one visual calendar. It also
+              Hookpost is an open-source social media scheduler that publishes to {PUBLISHABLE_CHANNEL_COUNT} networks from one visual calendar. It also
               ships a Model Context Protocol server, so Claude Code, Cursor and
               Windsurf can draft and queue posts without you opening the app.
             </p>
@@ -362,74 +365,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ------------------------------------------------------------- footer */}
-      <footer className="border-t border-white/10 bg-black">
-        <div className="mx-auto w-full max-w-[1280px] px-5 py-14 sm:px-10">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
-            <div>
-              <div className="flex items-center gap-2.5">
-                <img src="/brand-logo-96.webp" width="96" height="96" alt="" className="h-7 w-auto object-contain" />
-                <span className="font-extrabold tracking-tight">Hookpost</span>
-              </div>
-              <p className="mt-4 max-w-[34ch] text-sm leading-relaxed text-white/50">
-                Open-source social media scheduling, by Hookstep
-              </p>
-            </div>
-
-            {[
-              ["Product", [["Channels", "/channels"], ["AI agents & MCP", "/mcp"], ["Pricing", "/pricing"], ["Free plan", "/free-social-media-scheduler"], ["For India (₹, UPI)", "/social-media-scheduler-india"], ["By role", "/for"]]],
-              ["Developers", [["Public API", "/docs/public-api"], ["OAuth apps", "/docs/oauth"], ["Self-hosting", "/guides/docker-self-hosting"], ["Guides", "/guides"], ["Character counter", "/tools/character-counter"]]],
-              ["Company", [["About", "/about"], ["Contact", "/contact"], ["Comparisons", "/alternatives"], ["Privacy", "/privacy"], ["Terms", "/terms"]]],
-              // Razorpay's payment-method review looks for these five policy
-              // pages linked from the site, not just reachable by URL.
-              ["Policies", [["Refunds", "/refund-policy"], ["Cancellation", "/cancellation-policy"], ["Shipping & delivery", "/shipping-policy"], ["Data deletion", "/data-deletion"]]],
-            ].map(([heading, links]) => (
-              <div key={heading as string}>
-                <h3 className="text-xs font-bold uppercase tracking-wider text-white/60">
-                  {heading as string}
-                </h3>
-                <ul className="mt-4 flex flex-col gap-2.5 text-sm">
-                  {(links as string[][]).map(([label, href]) => (
-                    <li key={href}>
-                      <Link href={href} prefetch={false} className="text-white/65 transition-colors hover:text-[#FF4CE2]">
-                        {label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-7 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between">
-            {/* The operating address deliberately lives on /contact only, not
-                here. Razorpay requires it published somewhere reachable on the
-                site - a Contact page satisfies that - and it is the owner's
-                home address, so it is printed once rather than on every page.
-                If a Razorpay reviewer ever asks for it in the footer, add it
-                back here and keep it identical to the GST and IEC records. */}
-            <p>
-              © {new Date().getFullYear()} Hookstep Licensed under AGPL-3.0.
-            </p>
-            <div className="flex items-center gap-6">
-              <a
-                href="https://www.linkedin.com/company/hookpost"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-[#FF4CE2]"
-              >
-                LinkedIn
-              </a>
-              <a href="mailto:support@hookstep.in" className="hover:text-[#FF4CE2]">
-                support@hookstep.in
-              </a>
-              <Link href="/data-deletion" className="hover:text-[#FF4CE2]">
-                Data deletion
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

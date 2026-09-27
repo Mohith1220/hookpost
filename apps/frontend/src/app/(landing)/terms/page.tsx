@@ -57,7 +57,7 @@ export default function TermsOfServicePage() {
       </header>
 
       {/* Main Content Area */}
-      <main className="pt-12 sm:pt-16 pb-24 sm:pb-32">
+      <div className="pt-12 sm:pt-16 pb-24 sm:pb-32">
         <div className="max-w-[840px] mx-auto px-5 sm:px-8 text-[#d1d1d1] text-[17px] sm:text-[18px] leading-[1.8] space-y-8">
           
           {/* Header Title */}
@@ -212,7 +212,7 @@ export default function TermsOfServicePage() {
           </section>
 
         </div>
-      </main>
+      </div>
 
       {/* Footer CTA */}
       <div className="w-full bg-[#141414] border-t border-[#262626] py-12 px-6 text-center space-y-4">

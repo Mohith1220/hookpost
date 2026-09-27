@@ -208,7 +208,7 @@ export default function SchedulingApiPage() {
           A social media scheduling API you call with one header
         </h1>
         <p className="mt-5 max-w-[70ch] text-lg text-white/75">
-          Hookpost&apos;s Public API schedules, publishes and deletes posts on every channel you have connected. It is plain REST
+          Hookpost&apos;s social media scheduling API, the Public API, schedules, publishes and deletes posts on every channel you have connected. It is plain REST
           with JSON in and out, and one request can send a post to LinkedIn and X at the same time. It is included from{' '}
           <strong className="text-white">Standard at {inr(STANDARD.month_price)} a month</strong>, which covers {STANDARD.channel}{' '}
           channels and {STANDARD.posts_per_month} posts.

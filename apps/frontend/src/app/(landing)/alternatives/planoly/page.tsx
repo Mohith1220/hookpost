@@ -21,7 +21,7 @@ const PLANOLY_SOURCE = 'https://www.planoly.com/pricing';
 const BEST_ALTERNATIVE_ANSWER = `Planoly is built around Instagram and Pinterest planning, and Hookpost cannot publish to either for a new account yet: Instagram (with Threads) is awaiting Meta approval, and Pinterest publishing is not available. If those are your main channels, Hookpost is not a replacement today. Hookpost fits if you publish mainly to YouTube, X, LinkedIn, Facebook Pages, Bluesky and similar networks; it publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks for a new account. Planoly's plans start at $14 a month (Starter: 1 social set, 1 user), with a 14-day trial and a free plan on its mobile app limited to 10 uploads a month. ${HOOKPOST_PLANS} Planoly prices checked ${PLANOLY_CHECKED}.`;
 
 export const metadata: Metadata = {
-  title: "Hookpost vs Planoly (2026): Visual Planner Alternative",
+  title: "Planoly Alternative (2026): For X, LinkedIn & YouTube | Hookpost",
   description: "Hookpost vs Planoly on price, free plans and networks. Planoly centres on Instagram and Pinterest, which Hookpost can't publish to for new accounts yet.",
   keywords: ["planoly alternative","planoly competitors","planoly vs hookpost","instagram grid planner alternative","planoly pricing"],
   alternates: {
@@ -124,7 +124,7 @@ export default function PlanolyAlternativePage() {
         </div>
       </header>
 
-      <main className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
+      <div className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li>
@@ -289,20 +289,8 @@ export default function PlanolyAlternativePage() {
             Start Free for $0
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">All Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/compare" className="hover:underline text-[#888]">Compare Tools</Link>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { IndiaCostNote } from "../IndiaCostNote";
 import { PUBLISHABLE_CHANNEL_COUNT } from "../../channels/channel-count";
 import { pricingINR, pricingUSD } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/pricing';
 import { COMPETITOR_FACTS, FACTS_CHECKED } from '../../compare/competitor-facts';
+import { SiteNav } from "../../site-nav";
 
 const { FREE, STANDARD: STD_INR, PRO: PRO_INR } = pricingINR;
 const { STANDARD: STD_USD, PRO: PRO_USD } = pricingUSD;
@@ -17,7 +18,7 @@ const FACTS = Object.values(COMPETITOR_FACTS);
 const MCP_COUNT = FACTS.filter((c) => c.mcp === true).length;
 
 export const metadata: Metadata = {
-  title: "Hookpost vs Mixpost (2026): Open-Source Self-Hosted Alternative",
+  title: "Mixpost Alternative (2026): Hosted or Self-Hosted | Hookpost",
   description:
     `Hookpost vs Mixpost: hosted plus self-hosting vs self-hosted only, Node.js vs Laravel, and a free plan with monthly pricing vs a $299 one-time licence.`,
   keywords: [
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
     canonical: "https://hookpost.hookstep.in/alternatives/mixpost",
   },
   openGraph: {
-    title: "Hookpost vs Mixpost (2026): Open-Source Alternative",
+    title: "Mixpost Alternative (2026): Hosted or Self-Hosted | Hookpost",
     description:
       `Compare Hookpost vs Mixpost: publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks, Node.js + Temporal architecture, MCP server on paid plans, and cloud + Docker self-hosting.`,
     url: "https://hookpost.hookstep.in/alternatives/mixpost",
@@ -52,7 +53,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mixpost Alternative (2026): Hookpost vs Mixpost",
+    title: "Mixpost Alternative (2026): Hosted or Self-Hosted | Hookpost",
     description: `Compare Hookpost vs Mixpost. Publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks, hosted cloud plus self-hosting, and event-driven Temporal scheduling.`,
     images: ["https://hookpost.hookstep.in/og-image.png"],
   },
@@ -164,6 +165,7 @@ export default function MixpostAlternativePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
       />
+      <SiteNav />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-28 pb-20 px-6 sm:px-12 max-w-6xl mx-auto text-center">
@@ -173,7 +175,7 @@ export default function MixpostAlternativePage() {
 
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
           Hookpost vs Mixpost: <br className="hidden sm:inline" />
-          The Modern Open-Source Alternative (2026)
+          The Modern Open-Source Mixpost Alternative (2026)
         </h1>
 
         <p className="text-lg sm:text-xl text-white/70 max-w-3xl mx-auto mb-10 leading-relaxed">

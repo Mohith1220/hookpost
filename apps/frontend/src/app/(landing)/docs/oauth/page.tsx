@@ -95,7 +95,7 @@ export default function OAuthDocsPage() {
         </div>
       </header>
 
-      <main className="max-w-[860px] mx-auto px-6 pt-10 pb-24 space-y-12">
+      <div className="max-w-[860px] mx-auto px-6 pt-10 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
@@ -277,7 +277,7 @@ export default function OAuthDocsPage() {
             <Link href="/guides/claude-mcp-social-media" className="text-[#FF4CE2] underline underline-offset-2 decoration-[#FF4CE2]/40 hover:decoration-[#FF4CE2]">Claude setup guide</Link>
           </p>
         </section>
-      </main>
+      </div>
     </div>
   );
 }

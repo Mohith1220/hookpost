@@ -41,8 +41,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Social Media MCP Server (2026): Automate 18 Platforms with Claude & Cursor",
-    description: "An open-source Social Media Model Context Protocol (MCP) server. Schedule and draft across 18 channels.",
+    title: `Social Media MCP Server (2026): Automate ${PUBLISHABLE_CHANNEL_COUNT} Platforms with Claude & Cursor`,
+    description: `An open-source Social Media Model Context Protocol (MCP) server. Schedule and draft across ${PUBLISHABLE_CHANNEL_COUNT} channels.`,
     images: ["https://hookpost.hookstep.in/og-image.png"],
   },
 };
@@ -247,7 +247,7 @@ export default function McpPage() {
         </div>
       </header>
 
-      <main className="max-w-[1100px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-16">
+      <div className="max-w-[1100px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-16">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li>
@@ -572,7 +572,7 @@ export default function McpPage() {
             </Link>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 }

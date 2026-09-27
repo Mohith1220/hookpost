@@ -78,7 +78,7 @@ export default function EnterpriseTeamsPage() {
           <Link href="/auth" className="text-sm font-bold bg-[#FF4CE2] text-black px-5 py-2 rounded-full hover:bg-white transition-all shadow-[0_0_20px_rgba(255,76,226,0.5)]">Get Started</Link>
         </div>
       </header>
-      <main className="max-w-[1200px] mx-auto px-6 sm:px-12 pt-16 pb-24 text-center">
+      <div className="max-w-[1200px] mx-auto px-6 sm:px-12 pt-16 pb-24 text-center">
         <span className="inline-block px-4 py-1.5 rounded-full bg-[#FF4CE2]/10 border border-[#FF4CE2]/30 text-[#FF4CE2] text-xs font-bold uppercase tracking-widest mb-6">
           For Enterprise Organizations & Marketing Teams
         </span>
@@ -118,7 +118,7 @@ export default function EnterpriseTeamsPage() {
 
         <SectionFaq items={faqSchema.mainEntity} />
 
-      </main>
+      </div>
     </div>
   );
 }

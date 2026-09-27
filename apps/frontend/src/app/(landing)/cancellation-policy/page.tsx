@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { SiteNav } from '../site-nav';
 
 // Fourth of the four URLs Razorpay's page-compliance check requires. The
 // substance already existed in /terms ("Subscriptions renew automatically ...
@@ -17,6 +18,7 @@ const SUPPORT_EMAIL = 'support@hookstep.in';
 export default function CancellationPolicyPage() {
   return (
     <div className="min-h-screen bg-black text-white font-dm">
+      <SiteNav />
       <div className="mx-auto w-full max-w-[820px] px-5 py-20 sm:px-10 sm:py-28">
         <Link
           href="/"

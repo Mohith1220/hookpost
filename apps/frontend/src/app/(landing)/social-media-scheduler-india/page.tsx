@@ -121,7 +121,8 @@ export default function IndiaSchedulerPage() {
           The social media scheduler you can pay for with UPI
         </h1>
         <p className="mt-5 max-w-[70ch] text-lg text-white/75">
-          Hookpost schedules posts to X, LinkedIn, YouTube, Bluesky, Telegram and more, and bills in rupees. Start on the free
+          Hookpost is a social media scheduler for India: it schedules posts to X, LinkedIn, YouTube, Bluesky, Telegram and
+          more, and bills in rupees. Start on the free
           plan, then pay <strong className="text-white">{inr(STANDARD.month_price)} a month flat for {STANDARD.channel} channels</strong>{' '}
           through Razorpay with UPI Autopay, a card or NetBanking. No fee per channel, and no international card needed.
         </p>

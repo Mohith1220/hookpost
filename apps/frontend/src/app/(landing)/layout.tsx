@@ -41,6 +41,7 @@ import { FacebookComponent } from '@hookpost/frontend/components/layout/facebook
 import { GoogleTagManagerComponent } from '@hookpost/frontend/components/layout/gtm.component';
 import { GoogleOneTap } from '@hookpost/frontend/components/auth/google-one-tap';
 import { PUBLISHABLE_CHANNEL_COUNT } from './channels/channel-count';
+import { SiteFooter } from './site-footer';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://hookpost.hookstep.in'),
@@ -121,27 +122,11 @@ export const metadata: Metadata = {
     shortcut: '/favicon.png',
     apple: '/apple-touch-icon.png',
   },
+  // No `languages`: it listed 17 hreflang locales, every one pointing at
+  // this same English homepage. There are no translated pages, so the tags
+  // claimed alternates that do not exist.
   alternates: {
     canonical: 'https://hookpost.hookstep.in',
-    languages: {
-      en: 'https://hookpost.hookstep.in',
-      'en-US': 'https://hookpost.hookstep.in',
-      'en-GB': 'https://hookpost.hookstep.in',
-      'en-CA': 'https://hookpost.hookstep.in',
-      'en-AU': 'https://hookpost.hookstep.in',
-      'en-IN': 'https://hookpost.hookstep.in',
-      'en-NZ': 'https://hookpost.hookstep.in',
-      'en-ZA': 'https://hookpost.hookstep.in',
-      es: 'https://hookpost.hookstep.in',
-      'es-ES': 'https://hookpost.hookstep.in',
-      'es-MX': 'https://hookpost.hookstep.in',
-      pt: 'https://hookpost.hookstep.in',
-      'pt-BR': 'https://hookpost.hookstep.in',
-      de: 'https://hookpost.hookstep.in',
-      fr: 'https://hookpost.hookstep.in',
-      ja: 'https://hookpost.hookstep.in',
-      'x-default': 'https://hookpost.hookstep.in',
-    },
   },
   openGraph: {
     title:
@@ -164,11 +149,13 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title:
       'Hookpost — Open-Source Social Media Scheduler & AI Management Platform',
-    description:
-      'Schedule and auto-publish posts worldwide to Instagram, Pinterest, YouTube, LinkedIn, X, Facebook, and Threads.',
+    // Listed Instagram, Pinterest and Threads first, none of which can publish
+    // for a new account yet (see channel-specs.ts). Named from the publishable
+    // set instead.
+    description: `Schedule and auto-publish posts to ${PUBLISHABLE_CHANNEL_COUNT} networks, including X, LinkedIn, YouTube, Facebook Pages, Bluesky, Discord and Telegram.`,
     images: ['https://hookpost.hookstep.in/og-image.png'],
-    creator: '@hookstep',
-    site: '@hookstep',
+    // No creator/site: @hookstep is a stranger's account (see sameAs below),
+    // and there is no Hookpost brand handle on X to put here instead.
   },
   robots: {
     index: true,
@@ -489,6 +476,9 @@ export default function LandingLayout({
         <main style={{ background: '#05070a', minHeight: '100vh' }}>
           {children}
         </main>
+        {/* After </main>, not inside it: a footer outside the main landmark is
+            the page's contentinfo landmark. Pages must not render their own. */}
+        <SiteFooter />
       </body>
     </html>
   );

@@ -19,7 +19,7 @@ const inr = (n: number) => `₹${n.toLocaleString('en-IN')}`;
 const BEST_LATER_ANSWER = `Hookpost is a strong alternative to Later if you post to X, LinkedIn, YouTube, Bluesky or developer and community channels. Later has no free plan (14-day trial), its Starter plan is $18.75/month billed yearly ($25 month-to-month) for one user, and it does not support X/Twitter. Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks today, including X, with a free plan (${FREE.channel} channels, ${FREE.posts_per_month} posts a month) and Standard at ${inr(STD_INR.month_price)} ($${STD_USD.month_price}) a month. If Instagram, Threads or TikTok are your main channels, note that Hookpost cannot publish to them yet - Instagram and Threads await Meta approval. Facebook Pages publish today. Later pricing checked 26 September 2026.`;
 
 export const metadata: Metadata = {
-  title: "Hookpost vs Later (2026): Best Visual Scheduler Alternative",
+  title: "Later Alternative (2026): X Support & a Free Plan | Hookpost",
   description: `Looking for a Later alternative? Hookpost publishes to ${PUBLISHABLE_CHANNEL_COUNT} networks including X, is open source and self-hostable, and has a free plan.`,
   keywords: ["later alternative","best later alternative","instagram scheduler like later","later competitors","later vs hookpost"],
   alternates: {
@@ -122,7 +122,7 @@ export default function LaterAlternativePage() {
         </div>
       </header>
 
-      <main className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
+      <div className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li>
@@ -269,20 +269,8 @@ export default function LaterAlternativePage() {
             Start Free for $0
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">All Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/compare" className="hover:underline text-[#888]">Compare Tools</Link>
-        </div>
-      </footer>
     </div>
   );
 }

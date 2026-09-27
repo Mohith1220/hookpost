@@ -1,12 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import { Metadata } from "next";
-import { CHANNEL_COUNT } from "./channel-count";
+import { CHANNEL_COUNT, PUBLISHABLE_CHANNEL_COUNT } from "./channel-count";
 
 export const metadata: Metadata = {
   title: "Supported Social Media Channels (2026) | Hookpost",
   description:
-    `Schedule and auto-publish across ${CHANNEL_COUNT} social platforms from one dashboard: X, LinkedIn, YouTube, Bluesky, Telegram, Discord and more.`,
+    `Schedule and auto-publish across ${PUBLISHABLE_CHANNEL_COUNT} social platforms from one dashboard: X, LinkedIn, YouTube, Bluesky, Telegram, Discord and more.`,
   keywords: [
     "supported social media platforms",
     "social media channels hookpost",
@@ -20,7 +20,8 @@ export const metadata: Metadata = {
 };
 
 // NOTE: this list must cover every key in channel-specs.ts. The page header
-// prints CHANNEL_COUNT, derived from those specs, so a channel present in the
+// prints CHANNEL_COUNT (and PUBLISHABLE_CHANNEL_COUNT where the copy says
+// "publish"), derived from those specs, so a channel present in the
 // specs but absent here makes the page claim a number larger than the list it
 // shows - which is what happened: "18 networks" above a grid of 11, with the
 // other seven reachable only by typing the URL.
@@ -196,7 +197,7 @@ export default function ChannelsHubPage() {
         </div>
       </header>
 
-      <main className="max-w-[1200px] mx-auto px-6 pt-12 pb-24 space-y-16">
+      <div className="max-w-[1200px] mx-auto px-6 pt-12 pb-24 space-y-16">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
@@ -211,7 +212,7 @@ export default function ChannelsHubPage() {
           </div>
           <h1 className="text-[34px] sm:text-[56px] font-black tracking-tight text-white leading-[1.15]">
             Connect, Schedule &amp; Publish <br />
-            <span className="text-[#FF4CE2]">Across {CHANNEL_COUNT} Social Networks</span>
+            <span className="text-[#FF4CE2]">Across {PUBLISHABLE_CHANNEL_COUNT} Social Networks</span>
           </h1>
           <p className="text-[#aaa] text-lg sm:text-xl leading-relaxed">
             Stop switching tabs between different social platforms. Upload your content once, optimize it with AI, and schedule to all your accounts simultaneously.
@@ -222,7 +223,7 @@ export default function ChannelsHubPage() {
         <div className="bg-[#161616] border border-[#FF4CE2]/30 rounded-2xl p-6 max-w-[900px] mx-auto text-left shadow-[0_0_30px_rgba(255,76,226,0.1)]">
           <p className="text-xs uppercase tracking-widest text-[#FF4CE2] font-bold mb-2">Supported Social Channels Summary</p>
           <p className="text-sm sm:text-base text-neutral-300 leading-relaxed">
-            <strong>Hookpost</strong> supports multi-channel social media publishing across {CHANNEL_COUNT} networks, including Instagram (Reels &amp; Carousels), YouTube Shorts, LinkedIn, X, Meta Threads, Pinterest, and Facebook. Users can draft once, customize captions with AI, and schedule posts across all connected channels simultaneously from a unified visual calendar.
+            <strong>Hookpost</strong> supports multi-channel social media publishing across {PUBLISHABLE_CHANNEL_COUNT} networks, including YouTube Shorts, LinkedIn, X, Facebook Pages, Bluesky, Discord and Telegram. Instagram, Threads and Pinterest are waiting on platform approval before they can publish for new accounts. Users can draft once, customize captions with AI, and schedule posts across all connected channels simultaneously from a unified visual calendar.
           </p>
         </div>
 
@@ -271,20 +272,8 @@ export default function ChannelsHubPage() {
             Start Free for $0 &rarr;
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/for" className="hover:underline text-[#888]">Solutions</Link>
-        </div>
-      </footer>
     </div>
   );
 }

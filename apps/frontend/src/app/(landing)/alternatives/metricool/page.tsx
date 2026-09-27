@@ -19,7 +19,7 @@ const inr = (n: number) => `₹${n.toLocaleString("en-IN")}`;
 const BEST_METRICOOL_ANSWER = `Hookpost is an open-source (AGPL-3.0) alternative to Metricool for multi-platform publishing. Metricool prices by brand: its free plan covers 1 brand and 20 posts a month but excludes LinkedIn and X, and Starter is $20/month billed annually ($25 month-to-month) for up to 5 brands, with X as a paid add-on. Hookpost's free plan has ${FREE.channel} channels and ${FREE.posts_per_month} posts a month, LinkedIn and X included, and Standard is ${inr(STD_INR.month_price)} ($${STD_USD.month_price}) a month for ${STD_USD.channel} channels. Both ship an MCP server for Claude and other AI agents. Metricool pricing checked 26 September 2026.`;
 
 export const metadata: Metadata = {
-  title: "Hookpost vs Metricool (2026): #1 Open-Source Alternative",
+  title: "Metricool Alternative (2026): Free Plan Includes X | Hookpost",
   description: `Compare Hookpost vs Metricool. Hookpost offers open-source self-hosting, publishing to ${PUBLISHABLE_CHANNEL_COUNT} networks, an MCP server, and a free plan that includes LinkedIn and X.`,
   keywords: ["metricool alternative","metricool competitors","metricool vs hookpost","open source metricool","metricool pricing"],
   alternates: {
@@ -122,7 +122,7 @@ export default function MetricoolAlternativePage() {
         </div>
       </header>
 
-      <main className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
+      <div className="max-w-[1000px] mx-auto px-5 sm:px-8 pt-8 pb-24 space-y-12">
         <nav aria-label="Breadcrumb" className="text-sm text-white/50">
           <ol className="flex items-center space-x-2">
             <li>
@@ -279,20 +279,8 @@ export default function MetricoolAlternativePage() {
             Start Free for $0
           </Link>
         </div>
-      </main>
+      </div>
 
-      <footer className="w-full bg-[#141414] border-t border-[#262626] py-10 px-6 text-center text-xs text-[#666] space-y-2">
-        <p>&copy; 2026 Hookstep / Hookpost. All rights reserved.</p>
-        <div className="space-x-4">
-          <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
-          <span>&bull;</span>
-          <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
-          <span>&bull;</span>
-          <Link href="/alternatives" className="hover:underline text-[#888]">All Alternatives</Link>
-          <span>&bull;</span>
-          <Link href="/compare" className="hover:underline text-[#888]">Compare Tools</Link>
-        </div>
-      </footer>
     </div>
   );
 }

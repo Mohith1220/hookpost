@@ -92,7 +92,7 @@ export default function AffiliatesPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SiteNav />
 
-      <main>
+      <div>
         <section className="mx-auto w-full max-w-[1100px] px-5 pt-16 sm:px-10">
           <p className="text-sm font-semibold uppercase tracking-wider text-[#FF4CE2]">Affiliate programme</p>
           <h1 className="mt-3 text-4xl font-extrabold tracking-tight font-jakarta sm:text-5xl text-balance">
@@ -182,7 +182,7 @@ export default function AffiliatesPage() {
             </p>
           </div>
         </section>
-      </main>
+      </div>
     </div>
   );
 }

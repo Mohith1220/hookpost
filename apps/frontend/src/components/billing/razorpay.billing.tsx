@@ -142,7 +142,13 @@ export const RazorpayBilling: FC<{
   amountLabel?: string;
   allowTrial?: boolean;
   onSuccess?: () => void;
-}> = ({ subscriptionId, url, keyId, currency, amountLabel, allowTrial, onSuccess }) => {
+  /**
+   * Creates the Razorpay subscription on click and returns the
+   * /billing/embedded response. Used instead of subscriptionId so a
+   * subscription is only created when the visitor actually starts checkout.
+   */
+  createCheckout?: () => Promise<any>;
+}> = ({ subscriptionId, url, keyId, currency, amountLabel, allowTrial, onSuccess, createCheckout }) => {
   const t = useT();
   const fetch = useFetch();
   const [ready, setReady] = useState(false);
@@ -157,10 +163,35 @@ export const RazorpayBilling: FC<{
     setError(null);
     setBusy(true);
 
+    let subId = subscriptionId;
+    let key = keyId;
+    let cur = currency;
+    let hostedUrl = url;
+    if (createCheckout) {
+      const d = await createCheckout().catch(() => null);
+      if (!d || d.blocked || d.statusCode >= 400 || !d.subscriptionId) {
+        setBusy(false);
+        setError(
+          d?.blocked
+            ? t(
+                'billing_other_account_subscribed',
+                'Another account with this email already has an active subscription. Please log off and sign in to that account to manage your subscription.'
+              )
+            : d?.message ||
+                t('billing_checkout_unavailable', 'Checkout is currently unavailable.')
+        );
+        return;
+      }
+      subId = d.subscriptionId;
+      key = d.keyId || keyId;
+      cur = d.currency || currency;
+      hostedUrl = d.url;
+    }
+
     const opened = await openRazorpayCheckout({
-      subscriptionId: subscriptionId!,
-      keyId,
-      currency,
+      subscriptionId: subId!,
+      keyId: key,
+      currency: cur,
       amountLabel,
       verify: async (payload) => {
         await fetch('/razorpay/verify', {
@@ -184,14 +215,14 @@ export const RazorpayBilling: FC<{
     // and it has been known to be unavailable on this account - so say so
     // rather than dropping the customer on an error screen with no context.
     setBusy(false);
-    if (url) {
-      window.location.href = url;
+    if (hostedUrl) {
+      window.location.href = hostedUrl;
       return;
     }
     setError(
       t('billing_checkout_unavailable', 'Checkout is currently unavailable.')
     );
-  }, [subscriptionId, keyId, currency, url, amountLabel, onSuccess]);
+  }, [subscriptionId, keyId, currency, url, amountLabel, onSuccess, createCheckout]);
 
   if (!ready && !url) {
     return <LoadingComponent />;

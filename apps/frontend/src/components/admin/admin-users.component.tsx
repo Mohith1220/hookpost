@@ -332,6 +332,10 @@ const money = (amount: number, currency: string) =>
 const PAID = ['captured', 'authorized', 'refunded'];
 
 /**
+ * Counts before 27 Sep 2026 include every VIEW of the plan screen: it created
+ * a Razorpay subscription on page load until then. From that date a
+ * subscription is only created when the visitor presses the checkout button.
+ *
  * What this workspace did at checkout, from Razorpay: opened it and left,
  * tried the Rs 5 mandate authorisation and failed, or paid. The line under
  * the Razorpay ID answers "did they actually want to pay?".
@@ -369,7 +373,7 @@ const CheckoutSignalCell = ({ signal }: { signal?: CheckoutSignal }) => {
         : signal.checkoutsOpened > 0
         ? chip(
             'bg-amber-500/15 text-amber-300 border-amber-500/40',
-            `Checkout opened ${signal.checkoutsOpened}× · never paid`
+            `Pricing/checkout opened ${signal.checkoutsOpened}× · never paid`
           )
         : null}
       {(signal.checkoutsOpened > 0 || failed.length > 0) && (

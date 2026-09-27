@@ -1,7 +1,6 @@
 'use client';
 
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import useSWR from 'swr';
 import { useFetch } from '@hookpost/helpers/utils/custom.fetch';
 import { useVariables } from '@hookpost/react/helpers/variable.context';
 import { OrganizationSelector } from '@hookpost/frontend/components/layout/organization.selector';
@@ -134,17 +133,17 @@ export const FirstBillingComponent = () => {
     });
   };
 
-  const { data, isLoading } = useSWR(
-    `/billing-${tier}-${period}-${currency}-${appliedCoupon?.code || ''}`,
-    loadCheckout,
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-      revalidateIfStale: false,
-      refreshWhenOffline: false,
-      refreshWhenHidden: false,
-    }
-  );
+  // The Razorpay subscription is created when the visitor presses the
+  // checkout button, not on page load. Creating it in a useSWR on mount made a
+  // new subscription for every view of this screen - one test workspace got 5
+  // in 16 minutes without ever clicking - and inflated the admin panel's
+  // "checkout opened" counts into page-view counts.
+  const [blocked, setBlocked] = useState(false);
+  const createCheckout = useCallback(async () => {
+    const d = await loadCheckout();
+    if (d?.blocked) setBlocked(true);
+    return d;
+  }, [loadCheckout]);
 
   const price = useMemo(
     () =>
@@ -265,7 +264,7 @@ export const FirstBillingComponent = () => {
           <div className="block tablet:hidden">
             <JoinOver />
           </div>
-          {data?.blocked ? (
+          {blocked ? (
             <div className="mt-[24px] p-[24px] rounded-[20px] border-[1.5px] border-newColColor text-[16px] font-[500]">
               {t(
                 'billing_other_account_subscribed',
@@ -286,29 +285,20 @@ export const FirstBillingComponent = () => {
             symbol={currencySymbol}
             period={period === 'MONTHLY' ? 'month' : 'year'}
           />
-          {!isLoading && data?.statusCode >= 400 ? (
-            <div className="mt-[16px] text-[14px] text-red-400" role="alert">
-              {data.message || 'Could not start checkout.'}
-            </div>
-          ) : !isLoading && data ? (
-            <RazorpayBilling
-              subscriptionId={data.subscriptionId}
-              url={data.url}
-              keyId={data.keyId || razorpayKeyId}
-              currency={data.currency || currency}
-              amountLabel={`${getCurrencyConfig(data.currency || currency).symbol}${formatMoney(
-                discounted(
-                  (period === 'MONTHLY'
-                    ? activePricing[tier]?.month_price
-                    : activePricing[tier]?.year_price) || 0,
-                  appliedCoupon
-                )
-              )}`}
-              allowTrial={!!user?.allowTrial}
-            />
-          ) : (
-            <LoadingComponent />
-          )}
+          <RazorpayBilling
+            createCheckout={createCheckout}
+            keyId={razorpayKeyId}
+            currency={currency}
+            amountLabel={`${currencySymbol}${formatMoney(
+              discounted(
+                (period === 'MONTHLY'
+                  ? activePricing[tier]?.month_price
+                  : activePricing[tier]?.year_price) || 0,
+                appliedCoupon
+              )
+            )}`}
+            allowTrial={!!user?.allowTrial}
+          />
             </>
           )}
         </div>
@@ -323,7 +313,7 @@ export const FirstBillingComponent = () => {
                 the trial, so a visitor who only wants to try it is not stuck on
                 a payment screen. It lives in this column because on tablet and
                 mobile the layout is flex-col-reverse and this column comes first. Same behaviour as the link in RazorpayBilling. */}
-            {!data?.blocked && (
+            {!blocked && (
               <div className="mb-[24px] flex flex-wrap items-center gap-x-[16px] gap-y-[8px] rounded-[14px] border border-newColColor p-[16px]">
                 <div className="flex-1 min-w-[200px] text-[14px]">
                   <div className="font-[600]">

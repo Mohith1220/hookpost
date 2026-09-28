@@ -1,4 +1,4 @@
-import { SectionFaq } from "../../SectionFaq";
+import { SectionFaq } from "../../../SectionFaq";
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Social Media Automation for Real Estate Agents | Hookpost',
   description:
-    'Schedule Just Listed posts, open-house tour videos and multi-image property carousels to LinkedIn, X and YouTube. Social media scheduling for realtors and brokers.',
+    'Schedule Just Listed posts, open-house tour videos and property carousels to Instagram, LinkedIn, X and YouTube. Social media scheduling for realtors.',
   keywords: [
     'social media for real estate agents',
     'realtor instagram scheduler',

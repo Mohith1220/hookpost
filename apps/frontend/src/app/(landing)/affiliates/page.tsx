@@ -114,6 +114,7 @@ export default function AffiliatesPage() {
             <Link
               href="/affiliate"
               prefetch={false}
+              rel="nofollow"
               className="inline-flex h-12 items-center rounded-xl border border-white/20 px-6 font-semibold text-white/90 hover:border-[#FF4CE2]/60"
             >
               Already a user? Open your dashboard

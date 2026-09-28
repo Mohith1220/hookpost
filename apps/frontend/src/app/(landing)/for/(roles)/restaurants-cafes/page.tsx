@@ -1,4 +1,4 @@
-import { SectionFaq } from "../../SectionFaq";
+import { SectionFaq } from "../../../SectionFaq";
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Social Media Scheduler for Restaurants & Cafes | Hookpost',
   description:
-    'Schedule daily specials, menu videos and event posts to your Facebook Page and more from one calendar, with Instagram once Meta approves the app. For restaurants, cafes, and bars.',
+    'Schedule daily specials, menu videos and event posts to Instagram, your Facebook Page and more from one calendar. For restaurants, cafes and bars.',
   keywords: [
     'restaurant social media scheduler',
     'cafe instagram marketing tool',

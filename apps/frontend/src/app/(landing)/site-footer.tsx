@@ -17,6 +17,7 @@ const PRODUCT: LinkGroup = [
     ['Pricing', '/pricing'],
     ['Free plan', '/free-social-media-scheduler'],
     ['For India (₹, UPI)', '/social-media-scheduler-india'],
+    ['Best schedulers in India', '/best-social-media-scheduler-india'],
     ['By role', '/for'],
   ],
 ];
@@ -58,6 +59,7 @@ const TOOLS: LinkGroup = [
     ['LinkedIn character counter', '/tools/linkedin-character-counter'],
     ['Bluesky character counter', '/tools/bluesky-character-counter'],
     ['Thread splitter', '/tools/thread-splitter'],
+    ['Social media calendar India', '/social-media-calendar-india'],
   ],
 ];
 
@@ -67,6 +69,7 @@ const DEVELOPERS: LinkGroup = [
     ['Public API', '/docs/public-api'],
     ['OAuth apps', '/docs/oauth'],
     ['Scheduling API', '/social-media-scheduling-api'],
+    ['MCP servers compared', '/social-media-mcp-servers'],
     ['Open source', '/open-source-social-media-scheduler'],
     ['Self-hosting', '/guides/docker-self-hosting'],
     ['n8n integration', '/integrations/n8n'],

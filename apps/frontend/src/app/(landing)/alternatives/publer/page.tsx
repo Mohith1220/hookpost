@@ -19,7 +19,7 @@ const BEST_ALTERNATIVE_ANSWER = `Hookpost is an open-source alternative to Puble
 
 export const metadata: Metadata = {
   title: "Publer Alternative (2026): Flat Plans, Not Per Account | Hookpost",
-  description: `Compare Hookpost vs Publer: flat plans from $0 (Standard ₹${inr(STD_INR.month_price)} or $${STD_USD.month_price}/mo for ${STD_INR.channel} channels) vs Publer's $4 per account, Docker self-hosting, and Razorpay UPI billing.`,
+  description: `Compare Hookpost vs Publer: flat plans from $0 (Standard ₹${inr(STD_INR.month_price)} or $${STD_USD.month_price}/mo for ${STD_INR.channel} channels) vs Publer's $4 per account, Docker self-hosting and UPI billing.`,
   keywords: ["publer alternative","publer competitors","publer vs hookpost","free publer alternative","publer pricing 2026"],
   alternates: {
     canonical: "https://hookpost.hookstep.in/alternatives/publer",

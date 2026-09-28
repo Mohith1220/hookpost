@@ -1,4 +1,4 @@
-import { SectionFaq } from "../../SectionFaq";
+import { SectionFaq } from "../../../SectionFaq";
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Social Media Management for Healthcare Clinics | Hookpost',
   description:
-    'Share patient education across LinkedIn, YouTube, X and your Facebook Page, with Instagram once Meta approves the app. Scheduling for clinics, dentists, therapists.',
+    'Share patient education across Instagram, LinkedIn, YouTube, X and your Facebook Page. Social media scheduling for clinics, dentists and therapists.',
   keywords: [
     'healthcare social media scheduler',
     'medical practice social media tool',

@@ -18,6 +18,9 @@ Facts that are easy to get wrong:
 ## Pages
 - [Free social media scheduler](https://hookpost.hookstep.in/free-social-media-scheduler): What the free plan includes, compared with the free plans of Buffer, Metricool, Hootsuite and Later.
 - [Social media scheduler for India](https://hookpost.hookstep.in/social-media-scheduler-india): INR pricing and UPI Autopay, compared with dollar-billed tools that need an international card.
+- [Best social media schedulers in India](https://hookpost.hookstep.in/best-social-media-scheduler-india): ten tools compared on free plans, rupee prices, UPI and pricing model, from vendor pricing pages.
+- [Social media calendar for India](https://hookpost.hookstep.in/social-media-calendar-india): festival and holiday dates, October 2026 to March 2027, from the DoPT lists, with a CSV download.
+- [Social media MCP servers compared](https://hookpost.hookstep.in/social-media-mcp-servers): which schedulers ship an MCP server, and the exact tools Hookpost's hosted and stdio servers expose.
 - [Open-source schedulers compared](https://hookpost.hookstep.in/open-source-social-media-scheduler): Hookpost, Postiz and Mixpost - licence, GitHub activity, self-hosting, hosted pricing.
 - [Social media scheduling API](https://hookpost.hookstep.in/social-media-scheduling-api): REST endpoints, auth and curl examples.
 - [n8n integration](https://hookpost.hookstep.in/integrations/n8n): the n8n-nodes-hookpost community node.

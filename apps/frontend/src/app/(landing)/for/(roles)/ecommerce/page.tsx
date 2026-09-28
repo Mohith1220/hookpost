@@ -1,4 +1,4 @@
-import { SectionFaq } from "../../SectionFaq";
+import { SectionFaq } from "../../../SectionFaq";
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
@@ -6,7 +6,7 @@ import { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Social Media Automation for E-Commerce Brands | Hookpost',
   description:
-    'Schedule product launches to YouTube, X, your Facebook Page, Telegram, Discord and your Listmonk email list from one calendar. Instagram follows once Meta approves the app.',
+    'Schedule product launches to Instagram, YouTube, X, your Facebook Page, Telegram, Discord and your Listmonk email list from one calendar.',
   keywords: [
     'social media scheduler for ecommerce',
     'shopify social media automation',

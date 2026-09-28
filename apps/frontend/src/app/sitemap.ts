@@ -11,15 +11,19 @@ const baseUrl = 'https://hookpost.hookstep.in';
 // lastmod once it catches a site doing that, so the signal was worth nothing.
 // Honest, stable dates are what make it worth something again.
 const UPDATED = {
-  home: '2026-09-06',
+  // Bumped 2026-09-28 to the last real content change per group (git log):
+  // pricing/tier copy, the channel status rewrite and the persona descriptions
+  // all landed 25-28 Sep, so the older dates under-reported fresh pages.
+  home: '2026-09-27',
   docs: '2026-09-06',
-  guides: '2026-08-28',
+  guides: '2026-09-27',
   landing: '2026-09-25',
   landing2: '2026-09-26',
-  alternatives: '2026-08-28',
-  personas: '2026-08-20',
-  channels: '2026-08-20',
+  alternatives: '2026-09-27',
+  personas: '2026-09-28',
+  channels: '2026-09-27',
   legal: '2026-07-15',
+  veritas: '2026-09-28',
 };
 
 type Entry = MetadataRoute.Sitemap[number];
@@ -72,6 +76,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/tools/linkedin-character-counter', UPDATED.landing2, 0.75, 'monthly'),
     page('/tools/thread-splitter', UPDATED.landing2, 0.75, 'monthly'),
     page('/affiliates', UPDATED.landing2, 0.6, 'monthly'),
+    // Veritas SEO run (2026-09-28): India roundup, festival calendar, MCP roundup.
+    page('/best-social-media-scheduler-india', UPDATED.veritas, 0.9, 'monthly'),
+    page('/social-media-calendar-india', UPDATED.veritas, 0.8, 'monthly'),
+    page('/social-media-mcp-servers', UPDATED.veritas, 0.8, 'monthly'),
     ...PAIRS.map((pair) => page(`/compare/${pair}`, UPDATED.landing2, 0.7, 'monthly')),
   ];
 
@@ -166,6 +174,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     page('/privacy', UPDATED.legal, 0.3, 'yearly'),
     page('/terms', UPDATED.legal, 0.3, 'yearly'),
     page('/data-deletion', UPDATED.legal, 0.3, 'yearly'),
+    // Linked from every footer (Razorpay's review wants them) but were missing
+    // here, so the sitemap under-described the site.
+    page('/refund-policy', UPDATED.legal, 0.3, 'yearly'),
+    page('/cancellation-policy', UPDATED.legal, 0.3, 'yearly'),
+    page('/shipping-policy', UPDATED.legal, 0.3, 'yearly'),
   ];
 
   return [

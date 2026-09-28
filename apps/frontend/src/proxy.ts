@@ -147,6 +147,10 @@ export async function proxy(request: NextRequest) {
     nextUrl.pathname.startsWith('/integrations/n8n') ||
     nextUrl.pathname.startsWith('/social-media-scheduling-api') ||
     nextUrl.pathname.startsWith('/open-source-social-media-scheduler') ||
+    // Veritas SEO run (28 Sep 2026).
+    nextUrl.pathname.startsWith('/best-social-media-scheduler-india') ||
+    nextUrl.pathname.startsWith('/social-media-calendar-india') ||
+    nextUrl.pathname.startsWith('/social-media-mcp-servers') ||
     // Public affiliate terms. The signed-in dashboard is /affiliate (singular)
     // and stays behind auth.
     nextUrl.pathname.startsWith('/affiliates') ||

@@ -43,7 +43,7 @@ const TCO_HOOTSUITE_STD = HOOTSUITE_STD * MONTHS;
 export const metadata: Metadata = {
   title: "Postiz Alternative (2026): Rupee Billing, Free Plan | Hookpost",
   description:
-    `Compare Hookpost and Postiz: Hookpost is built on Postiz and adds rupee billing (Razorpay UPI and cards) and a hosted free plan. Prices checked 26 September 2026.`,
+    `Compare Hookpost and Postiz: Hookpost is built on Postiz and adds rupee billing (Razorpay UPI and cards) and a hosted free plan. Prices checked 26 Sep 2026.`,
   keywords: [
     "postiz competitor",
     "postiz competitors",

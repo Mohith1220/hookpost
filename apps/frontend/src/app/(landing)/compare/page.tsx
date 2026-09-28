@@ -168,7 +168,9 @@ export default function ComparePage() {
             Looking for a replacement rather than a matchup? See{' '}
             <Link href="/alternatives" className="text-[#FF4CE2] underline">alternatives</Link>,{' '}
             <Link href="/free-social-media-scheduler" className="text-[#FF4CE2] underline">free plans compared</Link> and{' '}
-            <Link href="/open-source-social-media-scheduler" className="text-[#FF4CE2] underline">open-source schedulers</Link>.
+            <Link href="/open-source-social-media-scheduler" className="text-[#FF4CE2] underline">open-source schedulers</Link>. Buying
+            from India? <Link href="/best-social-media-scheduler-india" className="text-[#FF4CE2] underline">Schedulers compared in rupees</Link>.
+            Want an AI assistant to post? <Link href="/social-media-mcp-servers" className="text-[#FF4CE2] underline">MCP servers compared</Link>.
           </p>
         </div>
       </section>

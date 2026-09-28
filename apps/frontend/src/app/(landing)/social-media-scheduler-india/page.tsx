@@ -45,7 +45,7 @@ const FAQ = [
 
 export const metadata: Metadata = {
   title: `Social Media Scheduler in India, ${inr(STANDARD.month_price)}/mo with UPI | Hookpost`,
-  description: `Schedule posts to X, LinkedIn and YouTube, billed in rupees. Free plan, then ${inr(STANDARD.month_price)}/month flat for ${STANDARD.channel} channels with UPI Autopay.`,
+  description: `Schedule Instagram, LinkedIn, YouTube and X posts, billed in rupees. Free plan, then ${inr(STANDARD.month_price)}/month flat for ${STANDARD.channel} channels with UPI Autopay.`,
   alternates: { canonical: CANONICAL },
   openGraph: {
     title: 'Social media scheduler for India - pay in rupees with UPI',
@@ -121,7 +121,7 @@ export default function IndiaSchedulerPage() {
           The social media scheduler you can pay for with UPI
         </h1>
         <p className="mt-5 max-w-[70ch] text-lg text-white/75">
-          Hookpost is a social media scheduler for India: it schedules posts to X, LinkedIn, YouTube, Bluesky, Telegram and
+          Hookpost is a social media scheduler for India: it schedules posts to Instagram, LinkedIn, YouTube, X, Bluesky, Telegram and
           more, and bills in rupees. Start on the free
           plan, then pay <strong className="text-white">{inr(STANDARD.month_price)} a month flat for {STANDARD.channel} channels</strong>{' '}
           through Razorpay with UPI Autopay, a card or NetBanking. No fee per channel, and no international card needed.
@@ -240,6 +240,10 @@ export default function IndiaSchedulerPage() {
           <p className="mt-10 text-white/60">
             Just want to try it?{' '}
             <Link href="/free-social-media-scheduler" className="text-[#FF4CE2] underline">What the free plan includes</Link>.
+            {' '}Comparing tools?{' '}
+            <Link href="/best-social-media-scheduler-india" className="text-[#FF4CE2] underline">The best schedulers for India, compared in rupees</Link>.
+            {' '}Planning festival posts?{' '}
+            <Link href="/social-media-calendar-india" className="text-[#FF4CE2] underline">Social media calendar for India</Link>.
           </p>
         </div>
       </section>

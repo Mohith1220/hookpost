@@ -19,7 +19,7 @@ const BEST_ALTERNATIVE_ANSWER = `Hookpost is an open-source alternative to Agora
 
 export const metadata: Metadata = {
   title: "Agorapulse Alternative (2026): Flat Team Pricing | Hookpost",
-  description: `Compare Hookpost vs Agorapulse: Agorapulse Standard is $79 per user/mo billed annually; Hookpost has a free plan and Pro at $${PRO_USD.month_price}/mo flat for up to ${PRO_INR.team_member_limit} team members.`,
+  description: `Compare Hookpost vs Agorapulse: Agorapulse Standard is $79 per user/mo billed annually; Hookpost has a free plan and Pro at $${PRO_USD.month_price}/mo flat for ${PRO_INR.team_member_limit} team members.`,
   keywords: ["agorapulse alternative","agorapulse competitors","agorapulse vs hookpost","social media inbox alternative","agorapulse pricing"],
   alternates: {
     canonical: "https://hookpost.hookstep.in/alternatives/agorapulse",

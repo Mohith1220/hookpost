@@ -1,8 +1,8 @@
-import { SectionFaq } from "../../SectionFaq";
+import { SectionFaq } from "../../../SectionFaq";
 import React from 'react';
 import Link from 'next/link';
 import { Metadata } from 'next';
-import { PUBLISHABLE_CHANNEL_COUNT } from '../../channels/channel-count';
+import { PUBLISHABLE_CHANNEL_COUNT } from '../../../channels/channel-count';
 
 export const metadata: Metadata = {
   title: 'Social Media Management for B2B SaaS Founders | Hookpost',

@@ -117,7 +117,7 @@ export default function McpPage() {
         "@type": "HowToStep",
         position: 3,
         name: "Restart Claude and Prompt Your Agent",
-        text: "Relaunch Claude Desktop. Look for the hammer icon showing list_channels, draft_post, schedule_post, and get_analytics, then prompt Claude to manage your social calendar.",
+        text: "Relaunch Claude Desktop. Look for the tools icon listing the Hookpost tools (integrationList, integrationSchema, schedulePostTool, postsListTool and others), then prompt Claude to manage your social calendar.",
       },
     ],
   };
@@ -139,7 +139,7 @@ export default function McpPage() {
         name: "What tools does the Hookpost MCP Server provide to AI agents?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Hookpost exposes four primary MCP tools: (1) list_channels: inspect connected profiles and limits, (2) draft_post: stage multi-network posts with character validation, (3) schedule_post: queue posts with ISO timestamps and media, and (4) get_analytics: retrieve engagement metrics.",
+          text: "The hosted MCP endpoint exposes integrationList (connected channels), groupList (customer groups), integrationSchema (per-channel rules and settings), schedulePostTool (create, schedule or draft a post), postsListTool (list scheduled and published posts), postSettingsTool, uploadFromUrlTool (attach media from a URL) and generateImageTool (AI image). The standalone stdio server in the repository offers list_channels, list_groups, get_channel_settings, find_free_slot, upload_media_from_url, create_post, list_posts and delete_post. Neither returns engagement analytics.",
         },
       },
       {
@@ -429,28 +429,43 @@ export default function McpPage() {
               </thead>
               <tbody className="divide-y divide-[#262626]">
                 <tr className="hover:bg-white/[0.02]">
-                  <td className="p-4 sm:p-5 font-mono text-[#FF4CE2]">list_channels</td>
-                  <td className="p-4 sm:p-5 text-white/80">Lists all active connected profiles, handles, and character constraints.</td>
-                  <td className="p-4 sm:p-5 text-white/60 font-mono text-xs">None</td>
+                  <td className="p-4 sm:p-5 font-mono text-[#FF4CE2]">integrationList</td>
+                  <td className="p-4 sm:p-5 text-white/80">Lists your connected channels, optionally filtered by customer group.</td>
+                  <td className="p-4 sm:p-5 text-white/60 font-mono text-xs">group?</td>
                 </tr>
                 <tr className="hover:bg-white/[0.02]">
-                  <td className="p-4 sm:p-5 font-mono text-[#FF4CE2]">draft_post</td>
-                  <td className="p-4 sm:p-5 text-white/80">Stages a drafted post with platform validation across multiple networks.</td>
-                  <td className="p-4 sm:p-5 text-white/60 font-mono text-xs">channels, content, mediaUrls?</td>
+                  <td className="p-4 sm:p-5 font-mono text-[#FF4CE2]">integrationSchema</td>
+                  <td className="p-4 sm:p-5 text-white/80">Returns a channel&apos;s posting rules, character limit and required settings before a post is written.</td>
+                  <td className="p-4 sm:p-5 text-white/60 font-mono text-xs">platform, isPremium?</td>
                 </tr>
                 <tr className="hover:bg-white/[0.02]">
-                  <td className="p-4 sm:p-5 font-mono text-[#FF4CE2]">schedule_post</td>
-                  <td className="p-4 sm:p-5 text-white/80">Queues content for automated dispatch at a specified UTC timestamp.</td>
-                  <td className="p-4 sm:p-5 text-white/60 font-mono text-xs">channels, content, scheduledAt, media?</td>
+                  <td className="p-4 sm:p-5 font-mono text-[#FF4CE2]">schedulePostTool</td>
+                  <td className="p-4 sm:p-5 text-white/80">Creates a post on one or more channels: publish now, schedule for a time, or save as a draft.</td>
+                  <td className="p-4 sm:p-5 text-white/60 font-mono text-xs">socialPost[] (integrationId, date, type, postsAndComments)</td>
                 </tr>
                 <tr className="hover:bg-white/[0.02]">
-                  <td className="p-4 sm:p-5 font-mono text-[#FF4CE2]">get_analytics</td>
-                  <td className="p-4 sm:p-5 text-white/80">Queries real-time impressions, engagement rates, and post performance.</td>
-                  <td className="p-4 sm:p-5 text-white/60 font-mono text-xs">postId?, channelId?, timeRange?</td>
+                  <td className="p-4 sm:p-5 font-mono text-[#FF4CE2]">postsListTool</td>
+                  <td className="p-4 sm:p-5 text-white/80">Lists scheduled and published posts in a date range.</td>
+                  <td className="p-4 sm:p-5 text-white/60 font-mono text-xs">startDate, endDate, customer?, includeAttachments?</td>
+                </tr>
+                <tr className="hover:bg-white/[0.02]">
+                  <td className="p-4 sm:p-5 font-mono text-[#FF4CE2]">uploadFromUrlTool</td>
+                  <td className="p-4 sm:p-5 text-white/80">Imports an image or video from a public URL into the media library for a post.</td>
+                  <td className="p-4 sm:p-5 text-white/60 font-mono text-xs">url</td>
+                </tr>
+                <tr className="hover:bg-white/[0.02]">
+                  <td className="p-4 sm:p-5 font-mono text-[#FF4CE2]">generateImageTool</td>
+                  <td className="p-4 sm:p-5 text-white/80">Generates an AI image to attach to a post (counts against the plan&apos;s AI image quota).</td>
+                  <td className="p-4 sm:p-5 text-white/60 font-mono text-xs">prompt</td>
                 </tr>
               </tbody>
             </table>
           </div>
+          <p className="text-center text-sm text-white/60">
+            The standalone stdio server in the repository exposes list_channels, list_groups, get_channel_settings, find_free_slot,
+            upload_media_from_url, create_post, list_posts and delete_post. How this compares with other schedulers:{' '}
+            <Link href="/social-media-mcp-servers" className="text-[#FF4CE2] underline">social media MCP servers compared</Link>.
+          </p>
         </section>
 
         {/* Interactive Production Prompt Formulas */}
@@ -498,11 +513,11 @@ export default function McpPage() {
 
             <div className="bg-[#111] border border-white/10 rounded-xl p-5 space-y-2">
               <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-indigo-400">4. Engagement Analytics Summary</span>
-                <span className="text-neutral-500 font-mono">Analytics API</span>
+                <span className="font-bold text-indigo-400">4. Weekly Publishing Recap</span>
+                <span className="text-neutral-500 font-mono">postsListTool</span>
               </div>
               <p className="text-sm text-neutral-300 font-mono bg-[#070707] p-3 rounded-lg border border-white/5">
-                &ldquo;Call get_analytics for our top 5 performing posts over the past 30 days. Breakdown impressions, click-throughs, and engagement rates by platform, and output an executive markdown summary.&rdquo;
+                &ldquo;List every post Hookpost published in the last 7 days, group them by channel, flag any channel with no posts, and output a markdown summary I can paste into our weekly update.&rdquo;
               </p>
             </div>
           </div>
@@ -561,7 +576,7 @@ export default function McpPage() {
             100% Private, On-Premise AI Execution
           </h2>
           <p className="text-gray-300 max-w-2xl mx-auto text-base leading-relaxed">
-            The Hookpost MCP Server connects directly from your local terminal to your Hookpost instance. Your API tokens, audience analytics, and drafted media never leave your controlled infrastructure.
+            Self-host Hookpost with Docker and point the MCP server at your own instance: your API keys, posts and media then stay on infrastructure you control. The hosted endpoint works the same way against hookpost.hookstep.in.
           </p>
           <div className="pt-2 flex justify-center gap-4">
             <Link

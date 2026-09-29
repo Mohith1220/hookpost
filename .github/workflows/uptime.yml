@@ -1,0 +1,76 @@
+name: Uptime
+
+# External uptime monitor for Hookpost, Tablamigo and Hookstep. Runs on
+# GitHub's runners on purpose: Hookpost and Tablamigo share one Contabo VM, so
+# a monitor on that VM would die with it. Checks live in scripts/uptime/checks.mjs.
+#
+# A check alerts after 2 consecutive failed runs: it opens an issue titled
+# "DOWN: <check>" and sends one email. On recovery it comments
+# "Recovered after N min", closes the issue and sends one more email.
+#
+# Needs the repo secret RESEND_API_KEY (scripts/set-uptime-secret.sh sets it).
+# Optional repo variables: ALERT_EMAIL (comma separated), ALERT_FROM.
+# GitHub runs schedules on a best-effort basis, so runs can land a few minutes late.
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  actions: write # only to delete this workflow's older state caches
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/uptime
+          sparse-checkout-cone-mode: false
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Consecutive-failure counts carried between runs. Cache keys are
+      # immutable, so each run saves a new key and restores the newest by prefix.
+      - name: Restore state
+        uses: actions/cache/restore@v4
+        with:
+          path: .uptime-state.json
+          key: uptime-state-${{ github.run_id }}
+          restore-keys: uptime-state-
+
+      - name: Run checks
+        run: node scripts/uptime/check.mjs .uptime-state.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ vars.ALERT_EMAIL }}
+          ALERT_FROM: ${{ vars.ALERT_FROM }}
+
+      - name: Save state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .uptime-state.json
+          key: uptime-state-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Delete older state caches
+        if: always()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          KEEP: uptime-state-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          gh cache list -R "$GITHUB_REPOSITORY" --key uptime-state- --limit 100 --json id,key \
+            --jq ".[] | select(.key != \"$KEEP\") | .id" \
+            | xargs -r -n1 gh cache delete -R "$GITHUB_REPOSITORY"

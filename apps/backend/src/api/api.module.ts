@@ -30,6 +30,8 @@ import { AutopostController } from '@hookpost/backend/api/routes/autopost.contro
 import { SetsController } from '@hookpost/backend/api/routes/sets.controller';
 import { ThirdPartyController } from '@hookpost/backend/api/routes/third-party.controller';
 import { MonitorController } from '@hookpost/backend/api/routes/monitor.controller';
+import { HealthController } from '@hookpost/backend/api/routes/health.controller';
+import { HealthService } from '@hookpost/nestjs-libraries/services/health.service';
 import { NoAuthIntegrationsController } from '@hookpost/backend/api/routes/no.auth.integrations.controller';
 import { EnterpriseController } from '@hookpost/backend/api/routes/enterprise.controller';
 import { OAuthAppController } from '@hookpost/backend/api/routes/oauth-app.controller';
@@ -82,6 +84,7 @@ const authenticatedController = [
         AuthController,
         PublicController,
         MonitorController,
+        HealthController,
         EnterpriseController,
         NoAuthIntegrationsController,
         MetaCallbacksController,
@@ -91,6 +94,7 @@ const authenticatedController = [
   providers: [
     AuthService,
     RazorpayService,
+    HealthService,
     OpenaiService,
     ExtractContentService,
     AuthMiddleware,

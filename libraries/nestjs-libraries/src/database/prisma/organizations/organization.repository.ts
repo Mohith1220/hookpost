@@ -21,7 +21,7 @@ export class OrganizationRepository {
   // clears it, and the badge counts elapsed days forever whether or not anyone
   // posted. On 2026-09-18 two of the three live streaks were exactly that: org
   // "testing" showed 13 days with its last publish 11 days earlier, and
-  // "Hookstep" showed 12 days having published nothing for 12.
+  // One workspace showed 12 days having published nothing for 12.
   //
   // A streak is a fact about the posting history, so derive it instead of
   // storing it. Returns the first day of the current run of consecutive days

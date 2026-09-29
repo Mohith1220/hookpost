@@ -3,13 +3,13 @@ import Link from "next/link";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About Hookpost & Hookstep — Open-Source Mission",
+  title: "About Hookpost — Open-Source Mission",
   description:
     "Learn about Hookpost, an AGPL open-source social media management engine built by Hookstep Empowering creators and agencies with data sovereignty.",
   keywords: [
     "about hookpost",
     "hookpost open source",
-    "Hookstep hookpost",
+    "hookstep hookpost",
     "postiz fork hookpost",
     "open source social media company",
   ],

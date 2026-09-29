@@ -3,10 +3,23 @@
 import Script from 'next/script';
 import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
+import { injectScript, whenEngaged } from './when-engaged';
 
 const PIXEL = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL;
 
-export const FacebookComponent = () => {
+/**
+ * deferUntilEngaged (marketing pages): install Meta's standard fbq stub right
+ * away, so init + PageView and any later fbq() call (ViewContent, SPA
+ * PageViews) queue on it, and load the library itself only after the first
+ * interaction or ~4s. The library drains fbq.queue when it arrives, so nothing
+ * fired in between is lost. Without the flag (logged-in app) it is the same
+ * lazyOnload snippet as before.
+ */
+export const FacebookComponent = ({
+  deferUntilEngaged = false,
+}: {
+  deferUntilEngaged?: boolean;
+}) => {
   const pathname = usePathname();
   // The init snippet already fires the first PageView, so the very first run of
   // this effect must not fire a second one for the same page.
@@ -28,7 +41,30 @@ export const FacebookComponent = () => {
     }
   }, [pathname]);
 
-  if (!PIXEL) {
+  useEffect(() => {
+    if (!PIXEL || !deferUntilEngaged) {
+      return;
+    }
+    const w = window as any;
+    if (!w.fbq) {
+      // Meta's snippet minus the <script> tag: same stub, same queue.
+      const n: any = function () {
+        // eslint-disable-next-line prefer-rest-params
+        n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+      };
+      w.fbq = n;
+      if (!w._fbq) w._fbq = n;
+      n.push = n;
+      n.loaded = true;
+      n.version = '2.0';
+      n.queue = [];
+      w.fbq('init', PIXEL);
+      w.fbq('track', 'PageView');
+    }
+    whenEngaged().then(() => injectScript('fb-pixel-lib', '/f.js'));
+  }, [deferUntilEngaged]);
+
+  if (!PIXEL || deferUntilEngaged) {
     return null;
   }
 

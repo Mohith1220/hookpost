@@ -410,7 +410,16 @@ export default function LandingLayout({
           WebkitFontSmoothing: 'antialiased',
         }}
       >
-        <GoogleOneTap />
+        {/*
+          deferUntilEngaged on all three third-party loaders: One Tap, the Meta
+          pixel and GTM/gtag load together on the first pointerdown, keydown,
+          scroll or touchstart, or after ~4s. lazyOnload alone still put them
+          inside the page load, and GTM + gtag (~427KB, ~258ms blocking) took
+          mobile Performance on / from 100 to 76. fbq and gtag/dataLayer stubs
+          are installed immediately, so every event fired before the scripts
+          arrive is queued and replayed. See components/layout/when-engaged.ts.
+        */}
+        <GoogleOneTap deferUntilEngaged />
         <RefCapture />
         {/*
           Analytics were mounted only in (app)/layout.tsx - the logged-in app -
@@ -441,10 +450,11 @@ export default function LandingLayout({
           If the campaigns are stopped, take these back out - the page weight is
           only worth paying for while it is buying something.
         */}
-        <FacebookComponent />
+        <FacebookComponent deferUntilEngaged />
         <GoogleTagManagerComponent
           gtmId={process.env.NEXT_PUBLIC_GTM_ID}
           googleAdsId={process.env.NEXT_PUBLIC_GOOGLE_ADS_ID}
+          deferUntilEngaged
         />
         {/*
           UtmSaver was mounted only in (app)/(provider)/(extension), never here.

@@ -4,6 +4,7 @@ import Script from 'next/script';
 import { FC, useEffect } from 'react';
 import { useUser } from '@hookpost/frontend/components/layout/user.context';
 import { useVariables } from '@hookpost/react/helpers/variable.context';
+import { injectScript, whenEngaged } from './when-engaged';
 
 export const TrialTracker: FC = () => {
   const user = useUser();
@@ -37,11 +38,11 @@ export const TrialTracker: FC = () => {
 export const GoogleTagManagerComponent: FC<{
   gtmId?: string;
   googleAdsId?: string;
-}> = ({ gtmId, googleAdsId }) => {
-  if (!gtmId && !googleAdsId) {
-    return null;
-  }
-
+  // Marketing pages: queue on dataLayer now, fetch gtm.js / gtag.js only after
+  // the first interaction or ~4s (see when-engaged.ts). Off = today's
+  // lazyOnload behaviour, which the logged-in app keeps.
+  deferUntilEngaged?: boolean;
+}> = ({ gtmId, googleAdsId, deferUntilEngaged = false }) => {
   // Two different Google products share this one env var, and they are not
   // interchangeable. A GTM container ("GTM-...") is loaded by gtm.js and reads
   // dataLayer; gtag.js takes a Google Ads ("AW-...") or GA4 ("G-...") id and
@@ -63,6 +64,45 @@ export const GoogleTagManagerComponent: FC<{
   const container = gtmId && gtmId.startsWith('GTM-') ? gtmId : undefined;
   // If NEXT_PUBLIC_GTM_ID itself holds an AW-/G- id, that is the gtag id.
   const tagId = googleAdsId || (!container ? gtmId : undefined);
+
+  useEffect(() => {
+    if (!deferUntilEngaged || (!container && !tagId)) {
+      return;
+    }
+    const w = window as any;
+    w.dataLayer = w.dataLayer || [];
+    if (tagId) {
+      // The standard gtag stub. It must push the `arguments` object itself,
+      // not an array - gtag.js only treats Arguments entries as commands.
+      if (!w.gtag) {
+        w.gtag = function () {
+          // eslint-disable-next-line prefer-rest-params
+          w.dataLayer.push(arguments);
+        };
+      }
+      w.gtag('js', new Date());
+      w.gtag('config', tagId);
+    }
+    whenEngaged().then(() => {
+      if (container) {
+        w.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        injectScript(
+          'google-tag-manager',
+          `https://www.googletagmanager.com/gtm.js?id=${container}`
+        );
+      }
+      if (tagId) {
+        injectScript(
+          'google-ads-gtag-lib',
+          `https://www.googletagmanager.com/gtag/js?id=${tagId}`
+        );
+      }
+    });
+  }, [deferUntilEngaged, container, tagId]);
+
+  if ((!gtmId && !googleAdsId) || deferUntilEngaged) {
+    return null;
+  }
 
   return (
     <>

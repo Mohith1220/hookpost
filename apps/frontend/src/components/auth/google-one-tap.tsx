@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { whenEngaged } from '@hookpost/frontend/components/layout/when-engaged';
 
 // Read at module scope: NEXT_PUBLIC_* is only inlined there (a read inside a
 // function silently came back undefined once before - see ViewContent).
@@ -22,7 +23,17 @@ declare global {
  * Renders nothing. Skips itself when the visitor is already logged in, when
  * no client id is configured, or when Google declines to show the prompt.
  */
-export function GoogleOneTap({ autoSelect = false }: { autoSelect?: boolean }): null {
+export function GoogleOneTap({
+  autoSelect = false,
+  deferUntilEngaged = false,
+}: {
+  autoSelect?: boolean;
+  // Marketing pages: load the GSI client after the first interaction or ~4s,
+  // together with the pixel and GTM (see when-engaged.ts), instead of on the
+  // first idle callback, which still landed inside the page load. The card
+  // still appears for logged-out visitors, a few seconds later.
+  deferUntilEngaged?: boolean;
+}): null {
   useEffect(() => {
     if (!CLIENT_ID || !BACKEND) return;
     if (document.cookie.split('; ').some((c) => c === 'hp_logged_in=1')) return;
@@ -79,6 +90,14 @@ export function GoogleOneTap({ autoSelect = false }: { autoSelect?: boolean }): 
     // Lighthouse and were trimmed by 70KB to get there, so it loads only once
     // the page is idle, never in the critical path.
     const w = window as any;
+    if (deferUntilEngaged) {
+      // `cancelled` makes a late resolve after unmount a no-op.
+      whenEngaged().then(load);
+      return () => {
+        cancelled = true;
+        window.google?.accounts?.id?.cancel?.();
+      };
+    }
     const idle = w.requestIdleCallback
       ? w.requestIdleCallback(load, { timeout: 4000 })
       : window.setTimeout(load, 2500);
@@ -89,7 +108,7 @@ export function GoogleOneTap({ autoSelect = false }: { autoSelect?: boolean }): 
       else window.clearTimeout(idle);
       window.google?.accounts?.id?.cancel?.();
     };
-  }, [autoSelect]);
+  }, [autoSelect, deferUntilEngaged]);
 
   return null;
 }

@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsDefined,
   IsEmail,
@@ -23,6 +24,10 @@ export class LoginUserDto {
   @ValidateIf((o) => !o.password)
   providerToken: string;
 
+  // " Jo@Gmail.com" is the same account as "jo@gmail.com"
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.trim().toLowerCase() : value
+  )
   @IsEmail()
   @IsDefined()
   email: string;

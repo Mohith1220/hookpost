@@ -53,7 +53,12 @@ export class GoogleProvider extends AuthProviderAbstract {
       if (!payload?.sub || !payload.email || !payload.email_verified) {
         return false as any;
       }
-      return { id: payload.sub, email: payload.email, name: payload.name };
+      return {
+        id: payload.sub,
+        email: payload.email,
+        name: payload.name,
+        emailVerified: true,
+      };
     }
 
     const client = makeClient(defaultRedirect());
@@ -65,6 +70,7 @@ export class GoogleProvider extends AuthProviderAbstract {
     return {
       id: data.id!,
       email: data.email!,
+      emailVerified: data.verified_email === true,
     };
   }
 }

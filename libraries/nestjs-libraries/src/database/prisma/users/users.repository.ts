@@ -115,7 +115,7 @@ export class UsersRepository {
     return this._user.model.user.findFirst({
       where: {
         email: {
-          equals: email,
+          equals: (email || '').trim(),
           mode: 'insensitive',
         },
         providerName: Provider.LOCAL,
@@ -128,6 +128,43 @@ export class UsersRepository {
             path: true,
           },
         },
+      },
+    });
+  }
+
+  // One email, one account: registration and OAuth sign-in look an email up
+  // across LOCAL and every provider before they create anyone. Oldest first,
+  // so accounts that were duplicated before this rule resolve the same way
+  // every time.
+  getUserByEmailAnyProvider(email: string) {
+    return this._user.model.user.findFirst({
+      where: {
+        email: {
+          equals: (email || '').trim(),
+          mode: 'insensitive',
+        },
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+  }
+
+  // A provider has just verified the email of a password account that never
+  // confirmed it. Activate it and drop the unconfirmed password, so whoever
+  // typed that password cannot sign in to the account the mailbox owner now
+  // uses. The owner can still set one through Forgot password.
+  activateWithVerifiedEmail(id: string) {
+    return this._user.model.user.updateMany({
+      where: {
+        id,
+        providerName: Provider.LOCAL,
+        activated: false,
+      },
+      data: {
+        activated: true,
+        password: '',
       },
     });
   }

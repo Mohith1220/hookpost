@@ -132,11 +132,17 @@ export class AppleProvider extends AuthProviderAbstract {
         audience,
         issuer: 'https://appleid.apple.com',
       }
-    ) as unknown as { sub: string; email: string };
+    ) as unknown as {
+      sub: string;
+      email: string;
+      email_verified?: boolean | string;
+    };
 
     return {
       id: payload.sub,
       email: payload.email,
+      // Apple sends this claim as a boolean or as the string "true"
+      emailVerified: String(payload.email_verified) === 'true',
     };
   }
 }

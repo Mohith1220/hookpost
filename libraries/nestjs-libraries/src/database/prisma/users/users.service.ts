@@ -27,6 +27,14 @@ export class UsersService {
     return this._usersRepository.getUserById(id);
   }
 
+  getUserByEmailAnyProvider(email: string) {
+    return this._usersRepository.getUserByEmailAnyProvider(email);
+  }
+
+  activateWithVerifiedEmail(id: string) {
+    return this._usersRepository.activateWithVerifiedEmail(id);
+  }
+
   getUserWithActiveSubscriptionByEmail(email: string, excludeUserId: string) {
     return this._usersRepository.getUserWithActiveSubscriptionByEmail(
       email,

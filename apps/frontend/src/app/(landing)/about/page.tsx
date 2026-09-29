@@ -149,6 +149,11 @@ export default function AboutPage() {
             <p className="mt-3 text-base text-white/70 leading-relaxed">
               Hookpost is built and operated by <strong className="text-white">Hookstep</strong> (based in Ghatkopar, Mumbai, India), part of the HookStep technology group. The same core team runs both operations and engineering.
             </p>
+            <p className="mt-3 text-base text-white/70 leading-relaxed">
+              Other products by the same team:{' '}
+              <a href="https://tablamigo.hookstep.in" className="text-white underline underline-offset-2 hover:text-[#FF4CE2]">Tablamigo</a>, an app to meet solo travelers nearby, and{' '}
+              <a href="https://hookstep.in" className="text-white underline underline-offset-2 hover:text-[#FF4CE2]">Hookstep</a>, for hiring vetted tech talent.
+            </p>
           </div>
 
           <div className="grid max-w-[640px] gap-6 sm:grid-cols-2">

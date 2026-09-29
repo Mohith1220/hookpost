@@ -125,6 +125,12 @@ export const SiteFooter = () => (
       <p className="mt-4 max-w-[48ch] text-sm leading-relaxed text-white/50">
         Open-source social media scheduling, by Hookstep
       </p>
+      <p className="mt-2 max-w-[48ch] text-sm leading-relaxed text-white/50">
+        Also by Hookstep:{' '}
+        <a href="https://tablamigo.hookstep.in" className="text-white/70 underline-offset-2 hover:text-[#FF4CE2] hover:underline">
+          Tablamigo, meet solo travelers nearby
+        </a>
+      </p>
 
       <div className="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-7">
         <Group group={PRODUCT} />
@@ -136,14 +142,10 @@ export const SiteFooter = () => (
       </div>
 
       <div className="mt-12 flex flex-col gap-3 border-t border-white/10 pt-7 text-sm text-white/60 sm:flex-row sm:items-center sm:justify-between">
-        {/* The operating address deliberately lives on /contact only, not
-            here. Razorpay requires it published somewhere reachable on the
-            site - a Contact page satisfies that - and it is the owner's
-            home address, so it is printed once rather than on every page.
-            If a Razorpay reviewer ever asks for it in the footer, add it
-            back here and keep it identical to the GST and IEC records. */}
+        {/* No address here: /contact shows the area only (Ghatkopar, Mumbai),
+            on the founder's instruction. Never print the street address. */}
         <p>
-          © {new Date().getFullYear()} Hookstep Licensed under AGPL-3.0.
+          © {new Date().getFullYear()} Hookstep. Licensed under AGPL-3.0.
         </p>
         <div className="flex flex-wrap items-center gap-6">
           <a

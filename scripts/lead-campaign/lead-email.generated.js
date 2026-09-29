@@ -412,8 +412,11 @@ var pricingGBP = {
 };
 
 // libraries/nestjs-libraries/src/emails/templates/lead-campaign.template.ts
+var DISCOUNT_PERCENT = 50;
+var CODE_TERMS = `${DISCOUNT_PERCENT}% off every payment, for the first 100 workspaces that subscribe by 31 Dec 2026`;
 function money(amount, isINR) {
-  return isINR ? `\u20B9${amount.toLocaleString("en-IN")}` : `$${amount.toLocaleString("en-US")}`;
+  const options = Number.isInteger(amount) ? {} : { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+  return isINR ? `\u20B9${amount.toLocaleString("en-IN", options)}` : `$${amount.toLocaleString("en-US", options)}`;
 }
 function generateLeadEmail(params) {
   const {
@@ -430,6 +433,9 @@ function generateLeadEmail(params) {
   const standard = (isINR ? pricingINR : pricingUSD).STANDARD;
   const monthly = money(standard.month_price, isINR);
   const yearly = money(standard.year_price, isINR);
+  const off = (price) => money(Math.round(price * (100 - DISCOUNT_PERCENT)) / 100, isINR);
+  const discountedMonthly = off(standard.month_price);
+  const discountedYearly = off(standard.year_price);
   const name = escapeHtml(displayName);
   const code = escapeHtml(discountCode);
   const base = appUrl2.replace(/\/+$/, "");
@@ -458,25 +464,26 @@ function generateLeadEmail(params) {
         `${strong("AI drafts.")} Turn one idea into a post sized for each platform, with hashtags.`,
         `${strong("Claude and Cursor.")} Schedule posts from your editor through the Hookpost MCP server or CLI.`
       ]) + button("Open your calendar", `${base}/launches`) + paragraph(
-        `When you're ready to upgrade, Standard is ${monthly}/month and code ${strong(code)} takes 50% off.`,
+        `When you're ready to upgrade, Standard is ${monthly}/month, or ${discountedMonthly}/month with code ${strong(code)}: ${CODE_TERMS}.`,
         { muted: true, small: true }
       ) + signoff("The Hookpost team")
     });
   }
   return buildEmail(`50% off Hookpost Standard with ${discountCode}`, {
-    preheader: `Standard is ${monthly}/month for ${standard.channel} channels. Your code takes 50% off.`,
+    preheader: `Standard is ${discountedMonthly}/month with your code, 50% off every payment.`,
     kind: "marketing",
     unsubscribeUrl,
     body: heading("Your Hookpost Standard offer") + paragraph(`Hi ${name},`) + paragraph(
       `Thanks for signing up for Hookpost${orgName ? ` for ${strong(escapeHtml(orgName))}` : ""}. When you need more than the free plan, Standard covers ${standard.channel} channels and ${standard.posts_per_month} posts a month, and code ${strong(
         code
-      )} takes 50% off.`
+      )} takes 50% off every payment for as long as you stay subscribed.`
     ) + details([
       ["Standard", `${monthly}/month or ${yearly}/year`],
+      ["With your code", `${discountedMonthly}/month or ${discountedYearly}/year`],
       ["Channels", `${standard.channel}`],
       ["Scheduled posts", `${standard.posts_per_month} a month`],
       ["AI captions", `${standard.ai_generation_count} a month`],
-      ["Your code", `${code} (50% off)`]
+      ["Your code", `${code} (${CODE_TERMS})`]
     ]) + button("See plans", `${base}/billing`) + paragraph(
       "Need a plan for a team or several client brands? Reply to this email and we'll help you pick.",
       { muted: true, small: true }

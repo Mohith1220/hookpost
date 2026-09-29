@@ -38,6 +38,10 @@ async function runTests() {
   assert(inr1.html.includes(INR_YEAR), `INR yearly price ${INR_YEAR} is present`);
   assert(!inr1.html.includes('₹349') && !inr1.html.includes('₹699'), 'Stale hard-coded prices are gone');
   assert(inr1.html.includes('LAUNCH50'), 'Discount code LAUNCH50 is present');
+  // LAUNCH50 is a percentOff 50 coupon: checkout charges exactly half, on
+  // every payment, until 31 Dec 2026 for 100 workspaces.
+  assert(inr1.html.includes('₹299.50/month or ₹2,995/year'), 'INR half price matches what checkout charges');
+  assert(inr1.html.includes('every payment') && inr1.html.includes('31 Dec 2026'), 'Code terms (every payment, expiry) are stated');
   assert(inr1.html.includes('Akhand'), 'Personalized name Akhand is present');
 
   // Test 2: Stage 1 Email Generation - USD
@@ -52,6 +56,7 @@ async function runTests() {
   assert(usd1.html.includes(`${USD_MONTH}/month`), `USD monthly price ${USD_MONTH} is present`);
   assert(usd1.html.includes(`${USD_YEAR}/year`), `USD annual price ${USD_YEAR} is present`);
   assert(usd1.html.includes('twitch'), 'Org name twitch is rendered');
+  assert(usd1.html.includes('$7.50/month or $75/year'), 'USD half price matches what checkout charges');
 
   // Test 3: Stage 2 Feature Spotlight Template
   console.log('\n--> Test 3: Stage 2 Feature Spotlight Template');

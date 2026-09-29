@@ -5,7 +5,10 @@ export default {
   displayName: 'backend',
   rootDir: '../..',
   testEnvironment: 'node',
-  roots: ['<rootDir>/apps/backend/src'],
+  roots: [
+    '<rootDir>/apps/backend/src',
+    '<rootDir>/libraries/nestjs-libraries/src',
+  ],
   testMatch: ['**/*.spec.ts'],
   transform: {
     '^.+\\.ts$': [

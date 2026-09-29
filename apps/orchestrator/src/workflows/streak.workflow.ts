@@ -21,8 +21,9 @@ export async function streakWorkflow({
     }
     await sendEmailAsync(
       user.user.email,
-      'Streak Reminder',
-      '<p>You are about to lose your streak in two hours! schedule a post now to keep it!</p>',
+      'Your posting streak ends in 2 hours',
+      // Wrapped in the shared email layout by EmailService.sendEmailSync.
+      '<p>Schedule a post in the next 2 hours to keep your streak going.</p>',
       'bottom'
     );
   }

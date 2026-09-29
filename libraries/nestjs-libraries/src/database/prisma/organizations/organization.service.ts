@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import { makeId } from '@hookpost/nestjs-libraries/services/make.is';
 import { Organization, ShortLinkPreference, User } from '@prisma/client';
 import { AutopostService } from '@hookpost/nestjs-libraries/database/prisma/autopost/autopost.service';
+import { teamInviteEmail } from '@hookpost/nestjs-libraries/emails/templates/auth.emails';
 
 @Injectable()
 export class OrganizationService {
@@ -133,11 +134,17 @@ export class OrganizationService {
       process.env.FRONTEND_URL +
       `/?org=${AuthService.signJWT({ ...body, orgId: org.id, timeLimit, id })}`;
     if (body.sendEmail) {
-      const inviter = user.name ? `${user.name} (${user.email})` : user.email;
+      const invite = teamInviteEmail({
+        inviterName: user.name,
+        inviterEmail: user.email,
+        orgName: org.name,
+        inviteUrl: url,
+        expiresInDays: 2,
+      });
       await this._notificationsService.sendEmail(
         body.email,
-        `${user.name || user.email} invited you to join "${org.name}"`,
-        `${inviter} has invited you to join the "${org.name}" team.<br /><a href="${url}">Accept the invitation</a> to get started.<br />The link will expire in 2 days.`
+        invite.subject,
+        invite.html
       );
     }
     return { url };

@@ -191,8 +191,12 @@ export async function postWorkflowV113({
   if (post.integration?.refreshNeeded) {
     await inAppNotification(
       post.organizationId,
-      `We couldn't post to ${post.integration?.providerIdentifier} for ${post?.integration?.name}`,
-      `We couldn't post to ${post.integration?.providerIdentifier} for ${post?.integration?.name} because you need to reconnect it. Please enable it and try again.`,
+      `Reconnect ${post?.integration?.name} on ${capitalize(
+        post.integration?.providerIdentifier
+      )} to keep posting`,
+      `We couldn't publish to ${post?.integration?.name} on ${capitalize(
+        post.integration?.providerIdentifier
+      )} because the connection needs refreshing. Reconnect the channel in Hookpost, then try the post again.`,
       true,
       false,
       'info'
@@ -211,8 +215,12 @@ export async function postWorkflowV113({
   if (post.integration?.disabled) {
     await inAppNotification(
       post.organizationId,
-      `We couldn't post to ${post.integration?.providerIdentifier} for ${post?.integration?.name}`,
-      `We couldn't post to ${post.integration?.providerIdentifier} for ${post?.integration?.name} because it's disabled. Please enable it and try again.`,
+      `We couldn't post to ${post?.integration?.name} on ${capitalize(
+        post.integration?.providerIdentifier
+      )}`,
+      `${post?.integration?.name} on ${capitalize(
+        post.integration?.providerIdentifier
+      )} is disabled in Hookpost. Enable the channel, then try the post again.`,
       true,
       false,
       'info'
@@ -420,14 +428,16 @@ export async function postWorkflowV113({
           await failRow(index, err);
           await inAppNotification(
             post.organizationId,
-            `Error posting${index === 0 ? ' ' : ' comments '}on ${
-              post.integration?.providerIdentifier
-            } for ${post?.integration?.name}`,
-            `An error occurred while posting${
-              index === 0 ? ' ' : ' comments '
-            }on ${post.integration?.providerIdentifier}${
-              handle.message ? `: ${handle.message}` : ``
-            }`,
+            `Your ${capitalize(post.integration?.providerIdentifier)} ${
+              index === 0 ? 'post' : 'comment'
+            } for ${post?.integration?.name} didn't publish`,
+            `${capitalize(post.integration?.providerIdentifier)} rejected the ${
+              index === 0 ? 'post' : 'comment'
+            }${
+              handle.message
+                ? `: ${String(handle.message).replace(/[.\s]+$/, '')}`
+                : ``
+            }. Open it in Hookpost to fix it and try again.`,
             true,
             false,
             'fail'
@@ -532,12 +542,12 @@ export async function postWorkflowV113({
           // send notification on a sucessful post
           await inAppNotification(
             post.integration.organizationId,
-            `Your post has been published on ${capitalize(
+            `Your post is live on ${capitalize(
               post.integration.providerIdentifier
             )}`,
-            `Your post has been published on ${capitalize(
+            `Your post is live on ${capitalize(
               post.integration.providerIdentifier
-            )} at ${postsResults[0].releaseURL}`,
+            )}: ${postsResults[0].releaseURL}`,
             true,
             true
           );
@@ -593,12 +603,16 @@ export async function postWorkflowV113({
         if (handle.type === 'bad-body') {
           await inAppNotification(
             post.organizationId,
-            `Error posting${i === 0 ? ' ' : ' comments '}on ${
-              post.integration?.providerIdentifier
-            } for ${post?.integration?.name}`,
-            `An error occurred while posting${i === 0 ? ' ' : ' comments '}on ${
-              post.integration?.providerIdentifier
-            }${handle.message ? `: ${handle.message}` : ``}`,
+            `Your ${capitalize(post.integration?.providerIdentifier)} ${
+              i === 0 ? 'post' : 'comment'
+            } for ${post?.integration?.name} didn't publish`,
+            `${capitalize(post.integration?.providerIdentifier)} rejected the ${
+              i === 0 ? 'post' : 'comment'
+            }${
+              handle.message
+                ? `: ${String(handle.message).replace(/[.\s]+$/, '')}`
+                : ``
+            }. Open it in Hookpost to fix it and try again.`,
             true,
             false,
             'fail'

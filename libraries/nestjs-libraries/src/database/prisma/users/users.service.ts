@@ -6,6 +6,7 @@ import { EmailNotificationsDto } from '@hookpost/nestjs-libraries/dtos/users/ema
 import { OrganizationRepository } from '@hookpost/nestjs-libraries/database/prisma/organizations/organization.repository';
 import { IntegrationRepository } from '@hookpost/nestjs-libraries/database/prisma/integrations/integration.repository';
 import { NotificationService } from '@hookpost/nestjs-libraries/database/prisma/notifications/notification.service';
+import { loginChangedEmail } from '@hookpost/nestjs-libraries/emails/templates/auth.emails';
 
 @Injectable()
 export class UsersService {
@@ -63,21 +64,18 @@ export class UsersService {
     // the swap is already committed; a notification failure must not fail it
     if (this._notificationService.hasEmailProvider()) {
       await Promise.all(
-        [kept, switched].map((account) =>
-          this._notificationService
-            .sendEmail(
+        [kept, switched].map(async (account) => {
+          try {
+            const message = loginChangedEmail({ email: account.email });
+            await this._notificationService.sendEmail(
               account.email,
-              'Your Hookpost login was changed',
-              `An administrator changed the login for your Hookpost account. ` +
-                `You can now sign in using ${account.email}. ` +
-                `Your subscription and plan were not changed by this switch — ` +
-                `if you intended to cancel a subscription, please do that ` +
-                `separately from your billing settings.`
-            )
-            .catch((err) =>
-              this._logger.error(`Failed to notify ${account.email}`, err)
-            )
-        )
+              message.subject,
+              message.html
+            );
+          } catch (err) {
+            this._logger.error(`Failed to notify ${account.email}`, err);
+          }
+        })
       );
     }
 

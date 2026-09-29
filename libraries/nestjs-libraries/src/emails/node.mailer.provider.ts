@@ -25,13 +25,15 @@ export class NodeMailerProvider implements EmailInterface {
     subject: string,
     html: string,
     emailFromName: string,
-    emailFromAddress: string
+    emailFromAddress: string,
+    replyTo?: string,
+    text?: string
   ) {
     const sends = await transporter.sendMail({
       from: `${emailFromName} <${emailFromAddress}>`, // sender address
       to: to, // list of receivers
       subject: subject, // Subject line
-      text: html, // plain text body
+      text: text || html, // plain text body
       html: html, // html body
     });
 

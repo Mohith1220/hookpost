@@ -7,6 +7,8 @@ export interface EmailInterface {
     html: string,
     emailFromName: string,
     emailFromAddress: string,
-    replyTo?: string
+    replyTo?: string,
+    /** Plain-text alternative. Every email should send one. */
+    text?: string
   ): Promise<any>;
 }

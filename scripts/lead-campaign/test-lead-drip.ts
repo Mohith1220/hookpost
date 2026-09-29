@@ -3,6 +3,13 @@
  */
 
 import { generateLeadEmail, LeadEmailParams } from '../../libraries/nestjs-libraries/src/emails/templates/lead-campaign.template';
+import { pricingINR, pricingUSD } from '../../libraries/nestjs-libraries/src/database/prisma/subscriptions/pricing';
+
+// Prices come from the live pricing table, so the email can never drift from checkout.
+const INR_MONTH = `₹${pricingINR.STANDARD.month_price.toLocaleString('en-IN')}`;
+const INR_YEAR = `₹${pricingINR.STANDARD.year_price.toLocaleString('en-IN')}`;
+const USD_MONTH = `$${pricingUSD.STANDARD.month_price}`;
+const USD_YEAR = `$${pricingUSD.STANDARD.year_price}`;
 
 function assert(condition: boolean, msg: string) {
   if (!condition) {
@@ -26,9 +33,10 @@ async function runTests() {
     currency: 'INR',
     stage: 'STAGE_1_LAUNCH'
   });
-  assert(inr1.subject.includes('USD & INR pricing unlocked'), 'Subject includes multi-currency launch');
-  assert(inr1.html.includes('₹349'), 'INR discounted price ₹349 is present');
-  assert(inr1.html.includes('₹699'), 'INR original price ₹699 is present');
+  assert(inr1.subject.includes('50% off') && inr1.subject.length <= 50, 'Subject names the offer in under 50 characters');
+  assert(inr1.html.includes(INR_MONTH), `INR monthly price ${INR_MONTH} is present`);
+  assert(inr1.html.includes(INR_YEAR), `INR yearly price ${INR_YEAR} is present`);
+  assert(!inr1.html.includes('₹349') && !inr1.html.includes('₹699'), 'Stale hard-coded prices are gone');
   assert(inr1.html.includes('LAUNCH50'), 'Discount code LAUNCH50 is present');
   assert(inr1.html.includes('Akhand'), 'Personalized name Akhand is present');
 
@@ -41,9 +49,8 @@ async function runTests() {
     currency: 'USD',
     stage: 'STAGE_1_LAUNCH'
   });
-  assert(usd1.html.includes('$4.50'), 'USD discounted price $4.50 is present');
-  assert(usd1.html.includes('$9'), 'USD original price $9 is present');
-  assert(usd1.html.includes('$39.50/year'), 'USD annual price is present');
+  assert(usd1.html.includes(`${USD_MONTH}/month`), `USD monthly price ${USD_MONTH} is present`);
+  assert(usd1.html.includes(`${USD_YEAR}/year`), `USD annual price ${USD_YEAR} is present`);
   assert(usd1.html.includes('twitch'), 'Org name twitch is rendered');
 
   // Test 3: Stage 2 Feature Spotlight Template
@@ -54,8 +61,8 @@ async function runTests() {
     currency: 'INR',
     stage: 'STAGE_2_FEATURES'
   });
-  assert(featEmail.subject.includes('Publish across 17+ platforms'), 'Stage 2 subject focuses on 17+ platforms');
-  assert(featEmail.html.includes('Unified Visual Calendar'), 'Calendar feature is highlighted');
+  assert(featEmail.subject.includes('One post, every channel'), 'Stage 2 subject explains the product');
+  assert(featEmail.html.includes('Calendar.'), 'Calendar feature is highlighted');
   assert(featEmail.html.includes('Cursor') && featEmail.html.includes('Claude'), 'Developer tools mentioned');
 
   // Test 4: Stage 3 Founder Personal Touch Template
@@ -66,8 +73,8 @@ async function runTests() {
     currency: 'USD',
     stage: 'STAGE_3_FOUNDER'
   });
-  assert(founderEmail.subject.includes('Quick question regarding your Hookpost setup'), 'Founder subject line matches pattern');
-  assert(founderEmail.text.includes('Jatinder here from Hookpost'), 'Founder intro in plain text');
+  assert(founderEmail.subject.includes('Quick question about your Hookpost setup'), 'Founder subject line matches pattern');
+  assert(founderEmail.text.includes('Mohan here, founder of Hookpost'), 'Founder intro in plain text');
   assert(founderEmail.text.includes('support@hookstep.in'), 'Founder email contact present');
 
   // Test 5: Currency IP Resolution Logic
@@ -116,18 +123,23 @@ async function runTests() {
   // Test 8: Mobile-Responsive HTML Structure & Tags
   console.log('\n--> Test 8: Mobile-Responsive HTML Structure');
   assert(inr1.html.includes('meta name="viewport"'), 'Viewport meta tag present');
-  assert(inr1.html.includes('max-width: 600px'), 'Standard 600px container present');
-  assert(inr1.html.includes('Claim 50% Off'), 'Clear call-to-action button present');
+  assert(inr1.html.includes('max-width:600px'), 'Standard 600px container present');
+  assert(inr1.html.includes('data-hp-button') && inr1.html.includes('See plans'), 'Clear call-to-action button present');
 
   // Test 9: CAN-SPAM Compliance Requirements
   console.log('\n--> Test 9: CAN-SPAM Compliance Requirements');
   assert(inr1.html.includes('Unsubscribe'), 'Unsubscribe option is present');
   assert(inr1.text.includes('Unsubscribe'), 'Plain text contains unsubscribe');
-  assert(inr1.html.includes('Sent by Hookpost'), 'Sender identity is clearly disclosed');
+  assert(inr1.html.includes('Hookpost by Hookstep'), 'Sender identity is clearly disclosed');
+  for (const e of [inr1, usd1, featEmail, founderEmail]) {
+    assert(e.html.includes('Ghatkopar, Mumbai, India'), `City-level location only in footer (${e.subject})`);
+    assert(!/Pathankot|Example Street|Examplepur|145023/i.test(e.html + e.text), `No street address (${e.subject})`);
+    assert(!/stripe/i.test(e.html + e.text), `No Stripe mention (${e.subject})`);
+  }
 
   // Test 10: Multi-Currency Pricing Parity
   console.log('\n--> Test 10: Multi-Currency Pricing Parity');
-  assert(inr1.html.includes('₹349') && usd1.html.includes('$4.50'), 'Both currencies accurately represent 50% discount');
+  assert(inr1.html.includes(INR_MONTH) && usd1.html.includes(USD_MONTH), 'Both currencies quote the live Standard price');
 
   console.log('\n================================================================');
   console.log('ALL 10 LEAD DRIP & CAMPAIGN TESTS PASSED WITH ZERO ERRORS! [10/10]');

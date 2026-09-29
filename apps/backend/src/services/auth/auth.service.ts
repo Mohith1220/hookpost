@@ -11,6 +11,10 @@ import { NotificationService } from '@hookpost/nestjs-libraries/database/prisma/
 import { ForgotReturnPasswordDto } from '@hookpost/nestjs-libraries/dtos/auth/forgot-return.password.dto';
 import { EmailService } from '@hookpost/nestjs-libraries/services/email.service';
 import { NewsletterService } from '@hookpost/nestjs-libraries/newsletter/newsletter.service';
+import {
+  activationEmail,
+  passwordResetEmail,
+} from '@hookpost/nestjs-libraries/emails/templates/auth.emails';
 
 @Injectable()
 export class AuthService {
@@ -73,10 +77,13 @@ export class AuthService {
             : false;
 
         const obj = { addedOrg, jwt: await this.jwt(create.users[0].user) };
+        const activation = activationEmail({
+          activationUrl: `${process.env.FRONTEND_URL}/auth/activate/${obj.jwt}`,
+        });
         await this._emailService.sendEmail(
           body.email,
-          'Activate your account',
-          `Click <a href="${process.env.FRONTEND_URL}/auth/activate/${obj.jwt}">here</a> to activate your account`,
+          activation.subject,
+          activation.html,
           'top'
         );
         return obj;
@@ -225,10 +232,14 @@ export class AuthService {
       expires: dayjs().add(20, 'minutes').format('YYYY-MM-DD HH:mm:ss'),
     });
 
+    const reset = passwordResetEmail({
+      resetUrl: `${process.env.FRONTEND_URL}/auth/forgot/${resetValues}`,
+      expiresInMinutes: 20,
+    });
     await this._notificationService.sendEmail(
       user.email,
-      'Reset your password',
-      `You have requested to reset your passsord. <br />Click <a href="${process.env.FRONTEND_URL}/auth/forgot/${resetValues}">here</a> to reset your password<br />The link will expire in 20 minutes`
+      reset.subject,
+      reset.html
     );
   }
 
@@ -278,10 +289,13 @@ export class AuthService {
 
     const jwt = await this.jwt(user);
 
+    const activation = activationEmail({
+      activationUrl: `${process.env.FRONTEND_URL}/auth/activate/${jwt}`,
+    });
     await this._emailService.sendEmail(
       user.email,
-      'Activate your account',
-      `Click <a href="${process.env.FRONTEND_URL}/auth/activate/${jwt}">here</a> to activate your account`,
+      activation.subject,
+      activation.html,
       'top'
     );
 

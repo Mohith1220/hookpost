@@ -308,10 +308,14 @@ export class IntegrationService {
     integration: Integration,
     err = ''
   ) {
+    const provider = String(integration.providerIdentifier || '');
+    const platform = provider.charAt(0).toUpperCase() + provider.slice(1);
     await this._notificationService.inAppNotification(
       orgId,
-      `Could not refresh your ${integration.providerIdentifier} channel ${err}`,
-      `Could not refresh your ${integration.providerIdentifier} channel ${err}. Please go back to the system and connect it again ${process.env.FRONTEND_URL}/launches`,
+      `Reconnect your ${platform} channel`,
+      `We couldn't refresh the connection to your ${platform} channel${
+        err ? ` (${err})` : ''
+      }, so posts to it will fail until you reconnect it: ${process.env.FRONTEND_URL}/launches`,
       true,
       false,
       'info'

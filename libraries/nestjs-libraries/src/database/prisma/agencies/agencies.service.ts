@@ -3,6 +3,11 @@ import { AgenciesRepository } from '@hookpost/nestjs-libraries/database/prisma/a
 import { User } from '@prisma/client';
 import { CreateAgencyDto } from '@hookpost/nestjs-libraries/dtos/agencies/create.agency.dto';
 import { NotificationService } from '@hookpost/nestjs-libraries/database/prisma/notifications/notification.service';
+import {
+  agencyApprovedEmail,
+  agencyDeclinedEmail,
+  newAgencyAdminEmail,
+} from '@hookpost/nestjs-libraries/emails/templates/agency.emails';
 
 @Injectable()
 export class AgenciesService {
@@ -35,48 +40,24 @@ export class AgenciesService {
     const agency = await this._agenciesRepository.getAgencyById(id);
 
     if (action === 'approve') {
+      const approved = agencyApprovedEmail({
+        agencyName: agency?.name,
+        agencySlug: agency?.slug,
+      });
       await this._notificationService.sendEmail(
         agency?.user?.email!,
-        'Your Agency has been approved and added to Hookpost 🚀',
-        `
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Agency has been approved and added to Hookpost 🚀</title>
-</head>
-
-<body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
-  Hi there, <br /><br />
-  Your agency ${agency?.name} has been added to Hookpost!<br />
-  You can <a href="https://hookpost.hookstep.in/agencies/${agency?.slug}">check it here</a><br />
-  It will appear on the main agency of Hookpost in the next 24 hours.<br /><br />
-</body>
-</html>`
+        approved.subject,
+        approved.html
       );
 
       return;
     }
 
+    const declined = agencyDeclinedEmail({ agencyName: agency?.name });
     await this._notificationService.sendEmail(
       agency?.user?.email!,
-      'Your Agency has been declined 😔',
-      `
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Agency has been declined</title>
-</head>
-
-<body style="font-family: Arial, sans-serif; margin: 0; padding: 0;">
-  Hi there, <br /><br />
-  Your agency ${agency?.name} has been declined to Hookpost!<br />
-  If you think we have made a mistake, please reply to this email and let us know
-</body>
-</html>`
+      declined.subject,
+      declined.html
     );
 
     return;
@@ -87,133 +68,25 @@ export class AgenciesService {
     // Upstream hard-coded its own founder's address here; the rebrand pointed it
     // at a domain this deployment does not own, so the notification would bounce
     // (or reach a stranger). Configure ADMIN_NOTIFICATION_EMAIL to receive it.
+    const adminEmail = newAgencyAdminEmail({
+      agencyId: agency.id,
+      name: body.name,
+      website: body.website,
+      facebook: body.facebook,
+      instagram: body.instagram,
+      twitter: body.twitter,
+      linkedIn: body.linkedIn,
+      youtube: body.youtube,
+      tiktok: body.tiktok,
+      logoPath: body.logo?.path,
+      shortDescription: body.shortDescription,
+      description: body.description,
+      niches: body.niches,
+    });
     await this._notificationService.sendEmail(
       process.env.ADMIN_NOTIFICATION_EMAIL || '',
-      'New agency created',
-      `
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Template</title>
-</head>
-
-<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
-    <table align="center" cellpadding="0" cellspacing="0" style="max-width: 600px; width: 100%; background-color: #ffffff; margin-top: 20px; border: 1px solid #ddd;">
-        <tr>
-            <td style="padding: 0 20px 20px 20px; text-align: center;">
-                <!-- Website -->
-                <a href="${
-                  body.website
-                }" style="text-decoration: none; color: #007bff;">${
-        body.website
-      }</a>
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 20px; text-align: center;">
-                <!-- Social Media Links -->
-                <p style="margin: 10px 0; font-size: 16px;">
-                    Social Medias:
-                    <a href="${
-                      body.facebook
-                    }" style="margin: 0 10px; text-decoration: none; color: #007bff;">${
-        body.facebook
-      }</a><br />
-                    <a href="${
-                      body.instagram
-                    }" style="margin: 0 10px; text-decoration: none; color: #007bff;">${
-        body.instagram
-      }</a><br />
-                    <a href="${
-                      body.twitter
-                    }" style="margin: 0 10px; text-decoration: none; color: #007bff;">${
-        body.twitter
-      }</a><br />
-                    <a href="${
-                      body.linkedIn
-                    }" style="margin: 0 10px; text-decoration: none; color: #007bff;">${
-        body.linkedIn
-      }</a><br />
-                    <a href="${
-                      body.youtube
-                    }" style="margin: 0 10px; text-decoration: none; color: #007bff;">${
-        body.youtube
-      }</a><br />
-                    <a href="${
-                      body.tiktok
-                    }" style="margin: 0 10px; text-decoration: none; color: #007bff;">${
-        body.tiktok
-      }</a>
-                </p>
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 20px;">
-                <!-- Short Description -->
-                <h2 style="text-align: center; color: #333;">Logo</h2>
-                <p style="text-align: center; color: #555; font-size: 16px;">
-                  <img src="${body.logo.path}" width="60" height="60" />
-                </p>
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 20px;">
-                <!-- Short Description -->
-                <h2 style="text-align: center; color: #333;">Name</h2>
-                <p style="text-align: center; color: #555; font-size: 16px;">${
-                  body.name
-                }</p>
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 20px;">
-                <!-- Short Description -->
-                <h2 style="text-align: center; color: #333;">Short Description</h2>
-                <p style="text-align: center; color: #555; font-size: 16px;">${
-                  body.shortDescription
-                }</p>
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 20px;">
-                <!-- Description -->
-                <h2 style="text-align: center; color: #333;">Description</h2>
-                <p style="text-align: center; color: #555; font-size: 16px;">${
-                  body.description
-                }</p>
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 20px;">
-                <!-- Niches -->
-                <h2 style="text-align: center; color: #333;">Niches</h2>
-                <p style="text-align: center; color: #555; font-size: 16px;">${body.niches.join(
-                  ','
-                )}</p>
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 20px; text-align: center; background-color: #000;">
-                <a href="https://hookpost.hookstep.in/agencies/action/approve/${
-                  agency.id
-                }" style="margin: 0 10px; text-decoration: none; color: #007bff;">To approve click here</a><br /><br /><br />
-                <a href="https://hookpost.hookstep.in/agencies/action/decline/${
-                  agency.id
-                }" style="margin: 0 10px; text-decoration: none; color: #007bff;">To decline click here</a><br /><br /><br />
-            </td>
-        </tr>
-        <tr>
-            <td style="padding: 20px; text-align: center; background-color: #f4f4f4;">
-                <p style="color: #777; font-size: 14px;">&copy; 2024 Your Gitroom Limited All rights reserved.</p>
-            </td>
-        </tr>
-    </table>
-</body>
-
-</html>
-    `
+      adminEmail.subject,
+      adminEmail.html
     );
     return agency;
   }

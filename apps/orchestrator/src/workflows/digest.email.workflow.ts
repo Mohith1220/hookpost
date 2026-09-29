@@ -57,8 +57,15 @@ export async function digestEmailWorkflow({
         user.user.email,
         toSend.length === 1
           ? toSend[0].title
-          : `[Hookpost] Your latest notifications`,
-        toSend.map((p) => p.message).join('<br/>'),
+          : `${toSend.length} updates from Hookpost`,
+        // One paragraph per update; EmailService wraps it in the shared layout.
+        toSend
+          .map((p, i) =>
+            i < toSend.length - 1
+              ? `<p style="margin:0 0 12px 0;padding:0 0 12px 0;border-bottom:1px solid #E6E9EF;">${p.message}</p>`
+              : `<p style="margin:0 0 16px 0;">${p.message}</p>`
+          )
+          .join(''),
         'bottom'
       );
     }

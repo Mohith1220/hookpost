@@ -1,7 +1,25 @@
 /**
- * High-Converting Multi-Currency Lead Nurture Email Templates
- * Designed for maximum deliverability, mobile responsiveness, and dark-mode compatibility.
+ * Lead nurture drip for free workspaces: day 1, day 3 and day 7 after signup.
+ * Sent by scripts/lead-campaign/run-lead-drip.js (cron on the server), which
+ * uses an esbuild bundle of this file, so keep imports to import-free modules
+ * (the email layout and the pricing table). After changing this file, run
+ * scripts/lead-campaign/build-lead-email.sh and commit the regenerated bundle.
+ *
+ * Prices come from the live pricing table rather than being typed in here, so
+ * the email can never quote a price the checkout does not charge.
  */
+import {
+  buildEmail,
+  button,
+  details,
+  escapeHtml,
+  heading,
+  paragraph,
+  signoff,
+  steps,
+  strong,
+} from '../layout/email.layout';
+import { pricingINR, pricingUSD } from '../../database/prisma/subscriptions/pricing';
 
 export interface LeadEmailParams {
   userName?: string | null;
@@ -13,7 +31,17 @@ export interface LeadEmailParams {
   appUrl?: string;
 }
 
-export function generateLeadEmail(params: LeadEmailParams): { subject: string; html: string; text: string } {
+function money(amount: number, isINR: boolean): string {
+  return isINR
+    ? `₹${amount.toLocaleString('en-IN')}`
+    : `$${amount.toLocaleString('en-US')}`;
+}
+
+export function generateLeadEmail(params: LeadEmailParams): {
+  subject: string;
+  html: string;
+  text: string;
+} {
   const {
     userName,
     orgName,
@@ -21,189 +49,90 @@ export function generateLeadEmail(params: LeadEmailParams): { subject: string; h
     currency,
     stage,
     discountCode = 'LAUNCH50',
-    appUrl = 'https://hookpost.hookstep.in'
+    appUrl = 'https://hookpost.hookstep.in',
   } = params;
 
   const displayName = userName || (email ? email.split('@')[0] : 'there');
   const isINR = currency === 'INR';
-  
-  // Pricing config
-  const originalMonthly = isINR ? '₹699' : '$9';
-  const discountedMonthly = isINR ? '₹349' : '$4.50';
-  const originalYearly = isINR ? '₹6,999' : '$79';
-  const discountedYearly = isINR ? '₹3,499' : '$39.50';
-  const currencySymbol = isINR ? '₹' : '$';
+  const standard = (isINR ? pricingINR : pricingUSD).STANDARD;
+  const monthly = money(standard.month_price, isINR);
+  const yearly = money(standard.year_price, isINR);
+  const name = escapeHtml(displayName);
+  const code = escapeHtml(discountCode);
+  const base = appUrl.replace(/\/+$/, '');
+  const unsubscribeUrl = 'mailto:support@hookstep.in?subject=Unsubscribe';
 
   if (stage === 'STAGE_3_FOUNDER') {
-    const subject = 'Quick question regarding your Hookpost setup';
-    const text = `Hey ${displayName},\n\nJatinder here from Hookpost.\n\nI noticed you created an account on Hookpost recently (${orgName ? `for ${orgName}` : 'to automate your social channels'}), but haven't had a chance to launch your first post yet.\n\nAre you looking to manage your personal brand, or client accounts across multiple platforms?\n\nIf you ran into any friction during setup or have questions about our multi-platform scheduling (LinkedIn, X, Instagram, Facebook, Threads, Slack, Discord), just reply directly to this email. I read and respond to every note personally.\n\nBest,\nJatinder Mahajan\nFounder, Hookpost\nsupport@hookstep.in`;
-
-    const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1F2937; margin: 0; padding: 24px; }
-    p { margin-bottom: 16px; font-size: 15px; }
-    .footer { margin-top: 32px; font-size: 12px; color: #6B7280; border-top: 1px solid #E5E7EB; padding-top: 16px; }
-  </style>
-</head>
-<body>
-  <p>Hey ${displayName},</p>
-  <p>Jatinder here from Hookpost.</p>
-  <p>I noticed you created an account on Hookpost recently${orgName ? ` for <strong>${orgName}</strong>` : ''}, but haven't had a chance to launch your first post yet.</p>
-  <p>Are you looking to manage your personal brand, or client accounts across multiple social platforms?</p>
-  <p>If you ran into any friction during setup or have questions about our multi-platform scheduling (LinkedIn, X, Instagram, Facebook, Threads, Slack, Discord), just reply directly to this email. I read and respond to every message personally.</p>
-  <p>Looking forward to hearing your thoughts,</p>
-  <p><strong>Jatinder Mahajan</strong><br>Founder, Hookpost<br><a href="${appUrl}">hookpost.hookstep.in</a></p>
-  <div class="footer">
-    Sent by Hookpost, Singapore & India.<br>
-    To update your email preferences or unsubscribe, please reply with "Unsubscribe".
-  </div>
-</body>
-</html>`;
-    return { subject, html, text };
+    return buildEmail('Quick question about your Hookpost setup', {
+      preheader: 'Personal brand or client accounts? Reply and tell me.',
+      kind: 'marketing',
+      unsubscribeUrl,
+      body:
+        paragraph(`Hi ${name},`) +
+        paragraph(
+          `Mohan here, founder of Hookpost. You signed up a week ago${
+            orgName ? ` for ${strong(escapeHtml(orgName))}` : ''
+          }, and I wanted to check how setup is going.`
+        ) +
+        paragraph(
+          'Are you posting for your own brand, or managing accounts for clients?'
+        ) +
+        paragraph(
+          'If anything got in the way, like connecting a channel or choosing a plan, reply to this email and tell me. I read and answer every reply myself.'
+        ) +
+        signoff('Mohan Bhanushali', 'Founder, Hookpost'),
+    });
   }
 
   if (stage === 'STAGE_2_FEATURES') {
-    const subject = 'Publish across 17+ platforms in 1 click (Feature Spotlight) 🚀';
-    const text = `Hey ${displayName},\n\nManaging multiple social media accounts doesn't have to be a full-time chore.\n\nWith Hookpost, you get:\n• 1-Click Multi-Posting across LinkedIn, X/Twitter, Instagram, Threads, Facebook, Slack, and Discord.\n• Unified Visual Calendar: Drag-and-drop scheduling with optimal posting slots.\n• AI Caption Engine: Craft platform-native hooks and threads in seconds.\n• Developer-First Tools: Cursor and Claude native MCP server + CLI.\n\nActivate your access with 50% off using code ${discountCode}:\n${appUrl}\n\nBest,\nThe Hookpost Team`;
-
-    const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hookpost Features</title>
-  <style>
-    body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0B0F19; color: #F3F4F6; }
-    .container { max-width: 600px; margin: 0 auto; background-color: #111827; border: 1px solid #1F2937; border-radius: 12px; overflow: hidden; }
-    .header { padding: 32px 24px; text-align: center; background: linear-gradient(180deg, #1E1B4B 0%, #111827 100%); border-bottom: 1px solid #374151; }
-    .badge { display: inline-block; background-color: rgba(99, 102, 241, 0.15); color: #818CF8; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 9999px; border: 1px solid rgba(99, 102, 241, 0.3); text-transform: uppercase; letter-spacing: 0.05em; }
-    .content { padding: 32px 24px; }
-    .feature-card { background-color: #1F2937; border: 1px solid #374151; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-    .feature-title { font-size: 15px; font-weight: 600; color: #E0E7FF; margin-bottom: 4px; }
-    .feature-desc { font-size: 13px; color: #9CA3AF; margin: 0; }
-    .btn { display: inline-block; background-color: #4F46E5; color: #FFFFFF !important; font-size: 15px; font-weight: 600; text-decoration: none; padding: 14px 28px; border-radius: 8px; text-align: center; }
-    .footer { padding: 24px; text-align: center; font-size: 12px; color: #6B7280; border-top: 1px solid #1F2937; }
-  </style>
-</head>
-<body>
-  <div style="padding: 24px 12px;">
-    <div class="container">
-      <div class="header">
-        <div class="badge">Feature Spotlight</div>
-        <h1 style="color: #FFFFFF; font-size: 24px; font-weight: 700; margin: 16px 0 8px 0;">Publish to 17+ Channels in 1 Click</h1>
-        <p style="color: #9CA3AF; font-size: 14px; margin: 0;">Save 10+ hours every week with automated scheduling.</p>
-      </div>
-      <div class="content">
-        <p style="font-size: 15px; color: #D1D5DB; line-height: 1.6;">Hey <strong>${displayName}</strong>,</p>
-        <p style="font-size: 14px; color: #9CA3AF; line-height: 1.6;">Switching between 6 different tabs to post the same update is a massive time sink. Hookpost unifies your entire publishing stack into one lightning-fast dashboard.</p>
-        
-        <div class="feature-card">
-          <div class="feature-title">📅 Unified Visual Calendar</div>
-          <p class="feature-desc">Drag-and-drop posts, visualize scheduling cadence, and preview exact layouts for LinkedIn, X, Instagram, and Discord.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-title">🤖 AI Caption & Thread Generator</div>
-          <p class="feature-desc">Transform a single raw thought into high-engagement platform-specific posts, threads, and hashtags.</p>
-        </div>
-
-        <div class="feature-card">
-          <div class="feature-title">⚡ Developer CLI & Native Cursor/Claude MCP</div>
-          <p class="feature-desc">Schedule posts directly from your IDE or terminal without ever opening a browser.</p>
-        </div>
-
-        <div style="text-align: center; margin: 32px 0 16px 0;">
-          <a href="${appUrl}" class="btn">Explore Hookpost Features →</a>
-        </div>
-        <p style="text-align: center; font-size: 13px; color: #818CF8; margin: 0;">Use launch code <strong>${discountCode}</strong> for 50% off any plan.</p>
-      </div>
-      <div class="footer">
-        © 2026 Hookpost. Built for creators & growth teams.<br>
-        <a href="${appUrl}/privacy" style="color: #6B7280; text-decoration: underline;">Privacy</a> • <a href="${appUrl}/terms" style="color: #6B7280; text-decoration: underline;">Terms</a>
-      </div>
-    </div>
-  </div>
-</body>
-</html>`;
-    return { subject, html, text };
+    return buildEmail('One post, every channel: how Hookpost works', {
+      preheader: 'The calendar, AI drafts and the Claude/Cursor integration, in one minute.',
+      kind: 'marketing',
+      unsubscribeUrl,
+      body:
+        heading('One post, every channel') +
+        paragraph(`Hi ${name}, here's what most people set up in their first week on Hookpost:`) +
+        steps([
+          `${strong('Calendar.')} See and drag every scheduled post for LinkedIn, X, Instagram, Facebook and YouTube in one view.`,
+          `${strong('AI drafts.')} Turn one idea into a post sized for each platform, with hashtags.`,
+          `${strong('Claude and Cursor.')} Schedule posts from your editor through the Hookpost MCP server or CLI.`,
+        ]) +
+        button('Open your calendar', `${base}/launches`) +
+        paragraph(
+          `When you're ready to upgrade, Standard is ${monthly}/month and code ${strong(code)} takes 50% off.`,
+          { muted: true, small: true }
+        ) +
+        signoff('The Hookpost team'),
+    });
   }
 
-  const subject = `Hookpost is live: USD & INR pricing unlocked + 50% Launch Access 🚀`;
-  const text = `Hey ${displayName},\n\nWe noticed you signed up for Hookpost${orgName ? ` (${orgName})` : ''} recently!\n\nWe have just rolled out a major platform update:\n• Multi-Currency Support: Live in both INR (₹) and USD ($).\n• Standard Plan now starting at just ${discountedMonthly}/month (50% off with code ${discountCode})!\n• 1-Click cross-platform publishing across LinkedIn, X/Twitter, Instagram, Threads, Facebook, Slack & Discord.\n• Native Claude/Cursor MCP integration and developer CLI.\n\nClaim your 50% launch discount here:\n${appUrl}\n\nBest regards,\nJatinder & The Hookpost Team\n\nTo unsubscribe from promotional updates, reply with "Unsubscribe".`;
-
-  const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hookpost Launch Offer</title>
-  <style>
-    body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #090D16; color: #F3F4F6; }
-    .container { max-width: 600px; margin: 0 auto; background-color: #111827; border: 1px solid #1F2937; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
-    .header { padding: 36px 24px; text-align: center; background: radial-gradient(circle at top, rgba(79, 70, 229, 0.25) 0%, #111827 80%); border-bottom: 1px solid #1F2937; }
-    .badge { display: inline-block; background-color: rgba(99, 102, 241, 0.15); color: #A5B4FC; font-size: 11px; font-weight: 700; padding: 6px 14px; border-radius: 9999px; border: 1px solid rgba(99, 102, 241, 0.3); text-transform: uppercase; letter-spacing: 0.08em; }
-    .content { padding: 32px 28px; }
-    .pricing-box { background: linear-gradient(180deg, #1F2937 0%, #171F2E 100%); border: 1px solid #374151; border-radius: 10px; padding: 24px; margin: 24px 0; text-align: center; }
-    .price-strike { font-size: 18px; color: #9CA3AF; text-decoration: line-through; margin-right: 8px; }
-    .price-active { font-size: 36px; font-weight: 800; color: #60A5FA; }
-    .price-period { font-size: 14px; color: #9CA3AF; }
-    .coupon-pill { display: inline-block; background-color: rgba(16, 185, 129, 0.15); border: 1px dashed #10B981; color: #34D399; font-family: monospace; font-size: 15px; font-weight: 700; padding: 6px 16px; border-radius: 6px; margin: 12px 0 4px 0; }
-    .btn { display: block; background: linear-gradient(135deg, #4F46E5 0%, #6366F1 100%); color: #FFFFFF !important; font-size: 16px; font-weight: 700; text-decoration: none; padding: 16px 24px; border-radius: 8px; text-align: center; margin-top: 16px; box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.4); }
-    .features-list { list-style: none; padding: 0; margin: 20px 0; }
-    .features-list li { font-size: 14px; color: #D1D5DB; margin-bottom: 10px; display: flex; align-items: center; }
-    .features-list li span { color: #10B981; margin-right: 10px; font-weight: bold; }
-    .footer { padding: 24px; text-align: center; font-size: 12px; color: #6B7280; border-top: 1px solid #1F2937; }
-  </style>
-</head>
-<body>
-  <div style="padding: 24px 12px;">
-    <div class="container">
-      <div class="header">
-        <div class="badge">✨ MULTI-CURRENCY LIVE &amp; 50% LAUNCH DISCOUNT</div>
-        <h1 style="color: #FFFFFF; font-size: 26px; font-weight: 800; margin: 16px 0 8px 0;">Unlock Your Full Social Workflow</h1>
-        <p style="color: #9CA3AF; font-size: 14px; margin: 0;">Publish across LinkedIn, X, Instagram, Facebook, Slack &amp; Discord.</p>
-      </div>
-      <div class="content">
-        <p style="font-size: 15px; color: #E5E7EB; line-height: 1.6;">Hey <strong>${displayName}</strong>,</p>
-        <p style="font-size: 14px; color: #9CA3AF; line-height: 1.6;">You created an account on Hookpost${orgName ? ` for <strong>${orgName}</strong>` : ''} recently. We've just introduced international multi-currency pricing (<strong>${isINR ? '₹ INR' : '$ USD'}</strong>) and wanted to welcome you with an exclusive <strong>50% launch discount</strong>.</p>
-        
-        <div class="pricing-box">
-          <div style="font-size: 12px; font-weight: 700; color: #818CF8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Standard Creator Tier</div>
-          <div>
-            <span class="price-strike">${originalMonthly}</span>
-            <span class="price-active">${discountedMonthly}</span>
-            <span class="price-period">/ month</span>
-          </div>
-          <div style="font-size: 12px; color: #9CA3AF; margin-top: 4px;">or ${discountedYearly}/year with annual billing</div>
-          <div>
-            <div class="coupon-pill">CODE: ${discountCode}</div>
-          </div>
-          <a href="${appUrl}" class="btn">Claim 50% Off &amp; Start Publishing →</a>
-        </div>
-
-        <ul class="features-list">
-          <li><span>✓</span> <strong>Connect 5-10 Social Channels:</strong> LinkedIn, X, Instagram, Threads, Facebook, Slack, Discord.</li>
-          <li><span>✓</span> <strong>500+ Scheduled Posts / Month:</strong> Never miss peak engagement hours with automated queueing.</li>
-          <li><span>✓</span> <strong>AI Caption Generator:</strong> Generate tailored hooks, hashtags, and carousels automatically.</li>
-          <li><span>✓</span> <strong>Cursor &amp; Claude MCP Support:</strong> Schedule directly from your favorite AI coding assistant.</li>
-        </ul>
-
-        <p style="font-size: 13px; color: #6B7280; text-align: center; margin-top: 24px;">Need assistance or a custom agency tier? Simply reply directly to this email.</p>
-      </div>
-      <div class="footer">
-        Sent by Hookpost • <a href="${appUrl}" style="color: #6366F1; text-decoration: none;">hookpost.hookstep.in</a><br>
-        To unsubscribe from promotional updates, reply with "Unsubscribe".
-      </div>
-    </div>
-  </div>
-</body>
-</html>`;
-
-  return { subject, html, text };
+  // STAGE_1_LAUNCH
+  return buildEmail(`50% off Hookpost Standard with ${discountCode}`, {
+    preheader: `Standard is ${monthly}/month for ${standard.channel} channels. Your code takes 50% off.`,
+    kind: 'marketing',
+    unsubscribeUrl,
+    body:
+      heading('Your Hookpost Standard offer') +
+      paragraph(`Hi ${name},`) +
+      paragraph(
+        `Thanks for signing up for Hookpost${
+          orgName ? ` for ${strong(escapeHtml(orgName))}` : ''
+        }. When you need more than the free plan, Standard covers ${standard.channel} channels and ${standard.posts_per_month} posts a month, and code ${strong(
+          code
+        )} takes 50% off.`
+      ) +
+      details([
+        ['Standard', `${monthly}/month or ${yearly}/year`],
+        ['Channels', `${standard.channel}`],
+        ['Scheduled posts', `${standard.posts_per_month} a month`],
+        ['AI captions', `${standard.ai_generation_count} a month`],
+        ['Your code', `${code} (50% off)`],
+      ]) +
+      button('See plans', `${base}/billing`) +
+      paragraph(
+        'Need a plan for a team or several client brands? Reply to this email and we\'ll help you pick.',
+        { muted: true, small: true }
+      ) +
+      signoff('The Hookpost team'),
+  });
 }

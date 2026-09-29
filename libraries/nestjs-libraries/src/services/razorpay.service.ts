@@ -22,6 +22,10 @@ import {
   buildPlanKey,
   parsePlanKey,
 } from '@hookpost/nestjs-libraries/services/razorpay.mapping';
+import {
+  paymentFailedEmail,
+  subscriptionWelcomeEmail,
+} from '@hookpost/nestjs-libraries/emails/templates/billing.emails';
 
 type Billing = 'STANDARD' | 'TEAM' | 'PRO' | 'ULTIMATE';
 type Period = 'MONTHLY' | 'YEARLY';
@@ -344,77 +348,15 @@ export class RazorpayService {
       const { Resend } = await import('resend');
       const resend = new Resend(apiKey);
 
-      const planName = `${billing.charAt(0) + billing.slice(1).toLowerCase()} Plan`;
       const channels = pricing[billing]?.channel || 10;
-      const subject = isTrial
-        ? `🎉 Welcome to Hookpost ${billing.charAt(0) + billing.slice(1).toLowerCase()} (7-Day Trial Active)`
-        : `🎉 Welcome to Hookpost ${billing.charAt(0) + billing.slice(1).toLowerCase()}!`;
-
-      const html = `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 24px; background-color: #0b0d13; color: #ffffff; border-radius: 16px; border: 1px solid #1f2430;">
-          <div style="text-align: center; margin-bottom: 28px;">
-            <img src="https://hookpost.hookstep.in/brand-logo.png" alt="Hookpost" style="height: 48px; width: auto; max-height: 48px; margin-bottom: 16px;" />
-            <h1 style="color: #ffffff; font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">Welcome to Hookpost</h1>
-            <p style="color: #94a3b8; font-size: 15px; margin-top: 8px;">${isTrial ? 'Your 7-Day Free Trial is now active!' : 'Your subscription is now live!'}</p>
-          </div>
-
-          <div style="background-color: #131722; border: 1px solid #232a3b; border-radius: 12px; padding: 20px; margin-bottom: 28px;">
-            <h2 style="color: #FF4CE2; font-size: 16px; font-weight: 700; margin-top: 0; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Subscription Overview</h2>
-            <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #e2e8f0;">
-              <tr>
-                <td style="padding: 9px 0; color: #94a3b8; border-bottom: 1px solid #1e2536;">Organization</td>
-                <td style="padding: 9px 0; font-weight: 600; text-align: right; border-bottom: 1px solid #1e2536;">${orgName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 9px 0; color: #94a3b8; border-bottom: 1px solid #1e2536;">Plan Tier</td>
-                <td style="padding: 9px 0; font-weight: 600; text-align: right; border-bottom: 1px solid #1e2536;">${planName} (${channels} Channels)</td>
-              </tr>
-              <tr>
-                <td style="padding: 9px 0; color: #94a3b8; border-bottom: 1px solid #1e2536;">Billing Cycle</td>
-                <td style="padding: 9px 0; font-weight: 600; text-align: right; border-bottom: 1px solid #1e2536;">${period === 'MONTHLY' ? 'Monthly' : 'Yearly'}</td>
-              </tr>
-              <tr>
-                <td style="padding: 9px 0; color: #94a3b8;">Status</td>
-                <td style="padding: 9px 0; font-weight: 600; text-align: right; color: #10b981;">● Active</td>
-              </tr>
-            </table>
-          </div>
-
-          <div style="margin-bottom: 32px; text-align: center;">
-            <p style="color: #cbd5e1; font-size: 15px; font-weight: 600; margin-bottom: 16px;">Quick Start Actions:</p>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-              <a href="https://hookpost.hookstep.in/launches" style="display: block; background: #FF4CE2; color: #ffffff; text-decoration: none; padding: 14px 24px; border-radius: 10px; font-weight: 700; font-size: 15px; margin-bottom: 10px; text-align: center;">
-                🔗 Connect Your Social Channels →
-              </a>
-              <a href="https://play.google.com/store/apps/details?id=in.hookstep.hookpost.twa" style="display: block; background: #1e293b; color: #38bdf8; text-decoration: none; padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 14px; border: 1px solid #334155; margin-bottom: 10px; text-align: center;">
-                📱 Download Hookpost on Google Play
-              </a>
-              <a href="https://hookpost.hookstep.in/launches" style="display: block; background: #131722; color: #cbd5e1; text-decoration: none; padding: 12px 20px; border-radius: 10px; font-weight: 600; font-size: 14px; border: 1px solid #232a3b; text-align: center;">
-                📅 Schedule Your First Post
-              </a>
-            </div>
-          </div>
-
-          <div style="background-color: #0f121a; border-left: 4px solid #FF4CE2; padding: 16px 20px; border-radius: 8px; margin-bottom: 28px;">
-            <p style="font-size: 14px; color: #e2e8f0; line-height: 1.6; margin: 0 0 10px 0;">
-              <em>"Need help connecting an account or migrating your schedule from Buffer or Hootsuite? Simply hit reply to this email — my team and I personally read and respond to every message."</em>
-            </p>
-            <p style="font-size: 13px; color: #94a3b8; margin: 0; font-weight: 600;">
-              — Mohan Bhanushali<br/>
-              <span style="font-weight: 400; font-size: 12px; color: #64748b;">Founder, Hookpost & Hookstep</span>
-            </p>
-          </div>
-
-          <div style="text-align: center; border-top: 1px solid #1e2430; padding-top: 20px; font-size: 12px; color: #64748b;">
-            <p style="margin: 0 0 6px 0;">Hookpost by HookStep &bull; Hookstep</p>
-            <p style="margin: 0;">
-              <a href="https://hookpost.hookstep.in/privacy" style="color: #94a3b8; text-decoration: underline;">Privacy Policy</a> &bull;
-              <a href="https://hookpost.hookstep.in/terms" style="color: #94a3b8; text-decoration: underline;">Terms of Service</a> &bull;
-              <a href="mailto:support@hookstep.in" style="color: #94a3b8; text-decoration: underline;">support@hookstep.in</a>
-            </p>
-          </div>
-        </div>
-      `;
+      const { subject, html, text } = subscriptionWelcomeEmail({
+        orgName,
+        billing,
+        channels,
+        period,
+        isTrial,
+        trialDays: TRIAL_DAYS_DEFAULT,
+      });
 
       await resend.emails.send({
         from: 'Hookpost Support <support@hookstep.in>',
@@ -422,6 +364,7 @@ export class RazorpayService {
         reply_to: 'support@hookstep.in',
         subject,
         html,
+        text,
       });
 
       this.logger.log(
@@ -458,84 +401,14 @@ export class RazorpayService {
       const { Resend } = await import('resend');
       const resend = new Resend(apiKey);
 
-      const planName = details.billing
-        ? `${details.billing.charAt(0) + details.billing.slice(1).toLowerCase()} Plan`
-        : 'Subscription Renewal';
-      const formattedAmount = details.amount
-        ? `${details.currency === 'USD' ? '$' : '₹'}${details.amount}`
-        : 'your recurring renewal';
-
-      const subject = details.isHalted
-        ? `🚨 Action Required: Hookpost Subscription Paused - Payment Declined`
-        : `⚠️ Action Required: Hookpost Renewal Payment Couldn't Be Processed`;
-
-      const html = `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 32px 24px; background-color: #0b0d13; color: #ffffff; border-radius: 16px; border: 1px solid #1f2430;">
-          <div style="text-align: center; margin-bottom: 28px;">
-            <img src="https://hookpost.hookstep.in/brand-logo.png" alt="Hookpost" style="height: 48px; width: auto; max-height: 48px; margin-bottom: 16px;" />
-            <h1 style="color: #ffffff; font-size: 24px; font-weight: 800; margin: 0; letter-spacing: -0.5px;">Renewal Payment Action Required</h1>
-            <p style="color: #f59e0b; font-size: 15px; margin-top: 8px; font-weight: 600;">
-              ${details.isHalted ? 'All automatic retries were declined by your bank' : 'We could not complete your automatic renewal debit'}
-            </p>
-          </div>
-
-          <div style="background-color: #131722; border: 1px solid #232a3b; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
-            <h2 style="color: #f59e0b; font-size: 15px; font-weight: 700; margin-top: 0; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Payment Details</h2>
-            <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #e2e8f0;">
-              <tr>
-                <td style="padding: 9px 0; color: #94a3b8; border-bottom: 1px solid #1e2536;">Organization</td>
-                <td style="padding: 9px 0; font-weight: 600; text-align: right; border-bottom: 1px solid #1e2536;">${orgName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 9px 0; color: #94a3b8; border-bottom: 1px solid #1e2536;">Plan Tier</td>
-                <td style="padding: 9px 0; font-weight: 600; text-align: right; border-bottom: 1px solid #1e2536;">${planName}</td>
-              </tr>
-              <tr>
-                <td style="padding: 9px 0; color: #94a3b8; border-bottom: 1px solid #1e2536;">Amount Due</td>
-                <td style="padding: 9px 0; font-weight: 600; text-align: right; border-bottom: 1px solid #1e2536;">${formattedAmount}</td>
-              </tr>
-              <tr>
-                <td style="padding: 9px 0; color: #94a3b8; border-bottom: 1px solid #1e2536;">Bank Note</td>
-                <td style="padding: 9px 0; font-weight: 600; text-align: right; color: #f87171; border-bottom: 1px solid #1e2536;">
-                  ${details.reason || 'Authorization declined / UPI mandate pending'}
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 9px 0; color: #94a3b8;">Grace Period Status</td>
-                <td style="padding: 9px 0; font-weight: 600; text-align: right; color: #10b981;">● Active (Posts protected)</td>
-              </tr>
-            </table>
-          </div>
-
-          <div style="background-color: #171c28; border: 1px solid #2d3748; border-radius: 12px; padding: 18px; margin-bottom: 28px;">
-            <p style="font-size: 14px; color: #cbd5e1; line-height: 1.6; margin: 0 0 14px 0;">
-              <strong>What this means for you:</strong> Your scheduled posts and connected channels are currently protected during our grace period. However, to prevent your scheduled publications from being paused, please update your payment method or approve the mandate in your bank/UPI app.
-            </p>
-            <div style="text-align: center; margin-top: 18px;">
-              <a href="https://hookpost.hookstep.in/settings?tab=billing" style="display: inline-block; background: #FF4CE2; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 10px; font-weight: 700; font-size: 15px; text-align: center;">
-                👉 Update Payment Method &amp; Retry Renewal →
-              </a>
-            </div>
-          </div>
-
-          <div style="background-color: #0f121a; border-left: 4px solid #f59e0b; padding: 16px 20px; border-radius: 8px; margin-bottom: 28px;">
-            <p style="font-size: 13px; color: #e2e8f0; line-height: 1.6; margin: 0 0 8px 0;">
-              <em>Need assistance completing your renewal or updating UPI details? Hit reply directly to this email and our team will help you right away.</em>
-            </p>
-            <p style="font-size: 12px; color: #94a3b8; margin: 0; font-weight: 600;">
-              — Hookpost Billing &amp; Support Team
-            </p>
-          </div>
-
-          <div style="text-align: center; border-top: 1px solid #1e2430; padding-top: 20px; font-size: 12px; color: #64748b;">
-            <p style="margin: 0 0 6px 0;">Hookpost by HookStep &bull; Hookstep</p>
-            <p style="margin: 0;">
-              <a href="https://hookpost.hookstep.in/settings" style="color: #94a3b8; text-decoration: underline;">Settings</a> &bull;
-              <a href="mailto:support@hookstep.in" style="color: #94a3b8; text-decoration: underline;">support@hookstep.in</a>
-            </p>
-          </div>
-        </div>
-      `;
+      const { subject, html, text } = paymentFailedEmail({
+        orgName,
+        billing: details.billing,
+        amount: details.amount,
+        currency: details.currency,
+        reason: details.reason,
+        isHalted: details.isHalted,
+      });
 
       await resend.emails.send({
         from: 'Hookpost Billing <support@hookstep.in>',
@@ -543,6 +416,7 @@ export class RazorpayService {
         reply_to: 'support@hookstep.in',
         subject,
         html,
+        text,
       });
 
       this.logger.log(

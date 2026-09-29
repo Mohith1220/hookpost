@@ -12,7 +12,8 @@ export class ResendProvider implements EmailInterface {
     html: string,
     emailFromName: string,
     emailFromAddress: string,
-    replyTo?: string
+    replyTo?: string,
+    text?: string
   ) {
     try {
       const sends = await resend.emails.send({
@@ -20,6 +21,7 @@ export class ResendProvider implements EmailInterface {
         to,
         subject,
         html,
+        ...(text && { text }),
         ...(replyTo && { reply_to: replyTo }),
       });
 

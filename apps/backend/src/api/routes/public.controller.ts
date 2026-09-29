@@ -1,4 +1,3 @@
-import { Resend } from 'resend';
 import {
   Body,
   Ip,
@@ -31,7 +30,7 @@ import { promisify } from 'util';
 import { OnlyURL } from '@hookpost/nestjs-libraries/dtos/webhooks/webhooks.dto';
 import { isSafePublicHttpsUrl } from '@hookpost/nestjs-libraries/dtos/webhooks/webhook.url.validator';
 import { ssrfSafeDispatcher } from '@hookpost/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
-import { PrismaRepository } from '@hookpost/nestjs-libraries/database/prisma/prisma.service';
+import { SupportTicketsService } from '@hookpost/nestjs-libraries/services/support-tickets.service';
 
 const pump = promisify(pipeline);
 
@@ -43,7 +42,7 @@ export class PublicController {
     private _agentGraphInsertService: AgentGraphInsertService,
     private _postsService: PostsService,
     private _subscriptionService: SubscriptionService,
-    private _contactMessage: PrismaRepository<'contactMessage'>
+    private _supportTicketsService: SupportTicketsService
   ) {}
   @Post('/agent')
   async createAgent(@Body() body: { text: string; apiKey: string }) {
@@ -316,74 +315,16 @@ export class PublicController {
       return { ok: false, error: 'Tell us a little more so we can help.' };
     }
 
-    // Rate limit off the database rather than an in-process Map. The Map reset
-    // on every PM2 restart, and was not shared between workers, so it enforced
-    // nothing reliable. Keyed on IP *and* email so two people behind one office
-    // or carrier NAT do not silently block each other.
-    const since = new Date(Date.now() - 60_000);
-    const recent = await this._contactMessage.model.contactMessage.findFirst({
-      where: { createdAt: { gte: since }, OR: [{ ip }, { email }] },
-      select: { id: true },
+    // Stored as a support ticket (the row is the record), then the internal
+    // copy to support@ and the customer's auto-reply, both best effort. A
+    // double submit inside 60s returns the first ticket's ref.
+    return this._supportTicketsService.submit({
+      name,
+      email,
+      topic,
+      message,
+      ip: ip || null,
+      userAgent: (headers['user-agent'] || '').slice(0, 500) || null,
     });
-    if (recent) {
-      return { ok: false, error: 'Just sent one - give it a minute.' };
-    }
-
-    const saved = await this._contactMessage.model.contactMessage.create({
-      data: {
-        name: name || null,
-        email,
-        topic,
-        message,
-        ip: ip || null,
-        userAgent: (headers['user-agent'] || '').slice(0, 500) || null,
-      },
-      select: { id: true },
-    });
-
-    // Notification only. The row above is the record, so a failure here still
-    // leaves the message visible in the admin panel - it is flagged so support
-    // knows the inbox did not get a copy.
-    const supportAddress =
-      process.env.EMAIL_FROM_ADDRESS || 'support@hookstep.in';
-    const apiKey = process.env.RESEND_API_KEY || '';
-
-    if (!apiKey) {
-      Logger.error('Contact form received a message but RESEND_API_KEY is unset');
-      await this._contactMessage.model.contactMessage.update({
-        where: { id: saved.id },
-        data: { emailSent: false, emailError: 'RESEND_API_KEY is unset' },
-      });
-      return { ok: true };
-    }
-
-    try {
-      const resend = new Resend(apiKey);
-      await resend.emails.send({
-        from: `Hookpost Contact <${supportAddress}>`,
-        to: supportAddress,
-        // Resend 3.5.0 takes snake_case here, so a reply from support goes
-        // back to the person who wrote in rather than to support itself.
-        reply_to: email,
-        subject: `[${topic}] ${name || email}`,
-        text:
-          `From:  ${name || '(no name)'} <${email}>\n` +
-          `Topic: ${topic}\n\n${message}\n`,
-      });
-      await this._contactMessage.model.contactMessage.update({
-        where: { id: saved.id },
-        data: { emailSent: true },
-      });
-    } catch (e) {
-      // The person still gets a success screen: their message is saved and will
-      // be read. Telling them to try again would only create a duplicate.
-      Logger.error(`Contact form email failed (message ${saved.id} saved): ${e}`);
-      await this._contactMessage.model.contactMessage.update({
-        where: { id: saved.id },
-        data: { emailSent: false, emailError: String(e).slice(0, 500) },
-      });
-    }
-
-    return { ok: true };
   }
 }

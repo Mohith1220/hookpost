@@ -1011,12 +1011,35 @@ model ContactMessage {
   // only copy, so the admin page is the only way this gets seen.
   emailSent Boolean             @default(false)
   emailError String?
+  // Support ticket reference shown to the customer ("HP-7K2Q"). Null only on
+  // rows from before tickets existed; the admin UI derives one for those.
+  ref        String?            @unique
+  // Last time an admin replied from /admin/contact. DONE state = closed.
+  answeredAt DateTime?
+  replies    ContactReply[]
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
 
   @@index([state, createdAt])
   @@index([createdAt])
   @@index([ip, createdAt])
+}
+
+// Replies an admin sent to a contact message from /admin/contact. Customer
+// replies are not captured here: they arrive in the support@ mailbox.
+// Created by contact-tickets.migration.sql (apply by hand, never db push).
+model ContactReply {
+  id               String         @id @default(uuid())
+  contactMessageId String
+  contactMessage   ContactMessage @relation(fields: [contactMessageId], references: [id], onDelete: Cascade)
+  body             String
+  adminUserId      String?
+  adminEmail       String?
+  emailSent        Boolean        @default(false)
+  emailError       String?
+  createdAt        DateTime       @default(now())
+
+  @@index([contactMessageId, createdAt])
 }
 
 // Website coupon codes a buyer types at checkout. Razorpay cannot re-price a

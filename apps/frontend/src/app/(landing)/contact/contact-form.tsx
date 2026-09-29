@@ -16,6 +16,7 @@ const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || '/api';
 export const ContactForm = () => {
   const [state, setState] = useState<'idle' | 'sending' | 'sent'>('idle');
   const [error, setError] = useState('');
+  const [ticketRef, setTicketRef] = useState('');
 
   const submit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,6 +38,7 @@ export const ContactForm = () => {
       });
       const data = await res.json();
       if (data?.ok) {
+        setTicketRef(typeof data.ref === 'string' ? data.ref : '');
         setState('sent');
       } else {
         setError(data?.error || 'Could not send. Write to support@hookstep.in.');
@@ -53,7 +55,14 @@ export const ContactForm = () => {
       <div className="rounded-2xl border border-[#FF4CE2]/30 bg-[#FF4CE2]/[0.06] p-8">
         <h3 className="text-xl font-bold text-white">Thanks — that reached us.</h3>
         <p className="mt-2 text-[15px] text-white/70">
-          We reply to the address you gave, usually within a working day.
+          {ticketRef ? (
+            <>
+              Your reference is <strong className="text-white">{ticketRef}</strong>. We
+              emailed you a confirmation, and a person will reply to the address you gave.
+            </>
+          ) : (
+            'A person will reply to the address you gave.'
+          )}
         </p>
       </div>
     );

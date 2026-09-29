@@ -2,6 +2,7 @@
 
 import React, { FC, useCallback, useState } from 'react';
 import useSWR from 'swr';
+import { useSearchParams } from 'next/navigation';
 import copy from 'copy-to-clipboard';
 import Link from 'next/link';
 import { useFetch } from '@hookpost/helpers/utils/custom.fetch';
@@ -22,7 +23,22 @@ interface ContactMessage {
   userAgent: string | null;
   emailSent: boolean;
   emailError: string | null;
+  ref: string;
+  answeredAt: string | null;
   createdAt: string;
+}
+
+interface ContactReply {
+  id: string;
+  body: string;
+  adminEmail: string | null;
+  emailSent: boolean;
+  emailError: string | null;
+  createdAt: string;
+}
+
+interface TicketDetail extends ContactMessage {
+  replies: ContactReply[];
 }
 
 interface Response {
@@ -52,12 +68,104 @@ const when = (iso: string) => {
   });
 };
 
-const Row: FC<{ row: ContactMessage; onState: (id: string, s: State) => void }> = ({
-  row,
-  onState,
-}) => {
-  const [open, setOpen] = useState(false);
+// Open = NEW or READ; a reply sets answeredAt; DONE = closed.
+const statusOf = (row: ContactMessage) =>
+  row.state === 'DONE' ? 'CLOSED' : row.answeredAt ? 'ANSWERED' : row.state === 'NEW' ? 'NEW' : 'OPEN';
+
+const STATUS_STYLES: Record<string, string> = {
+  NEW: STATE_STYLES.NEW,
+  OPEN: STATE_STYLES.READ,
+  ANSWERED: 'bg-sky-500/10 text-sky-400 border-sky-500/30',
+  CLOSED: STATE_STYLES.DONE,
+};
+
+const useTicket = (id: string | null) => {
+  const fetch = useFetch();
+  return useSWR<TicketDetail>(id ? `/admin/contact-messages/${id}` : null, async (url: string) => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to load ticket');
+    return res.json();
+  });
+};
+
+const Thread: FC<{ row: ContactMessage; onChanged: () => void }> = ({ row, onChanged }) => {
+  const fetch = useFetch();
   const toaster = useToaster();
+  const { data, mutate } = useTicket(row.id);
+  const [draft, setDraft] = useState('');
+  const [sending, setSending] = useState(false);
+
+  const send = async () => {
+    if (draft.trim().length < 2) return;
+    setSending(true);
+    try {
+      const res = await fetch(`/admin/contact-messages/${row.id}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ body: draft }),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (res.ok && out?.ok) {
+        toaster.show(`Reply emailed to ${row.email}`, 'success');
+        setDraft('');
+      } else {
+        toaster.show(out?.error || out?.message || 'Reply saved but the email failed', 'warning');
+      }
+      mutate();
+      onChanged();
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-[10px]">
+      {(data?.replies || []).map((r) => (
+        <div
+          key={r.id}
+          className="border border-sky-500/20 bg-sky-500/[0.04] rounded-[8px] p-[12px]"
+        >
+          <div className="text-[11px] opacity-60 mb-[6px]">
+            {r.adminEmail || 'admin'} · {when(r.createdAt)}
+            {r.emailSent ? ' · emailed' : ` · email failed${r.emailError ? `: ${r.emailError}` : ''}`}
+          </div>
+          <div className="whitespace-pre-wrap break-words text-[13px] leading-[1.6]">{r.body}</div>
+        </div>
+      ))}
+      <textarea
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        rows={5}
+        placeholder={`Reply to ${row.email}. Sent from support@hookstep.in with ${row.ref} in the subject.`}
+        className="bg-newBgColorInnerInner border border-newTableBorder rounded-[8px] p-[10px] text-[13px] outline-none w-full"
+      />
+      <div>
+        <button
+          type="button"
+          disabled={sending || draft.trim().length < 2}
+          onClick={send}
+          className="px-[14px] h-[32px] rounded-[6px] text-[13px] font-[600] bg-primary text-white hover:opacity-90 disabled:opacity-40"
+        >
+          {sending ? 'Sending…' : 'Send reply'}
+        </button>
+      </div>
+      <div className="text-[11px] opacity-50">
+        When the customer answers, the reply lands in the support@hookstep.in inbox with {row.ref} in
+        the subject. Search the inbox for the ref; this page only records replies sent from here.
+      </div>
+    </div>
+  );
+};
+
+const Row: FC<{
+  row: ContactMessage;
+  onState: (id: string, s: State) => void;
+  onChanged: () => void;
+  initiallyOpen?: boolean;
+}> = ({ row, onState, onChanged, initiallyOpen }) => {
+  const [open, setOpen] = useState(!!initiallyOpen);
+  const toaster = useToaster();
+  const status = statusOf(row);
 
   return (
     <div className="border border-newTableBorder rounded-[8px] bg-newBgColorInner overflow-hidden">
@@ -67,10 +175,11 @@ const Row: FC<{ row: ContactMessage; onState: (id: string, s: State) => void }> 
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-[8px] flex-wrap">
+            <span className="text-[12px] font-[700] text-white">{row.ref}</span>
             <span
-              className={`px-[8px] py-[2px] rounded-[4px] text-[11px] font-[600] border ${STATE_STYLES[row.state]}`}
+              className={`px-[8px] py-[2px] rounded-[4px] text-[11px] font-[600] border ${STATUS_STYLES[status]}`}
             >
-              {row.state}
+              {status}
             </span>
             <span className="px-[8px] py-[2px] rounded-[4px] text-[11px] font-[500] bg-white/5 border border-newTableBorder">
               {row.topic}
@@ -115,15 +224,9 @@ const Row: FC<{ row: ContactMessage; onState: (id: string, s: State) => void }> 
             {row.userAgent ? ` · ${row.userAgent}` : ''}
           </div>
 
+          <Thread row={row} onChanged={onChanged} />
+
           <div className="flex flex-wrap gap-[8px]">
-            <a
-              href={`mailto:${row.email}?subject=${encodeURIComponent(
-                `Re: [${row.topic}] Hookpost`
-              )}`}
-              className="px-[14px] h-[32px] flex items-center rounded-[6px] text-[13px] font-[600] bg-primary text-white hover:opacity-90"
-            >
-              Reply by email
-            </a>
             <button
               type="button"
               onClick={() => {
@@ -149,13 +252,13 @@ const Row: FC<{ row: ContactMessage; onState: (id: string, s: State) => void }> 
                 onClick={() => onState(row.id, 'DONE')}
                 className="px-[14px] h-[32px] rounded-[6px] text-[13px] font-[500] bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-600/30"
               >
-                Mark done
+                Close ticket
               </button>
             )}
             {row.state === 'DONE' && (
               <button
                 type="button"
-                onClick={() => onState(row.id, 'NEW')}
+                onClick={() => onState(row.id, 'READ')}
                 className="px-[14px] h-[32px] rounded-[6px] text-[13px] font-[500] bg-white/5 border border-newTableBorder hover:bg-white/10"
               >
                 Reopen
@@ -173,7 +276,11 @@ export const AdminContactComponent: FC = () => {
   const fetch = useFetch();
   const toaster = useToaster();
 
-  const [state, setState] = useState<'ALL' | State>('ALL');
+  const searchParams = useSearchParams();
+  const linkedTicket = searchParams?.get('ticket') || null;
+  const [state, setState] = useState<'ALL' | 'OPEN' | 'ANSWERED' | State>(
+    linkedTicket ? 'ALL' : 'OPEN'
+  );
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const limit = 25;
@@ -202,7 +309,7 @@ export const AdminContactComponent: FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ state: next }),
       });
-      toaster.show(`Marked ${next.toLowerCase()}`, 'success');
+      toaster.show(next === 'DONE' ? 'Ticket closed' : next === 'READ' ? 'Ticket open' : 'Updated', 'success');
       mutate();
     },
     [fetch, mutate, toaster]
@@ -223,11 +330,12 @@ export const AdminContactComponent: FC = () => {
       <div className="flex flex-wrap items-center justify-between gap-[16px]">
         <div>
           <h1 className="text-[24px] font-[700] text-white flex items-center gap-[8px]">
-            <span>✉️</span> Contact Messages
+            <span>✉️</span> Support tickets
           </h1>
           <p className="text-[13px] opacity-70 mt-[2px]">
-            Everything submitted through the contact form. Also emailed to
-            support@hookstep.in — this is the copy that survives if that fails.
+            Every contact-form message is a ticket with a ref (HP-XXXX). The
+            customer gets an automatic confirmation; replies typed here are emailed
+            to them from support@hookstep.in.
           </p>
         </div>
 
@@ -278,10 +386,11 @@ export const AdminContactComponent: FC = () => {
             }}
             className="bg-newBgColorInnerInner border border-newTableBorder rounded-[6px] h-[36px] px-[10px] text-[13px] outline-none"
           >
-            <option value="ALL">All</option>
+            <option value="OPEN">Open</option>
             <option value="NEW">New{data ? ` (${data.newCount})` : ''}</option>
-            <option value="READ">Read</option>
-            <option value="DONE">Done</option>
+            <option value="ANSWERED">Answered</option>
+            <option value="DONE">Closed</option>
+            <option value="ALL">All</option>
           </select>
         </div>
         <div className="flex flex-col gap-[6px] flex-1 min-w-[220px]">
@@ -292,7 +401,7 @@ export const AdminContactComponent: FC = () => {
               setSearch(e.target.value);
               setPage(1);
             }}
-            placeholder="name, email or message text"
+            placeholder="ref (HP-7K2Q), name, email or message text"
             className="bg-newBgColorInnerInner border border-newTableBorder rounded-[6px] h-[36px] px-[10px] text-[13px] outline-none w-full"
           />
         </div>
@@ -322,7 +431,13 @@ export const AdminContactComponent: FC = () => {
 
           <div className="flex flex-col gap-[8px]">
             {data.messages.map((m) => (
-              <Row key={m.id} row={m} onState={onState} />
+              <Row
+                key={m.id}
+                row={m}
+                onState={onState}
+                onChanged={() => mutate()}
+                initiallyOpen={m.id === linkedTicket}
+              />
             ))}
           </div>
 

@@ -15,6 +15,7 @@ import { AdminStatsService } from '@hookpost/nestjs-libraries/database/prisma/ad
 import { PrismaRepository } from '@hookpost/nestjs-libraries/database/prisma/prisma.service';
 import dayjs from 'dayjs';
 import { RazorpayClient } from '@hookpost/nestjs-libraries/services/razorpay.client';
+import { SupportTicketsService } from '@hookpost/nestjs-libraries/services/support-tickets.service';
 
 @ApiTags('Admin')
 @Controller('/admin')
@@ -27,7 +28,8 @@ export class AdminController {
     private _subscription: PrismaRepository<'subscription'>,
     private _integration: PrismaRepository<'integration'>,
     private _post: PrismaRepository<'post'>,
-    private _contactMessage: PrismaRepository<'contactMessage'>
+    private _contactMessage: PrismaRepository<'contactMessage'>,
+    private _supportTicketsService: SupportTicketsService
   ) {}
 
   private readonly _razorpay = new RazorpayClient();
@@ -299,16 +301,26 @@ export class AdminController {
     const take = Math.min(Math.max(parseInt(limit || '25', 10) || 25, 1), 100);
     const skip = (Math.max(parseInt(page || '1', 10) || 1, 1) - 1) * take;
 
+    // OPEN = not closed (NEW or READ); ANSWERED = open with a reply sent;
+    // DONE is closed. The raw states still work for old links.
+    const stateWhere: Prisma.ContactMessageWhereInput =
+      !state || state === 'ALL'
+        ? {}
+        : state === 'OPEN'
+        ? { state: { in: ['NEW', 'READ'] } }
+        : state === 'ANSWERED'
+        ? { state: { in: ['NEW', 'READ'] }, answeredAt: { not: null } }
+        : { state: state as Prisma.EnumContactMessageStateFilter['equals'] };
+
     const where: Prisma.ContactMessageWhereInput = {
-      ...(state && state !== 'ALL'
-        ? { state: state as Prisma.EnumContactMessageStateFilter['equals'] }
-        : {}),
+      ...stateWhere,
       ...(search
         ? {
             OR: [
               { email: { contains: search, mode: 'insensitive' } },
               { name: { contains: search, mode: 'insensitive' } },
               { message: { contains: search, mode: 'insensitive' } },
+              { ref: { equals: search.trim().toUpperCase() } },
             ],
           }
         : {}),
@@ -330,7 +342,44 @@ export class AdminController {
       }),
     ]);
 
-    return { messages, total, newCount, failedCount };
+    return {
+      messages: messages.map((m) => ({ ...m, ref: SupportTicketsService.refOf(m) })),
+      total,
+      newCount,
+      failedCount,
+    };
+  }
+
+  @Get('/contact-messages/:id')
+  async getContactMessage(@GetUserFromRequest() user: User, @Param('id') id: string) {
+    this.assertSuperAdmin(user);
+    const ticket = await this._supportTicketsService.get(id);
+    if (!ticket) {
+      throw new HttpException('Not found', 404);
+    }
+    return ticket;
+  }
+
+  /** Emails the reply to the customer in the product layout. */
+  @Post('/contact-messages/:id/reply')
+  async replyToContactMessage(
+    @GetUserFromRequest() user: User,
+    @Param('id') id: string,
+    @Body('body') body: string
+  ) {
+    this.assertSuperAdmin(user);
+    const text = (body || '').trim();
+    if (text.length < 2 || text.length > 10000) {
+      throw new HttpException('Write a reply between 2 and 10,000 characters', 400);
+    }
+    const result = await this._supportTicketsService.reply(id, text, {
+      id: user.id,
+      email: user.email,
+    });
+    if (!result.reply && !result.ok) {
+      throw new HttpException(result.error || 'Reply failed', 404);
+    }
+    return result;
   }
 
   @Post('/contact-messages/:id/state')

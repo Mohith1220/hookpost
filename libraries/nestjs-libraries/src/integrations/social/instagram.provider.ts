@@ -769,6 +769,9 @@ export class InstagramProvider
     const [firstPost] = postDetails;
     const isStory = firstPost.settings.post_type === 'story';
     const isTrialReel = this.assetBoolean(firstPost.settings.is_trial_reel);
+    const isAiGenerated = this.assetBoolean(
+      firstPost.settings.is_ai_generated
+    );
     const medias = await Promise.all(
       firstPost?.media?.map(async (m) => {
         const caption =
@@ -804,6 +807,11 @@ export class InstagramProvider
             )}`
           : ``;
 
+        // Meta rejects is_ai_generated on carousel children; a carousel gets
+        // it on the parent container in checkPostStatus instead
+        const aiLabel =
+          isAiGenerated && !isStory && !isCarousel ? `&is_ai_generated=true` : ``;
+
         const collaborators =
           firstPost?.settings?.collaborators?.length && !isStory
             ? `&collaborators=${JSON.stringify(
@@ -836,7 +844,7 @@ export class InstagramProvider
 
         const { id: photoId } = await (
           await this.fetch(
-            `https://${type}/${META_GRAPH_API_VERSION}/${id}/media?${mediaType}${isCarousel}${collaborators}${trialParams}${audioConfiguration}&access_token=${accessToken}${caption}`,
+            `https://${type}/${META_GRAPH_API_VERSION}/${id}/media?${mediaType}${isCarousel}${collaborators}${trialParams}${audioConfiguration}${aiLabel}&access_token=${accessToken}${caption}`,
             {
               method: 'POST',
             }
@@ -866,6 +874,7 @@ export class InstagramProvider
               : 'carousel',
           containers: medias,
           message: firstPost?.message || '',
+          isAiGenerated: isAiGenerated && !isStory,
         },
       },
     ];
@@ -878,6 +887,7 @@ export class InstagramProvider
       postType: 'stories' | 'single' | 'carousel';
       containers: string[];
       message?: string;
+      isAiGenerated?: boolean;
       carouselId?: string;
     },
     integration: Integration
@@ -944,6 +954,7 @@ export class InstagramProvider
       postType: 'stories' | 'single' | 'carousel';
       containers: string[];
       message?: string;
+      isAiGenerated?: boolean;
       carouselId?: string;
     },
     integration: Integration
@@ -1003,7 +1014,9 @@ export class InstagramProvider
             pendingData.message || ''
           )}&media_type=CAROUSEL&children=${encodeURIComponent(
             pendingData.containers.join(',')
-          )}&access_token=${accessToken}`,
+          )}${
+            pendingData.isAiGenerated ? `&is_ai_generated=true` : ``
+          }&access_token=${accessToken}`,
           {
             method: 'POST',
           }

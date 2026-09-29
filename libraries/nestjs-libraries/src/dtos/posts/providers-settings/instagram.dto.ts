@@ -56,6 +56,11 @@ export class InstagramDto {
   @IsOptional()
   is_trial_reel?: boolean;
 
+  // Meta's self-disclosure of AI use (is_ai_generated on the media container).
+  // Opt-in per post; not sent for stories or carousel children.
+  @IsOptional()
+  is_ai_generated?: boolean;
+
   @IsIn(['MANUAL', 'SS_PERFORMANCE'])
   @IsOptional()
   graduation_strategy?: 'MANUAL' | 'SS_PERFORMANCE';

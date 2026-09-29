@@ -21,11 +21,11 @@ import {
   passwordResetEmail,
   teamInviteEmail,
 } from '@hookpost/nestjs-libraries/emails/templates/auth.emails';
+import { agencyListedEmail } from '@hookpost/nestjs-libraries/emails/templates/agency.emails';
 import {
-  agencyApprovedEmail,
-  agencyDeclinedEmail,
-  newAgencyAdminEmail,
-} from '@hookpost/nestjs-libraries/emails/templates/agency.emails';
+  supportAutoReplyEmail,
+  supportReplyEmail,
+} from '@hookpost/nestjs-libraries/emails/templates/support.emails';
 import {
   paymentFailedEmail,
   subscriptionWelcomeEmail,
@@ -80,32 +80,36 @@ const previews: Preview[] = [
   },
   {
     name: '04-login-changed',
-    trigger: 'Admin swaps two accounts\' sign-in emails (users.service.ts)',
-    email: loginChangedEmail({ email: 'rahul.verma@gmail.com' }),
+    trigger: 'Admin swaps two accounts\' sign-in emails; one to every address involved, old and new (users.service.ts)',
+    email: loginChangedEmail({
+      changes: [
+        { from: 'rahul.verma@gmail.com', to: 'rahul@chaipoint.in' },
+        { from: 'rahul@chaipoint.in', to: 'rahul.verma@gmail.com' },
+      ],
+      recipient: 'rahul.verma@gmail.com',
+    }),
   },
   {
-    name: '05-agency-approved',
-    trigger: 'Admin approves an agency listing (agencies.service.ts)',
-    email: agencyApprovedEmail({ agencyName: 'Bombay Pixel Studio', agencySlug: 'bombay-pixel-studio' }),
+    name: '05-agency-listed',
+    trigger: 'First save of an agency listing; listed automatically, no review (agencies.service.ts createAgency)',
+    email: agencyListedEmail({ agencyName: 'Bombay Pixel Studio' }),
   },
   {
-    name: '06-agency-declined',
-    trigger: 'Admin declines an agency listing (agencies.service.ts)',
-    email: agencyDeclinedEmail({ agencyName: 'Bombay Pixel Studio' }),
+    name: '06-support-auto-reply',
+    trigger: 'Contact form submitted: confirmation to the customer (support-tickets.service.ts)',
+    email: supportAutoReplyEmail({ ref: 'HP-7K2Q', name: 'Priya', topic: 'Billing' }),
   },
   {
-    name: '07-agency-new-admin',
-    trigger: 'INTERNAL: new agency submitted, to ADMIN_NOTIFICATION_EMAIL (agencies.service.ts)',
-    email: newAgencyAdminEmail({
-      agencyId: 'cm1agency0001',
-      name: 'Bombay Pixel Studio',
-      website: 'https://bombaypixel.in',
-      instagram: 'https://instagram.com/bombaypixel',
-      linkedIn: 'https://linkedin.com/company/bombaypixel',
-      logoPath: 'https://uploads.hookpost.hookstep.in/agency/logo.png',
-      shortDescription: 'Social media for D2C food brands in Mumbai.',
-      description: 'We run content calendars and paid social for 14 D2C food and beverage brands.',
-      niches: ['Food', 'D2C', 'Instagram'],
+    name: '07-support-reply',
+    trigger: 'Admin replies to a ticket from /admin/contact (support-tickets.service.ts reply)',
+    email: supportReplyEmail({
+      ref: 'HP-7K2Q',
+      topic: 'Billing',
+      name: 'Priya Sharma',
+      reply:
+        'Thanks for flagging this. The second charge was a mandate from an older plan; I have cancelled it and the refund of Rs 599 is on its way. It usually shows up in 5-7 working days, depending on your bank.\n\nNothing else changes on your workspace.',
+      originalMessage:
+        'I was charged twice this month for Standard. Can you check? Workspace is Chai Point Social.',
     }),
   },
   {
@@ -118,6 +122,7 @@ const previews: Preview[] = [
       period: 'MONTHLY',
       isTrial: true,
       trialDays: 7,
+      firstChargeAt: new Date(Date.now() + 7 * 86_400_000),
     }),
   },
   {

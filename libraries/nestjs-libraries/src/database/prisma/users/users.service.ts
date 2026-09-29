@@ -61,19 +61,30 @@ export class UsersService {
       } login ${kept.email} -> ${switched.email}`
     );
 
-    // the swap is already committed; a notification failure must not fail it
+    // Security notice to every address involved, old and new. It used to go
+    // to each account's NEW address only, so no mailbox was ever told that the
+    // account it had signed in to had moved away from it. In a swap the two
+    // addresses trade places, so one email per address covers both changes.
+    // The swap is already committed; a notification failure must not fail it.
     if (this._notificationService.hasEmailProvider()) {
+      const changes = [
+        { from: switched.email, to: kept.email }, // account `kept.id`
+        { from: kept.email, to: switched.email }, // account `switched.id`
+      ];
+      const recipients = Array.from(
+        new Set(changes.flatMap((c) => [c.from, c.to]).map((e) => e.toLowerCase()))
+      );
       await Promise.all(
-        [kept, switched].map(async (account) => {
+        recipients.map(async (recipient) => {
           try {
-            const message = loginChangedEmail({ email: account.email });
+            const message = loginChangedEmail({ changes, recipient });
             await this._notificationService.sendEmail(
-              account.email,
+              recipient,
               message.subject,
               message.html
             );
           } catch (err) {
-            this._logger.error(`Failed to notify ${account.email}`, err);
+            this._logger.error(`Failed to notify ${recipient}`, err);
           }
         })
       );

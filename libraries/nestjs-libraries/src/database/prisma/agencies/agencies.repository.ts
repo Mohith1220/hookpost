@@ -47,32 +47,6 @@ export class AgenciesRepository {
     });
   }
 
-  approveOrDecline(action: string, id: string) {
-    return this._socialMediaAgencies.model.socialMediaAgency.update({
-      where: {
-        id,
-      },
-      data: {
-        approved: action === 'approve',
-      },
-    });
-  }
-
-  getAgencyById(id: string) {
-    return this._socialMediaAgencies.model.socialMediaAgency.findFirst({
-      where: {
-        id,
-        deletedAt: null,
-        approved: true,
-      },
-      include: {
-        logo: true,
-        niches: true,
-        user: true,
-      },
-    });
-  }
-
   getAgencyInformation(agency: string) {
     return this._socialMediaAgencies.model.socialMediaAgency.findFirst({
       where: {
@@ -119,7 +93,8 @@ export class AgenciesRepository {
           logoId: body.logo.id,
           shortDescription: body.shortDescription,
           description: body.description,
-          approved: false,
+          // No review step: a saved listing is live.
+          approved: true,
         },
         create: {
           userId: user.id,
@@ -135,7 +110,7 @@ export class AgenciesRepository {
           shortDescription: body.shortDescription,
           description: body.description,
           slug: body.name.toLowerCase().replace(/ /g, '-'),
-          approved: false,
+          approved: true,
         },
         select: {
           id: true,

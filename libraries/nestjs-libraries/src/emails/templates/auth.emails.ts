@@ -90,21 +90,45 @@ export function teamInviteEmail(params: {
   });
 }
 
-/** Sent to both accounts when an admin swaps their sign-in emails. */
-export function loginChangedEmail(params: { email: string }): RenderedEmail {
-  const { email } = params;
+/**
+ * Security notice when an admin changes sign-in emails. Sent to every address
+ * involved, old and new, so the previous owner of an address always hears
+ * about it. `changes` lists each account's old -> new address; the admin tool
+ * swaps two accounts, so it is usually two rows (a -> b and b -> a).
+ */
+export function loginChangedEmail(params: {
+  changes: Array<{ from: string; to: string }>;
+  recipient: string;
+}): RenderedEmail {
+  const { changes, recipient } = params;
+  const mine = changes.find((c) => c.from.toLowerCase() === recipient.toLowerCase());
+  const swap = changes.length > 1;
+  const rows: Array<[string, string]> = changes.map((c) => [
+    `Signed in with ${escapeHtml(c.from)}`,
+    `now signs in with ${escapeHtml(c.to)}`,
+  ]);
+
   return buildEmail('Your Hookpost sign-in email changed', {
-    preheader: `From now on, sign in with ${email}.`,
+    preheader: mine
+      ? `Your account no longer signs in with ${mine.from}. It now uses ${mine.to}.`
+      : `An administrator changed which account ${recipient} signs in to.`,
     kind: 'transactional',
+    reason: `You received this security notice because ${recipient} was one of the addresses involved.`,
     body:
       heading('Your sign-in email changed') +
-      paragraph('An administrator changed the sign-in email on your Hookpost account.') +
-      details([['Sign in with', escapeHtml(email)]]) +
       paragraph(
-        'Your plan and subscription did not change. If you meant to cancel a subscription, do that separately from Billing.'
+        swap
+          ? `An administrator swapped the sign-in emails of two Hookpost accounts. ${strong(
+              escapeHtml(recipient)
+            )} was one of them, so we're telling both the old and the new address.`
+          : `An administrator changed the sign-in email on your Hookpost account. We're telling both the old and the new address.`
+      ) +
+      details(rows) +
+      paragraph(
+        'Each account keeps its own workspaces, plan and subscription; only the sign-in address moved. If you meant to cancel a subscription, do that separately from Billing.'
       ) +
       button('Sign in', `${appUrl()}/auth/login`) +
-      paragraph("Didn't expect this? Reply to this email and we'll look into it.", {
+      paragraph("Didn't expect this? Reply to this email straight away and we'll look into it.", {
         muted: true,
         small: true,
       }),

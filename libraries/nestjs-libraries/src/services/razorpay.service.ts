@@ -37,6 +37,16 @@ type Period = 'MONTHLY' | 'YEARLY';
  */
 const TOTAL_COUNT: Record<Period, number> = { MONTHLY: 120, YEARLY: 10 };
 
+/**
+ * When Razorpay will take the first payment on a subscription: start_at for a
+ * subscription created with a trial or coupon delay, else charge_at. Null when
+ * neither is set.
+ */
+function firstChargeAt(subscription: any): Date | null {
+  const at = Number(subscription?.start_at || subscription?.charge_at || 0);
+  return at > 0 ? new Date(at * 1000) : null;
+}
+
 /** Free-trial length in days, matching what the billing page advertises. */
 const TRIAL_DAYS_DEFAULT = 7;
 
@@ -234,6 +244,13 @@ export class RazorpayService {
 
     const customerId = subscription.customer_id;
 
+    // createSubscription runs for authenticated, activated, every monthly
+    // charged, updated, and the checkout-callback sync. The welcome email must
+    // go out once per subscription, not on each of those, so remember whether
+    // this subscription was already on file before the upsert below.
+    const alreadyKnown =
+      !!(await this._subscriptionService.getSubscriptionByIdentifier(subscription.id));
+
     await this._subscriptionService.createOrUpdateSubscription(
       subscription.status === 'authenticated', // treated as trialing
       subscription.id,
@@ -276,14 +293,16 @@ export class RazorpayService {
 
       // Keep Organization.paymentId aligned with the Razorpay customer.
       await this._subscriptionService.updateCustomerId(orgId, customerId);
-      this.sendSubscriptionWelcomeEmail(
-        orgId,
-        billing,
-        period,
-        subscription.status === 'authenticated'
-      ).catch((e) => {
-        this.logger.error(`Failed to send subscription welcome email: ${e}`);
-      });
+      if (!alreadyKnown) {
+        this.sendSubscriptionWelcomeEmail(
+          orgId,
+          billing,
+          period,
+          firstChargeAt(subscription)
+        ).catch((e) => {
+          this.logger.error(`Failed to send subscription welcome email: ${e}`);
+        });
+      }
     }
 
     return { ok: true };
@@ -327,11 +346,18 @@ export class RazorpayService {
     }
   }
 
+  /**
+   * `firstCharge` is when Razorpay will take the first payment. More than half
+   * a day away means the customer is in a free trial (7 days by default, plus
+   * any free-months coupon), and the email states the real length and date
+   * rather than assuming 7. `status === 'authenticated'` is not a trial
+   * signal: a paid-upfront subscription is also `authenticated` for a moment.
+   */
   async sendSubscriptionWelcomeEmail(
     orgId: string,
     billing: Billing,
     period: Period,
-    isTrial: boolean
+    firstCharge: Date | null
   ) {
     try {
       const apiKey = process.env.RESEND_API_KEY || '';
@@ -349,13 +375,16 @@ export class RazorpayService {
       const resend = new Resend(apiKey);
 
       const channels = pricing[billing]?.channel || 10;
+      const msUntilCharge = firstCharge ? firstCharge.getTime() - Date.now() : 0;
+      const isTrial = msUntilCharge > 12 * 3600 * 1000;
       const { subject, html, text } = subscriptionWelcomeEmail({
         orgName,
         billing,
         channels,
         period,
         isTrial,
-        trialDays: TRIAL_DAYS_DEFAULT,
+        trialDays: isTrial ? Math.round(msUntilCharge / 86_400_000) : undefined,
+        firstChargeAt: isTrial ? firstCharge! : undefined,
       });
 
       await resend.emails.send({

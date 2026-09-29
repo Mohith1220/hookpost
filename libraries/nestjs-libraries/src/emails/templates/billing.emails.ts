@@ -13,8 +13,10 @@ import {
   strong,
 } from '@hookpost/nestjs-libraries/emails/layout/email.layout';
 
-const PLAY_STORE_URL =
-  'https://play.google.com/store/apps/details?id=in.hookstep.hookpost.twa';
+// No Android app link: the Play listing for in.hookstep.hookpost.twa returns
+// 404 to the public (checked 29 Sep 2026), so it is not live. Add it back
+// only once https://play.google.com/store/apps/details?id=in.hookstep.hookpost.twa
+// loads in a logged-out browser.
 
 /** "STANDARD" -> "Standard" */
 export function tierLabel(billing?: string | null): string {
@@ -41,9 +43,20 @@ export function subscriptionWelcomeEmail(params: {
   channels: number;
   period: 'MONTHLY' | 'YEARLY' | string;
   isTrial: boolean;
+  /** Days until the first charge, from the Razorpay subscription. */
   trialDays?: number;
+  /** When the first charge happens; shown so the customer can plan for it. */
+  firstChargeAt?: Date;
 }): RenderedEmail {
-  const { orgName, billing, channels, period, isTrial, trialDays = 7 } = params;
+  const { orgName, billing, channels, period, isTrial, trialDays = 7, firstChargeAt } = params;
+  const chargeDate = firstChargeAt
+    ? firstChargeAt.toLocaleDateString('en-IN', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'Asia/Kolkata',
+      })
+    : '';
   const tier = tierLabel(billing);
   const base = appUrl();
 
@@ -68,13 +81,14 @@ export function subscriptionWelcomeEmail(params: {
         ['Plan', `${escapeHtml(tier)} &middot; ${channels} channels`],
         ['Billing', period === 'MONTHLY' ? 'Monthly' : 'Yearly'],
         ['Status', isTrial ? `Free trial (${trialDays} days)` : 'Active'],
+        ...(isTrial && chargeDate ? ([['First charge', chargeDate]] as Array<[string, string]>) : []),
       ]) +
       paragraph('Three steps to your first scheduled post:') +
       steps(
         [
           `${link('Connect your social channels', `${base}/launches`)}.`,
           'Write a post, or let the AI draft one, and pick a time.',
-          `Post from your phone with the ${link('Android app', PLAY_STORE_URL)}.`,
+          `Check or edit what's scheduled from your phone: ${link('Hookpost', `${base}/launches`)} works in any mobile browser.`,
         ],
         { numbered: true }
       ) +

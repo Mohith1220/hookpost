@@ -48,10 +48,8 @@ export default function ContactPage() {
       email: SUPPORT_EMAIL,
       address: {
         '@type': 'PostalAddress',
-        streetAddress: 'Ghatkopar',
-        addressLocality: 'Mumbai',
+        addressLocality: 'Ghatkopar, Mumbai',
         addressRegion: 'Maharashtra',
-        postalCode: '400077',
         addressCountry: 'IN',
       },
       sameAs: [LINKEDIN],
@@ -104,21 +102,20 @@ export default function ContactPage() {
           </p>
         </div>
 
-        {/* Razorpay's banking partners require a complete Indian operating
-            address - street, city, state and PIN - to be published on the site
-            before they will enable payment methods. It was on none of our
-            pages, which held up 19 netbanking requests. It is also the address
-            on our GST and IEC registrations, so it must match those exactly. */}
+        {/* Only the area and city are published, on the founder's instruction
+            (29 Sep 2026): the full registered street address must never appear
+            on the site. Razorpay reviews may ask for more; share it with them
+            privately, not here. */}
         <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.02] p-8">
           <span className="text-xs font-bold uppercase tracking-wider text-white/50">
-            Registered office
+            Office
           </span>
           <address className="mt-3 not-italic text-[15px] leading-relaxed text-white/70">
             Hookstep
             <br />
-            Ghatkopar
+            Ghatkopar, Mumbai
             <br />
-            Mumbai, Maharashtra
+            Maharashtra
             <br />
             India
           </address>

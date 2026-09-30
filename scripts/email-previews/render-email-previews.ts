@@ -28,6 +28,8 @@ import {
 } from '@hookpost/nestjs-libraries/emails/templates/support.emails';
 import {
   paymentFailedEmail,
+  refundEmail,
+  subscriptionCancelledEmail,
   subscriptionWelcomeEmail,
 } from '@hookpost/nestjs-libraries/emails/templates/billing.emails';
 import { generateLeadEmail } from '@hookpost/nestjs-libraries/emails/templates/lead-campaign.template';
@@ -158,6 +160,55 @@ const previews: Preview[] = [
       currency: 'INR',
       reason: 'Bank retries exhausted — subscription renewal halted',
       isHalted: true,
+    }),
+  },
+  {
+    name: '11b-subscription-cancelled',
+    trigger: 'Razorpay subscription.cancelled mid-cycle (dashboard or customer); plan kept until current_end (razorpay.service.ts handleCancelled)',
+    email: subscriptionCancelledEmail({
+      orgName: 'Chai Point Social',
+      billing: 'STANDARD',
+      period: 'MONTHLY',
+      accessUntil: new Date(Date.now() + 24 * 86_400_000),
+    }),
+  },
+  {
+    name: '11c-subscription-cancelled-ended',
+    trigger: 'Razorpay subscription.cancelled at cycle end, or after a refund; plan ends now (razorpay.service.ts handleCancelled)',
+    email: subscriptionCancelledEmail({
+      orgName: 'Chai Point Social',
+      billing: 'STANDARD',
+      period: 'MONTHLY',
+      accessUntil: null,
+    }),
+  },
+  {
+    name: '11d-refund-plan-cancelled',
+    trigger: 'Razorpay refund.processed for a cancelled subscription (razorpay.service.ts handleRefund)',
+    email: refundEmail({
+      orgName: 'Chai Point Social',
+      amount: 599,
+      currency: 'INR',
+      refundId: 'rfnd_R8kq2mYp1xTz9L',
+      paymentId: 'pay_R8kp1cN2cQwE4v',
+      refundedAt: new Date(),
+      billing: 'STANDARD',
+      plan: 'cancelled',
+    }),
+  },
+  {
+    name: '11e-refund-plan-active',
+    trigger: 'Razorpay refund.processed, subscription still live (razorpay.service.ts handleRefund)',
+    email: refundEmail({
+      orgName: 'Chai Point Social',
+      amount: 1400,
+      currency: 'INR',
+      refundId: 'rfnd_R8kq2mYp1xTz9M',
+      paymentId: 'pay_R8kp1cN2cQwE4w',
+      refundedAt: new Date(),
+      billing: 'PRO',
+      plan: 'active',
+      nextChargeAt: new Date(Date.now() + 18 * 86_400_000),
     }),
   },
   {

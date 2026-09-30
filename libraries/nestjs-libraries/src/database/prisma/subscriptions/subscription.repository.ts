@@ -146,6 +146,27 @@ export class SubscriptionRepository {
     });
   }
 
+  /** Keep the plan until `cancelAt`, for this org's row with this identifier only. */
+  scheduleCancellation(organizationId: string, identifier: string, cancelAt: Date) {
+    return this._subscription.model.subscription.updateMany({
+      where: { organizationId, identifier, deletedAt: null },
+      data: { cancelAt },
+    });
+  }
+
+  /** Provider subscriptions whose scheduled end has passed and that still hold a plan. */
+  getLapsedCancellations(now: Date) {
+    return this._subscription.model.subscription.findMany({
+      where: {
+        cancelAt: { lt: now },
+        deletedAt: null,
+        isLifetime: false,
+        identifier: { startsWith: 'sub_' },
+      },
+      select: { organizationId: true, identifier: true, cancelAt: true },
+    });
+  }
+
   deleteSubscriptionByCustomerId(customerId: string) {
     return this._subscription.model.subscription.deleteMany({
       where: {

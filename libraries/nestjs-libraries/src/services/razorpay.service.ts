@@ -1,4 +1,10 @@
-import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { Organization } from '@prisma/client';
 import { SubscriptionService } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/subscription.service';
 import { OrganizationService } from '@hookpost/nestjs-libraries/database/prisma/organizations/organization.service';
@@ -24,8 +30,12 @@ import {
 } from '@hookpost/nestjs-libraries/services/razorpay.mapping';
 import {
   paymentFailedEmail,
+  refundEmail,
+  subscriptionCancelledEmail,
   subscriptionWelcomeEmail,
 } from '@hookpost/nestjs-libraries/emails/templates/billing.emails';
+import { RenderedEmail } from '@hookpost/nestjs-libraries/emails/layout/email.layout';
+import { ioRedis } from '@hookpost/nestjs-libraries/redis/redis.service';
 
 type Billing = 'STANDARD' | 'TEAM' | 'PRO' | 'ULTIMATE';
 type Period = 'MONTHLY' | 'YEARLY';
@@ -50,13 +60,27 @@ function firstChargeAt(subscription: any): Date | null {
 /** Free-trial length in days, matching what the billing page advertises. */
 const TRIAL_DAYS_DEFAULT = 7;
 
+/** Razorpay subscription states that will never bill again. */
+const ENDED_STATES = ['cancelled', 'completed', 'expired'];
+
+/**
+ * How long a "this email went out" marker lives. Razorpay retries a webhook
+ * for up to 24 hours and sends refund.created and refund.processed for the
+ * same refund, so anything well past a day is enough.
+ */
+const EMAIL_ONCE_TTL_SECONDS = 45 * 86400;
+
+/** How often lapsed cancellation grace periods are closed. */
+const GRACE_SWEEP_MS = 60 * 60 * 1000;
+
 function subscriptionSafeId(payment: any) {
   return payment?.order_id || payment?.invoice_id || String(payment?.created_at || '');
 }
 
 @Injectable()
-export class RazorpayService {
+export class RazorpayService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RazorpayService.name);
+  private graceTimer?: NodeJS.Timeout;
   private readonly client = new RazorpayClient();
   /** planId cache, keyed by tier|period|amount so a price change forces a new plan. */
   private planCache = new Map<string, string>();
@@ -70,6 +94,28 @@ export class RazorpayService {
     private _trackService: TrackService,
     private _affiliateService: AffiliateService
   ) {}
+
+  /**
+   * Close cancellation grace periods once they run out (see handleCancelled).
+   * Only where RUN_CRON is on, which is the production backend; the sweep is
+   * idempotent, so a second process running it would only repeat no-ops.
+   */
+  onModuleInit() {
+    if (process.env.RUN_CRON !== 'true' || process.env.NODE_ENV === 'test') {
+      return;
+    }
+    const run = () =>
+      this.endLapsedCancellations().catch((e) =>
+        this.logger.error(`Cancellation grace sweep failed: ${e}`)
+      );
+    setTimeout(run, 2 * 60 * 1000).unref();
+    this.graceTimer = setInterval(run, GRACE_SWEEP_MS);
+    this.graceTimer.unref();
+  }
+
+  onModuleDestroy() {
+    if (this.graceTimer) clearInterval(this.graceTimer);
+  }
 
   // ---------------------------------------------------------------------------
   // Webhooks
@@ -116,9 +162,14 @@ export class RazorpayService {
       case 'subscription.updated':
         return this.updateSubscription(subscription);
       case 'subscription.cancelled':
+        return this.handleCancelled(subscription);
       case 'subscription.completed':
       case 'subscription.expired':
         return this.deleteSubscription(subscription);
+      case 'refund.created':
+      case 'refund.processed':
+        await this.handleRefund(type, event?.payload?.refund?.entity, payment);
+        return { ok: true };
       case 'subscription.halted':
       case 'subscription.pending':
         // Payment is failing but the subscription is not dead yet. Leave
@@ -602,6 +653,320 @@ export class RazorpayService {
       known.organizationId
     );
     return { ok: true };
+  }
+
+  // ---------------------------------------------------------------------------
+  // Cancellation and refund emails
+  // ---------------------------------------------------------------------------
+
+  /**
+   * subscription.cancelled, from the customer or from the Razorpay dashboard.
+   *
+   * Razorpay only sends this once the subscription has actually stopped: at
+   * the end of the cycle for a scheduled cancellation, straight away for an
+   * immediate one. An immediate cancel mid-cycle leaves current_end in the
+   * future, and the customer has paid for that time - the cancellation policy
+   * promises they keep it. So the plan stays until current_end (the hourly
+   * endLapsedCancellations sweep closes it), unless that period's payment was
+   * refunded, in which case it ends now.
+   *
+   * Positively identified like deleteSubscription: no stored Subscription row
+   * with this identifier, no action and no email.
+   */
+  async handleCancelled(subscription: any) {
+    if (!subscription?.id) return { ok: true };
+
+    const known = await this._subscriptionService.getSubscriptionByIdentifier(
+      subscription.id
+    );
+    if (!known) {
+      this.logger.warn(
+        `Ignoring cancellation of ${subscription.id}: no Hookpost subscription ` +
+          `with that identifier (customer ${subscription.customer_id}).`
+      );
+      return { ok: true };
+    }
+
+    const orgId = known.organizationId;
+    const paidEnd = subscription.current_end
+      ? new Date(subscription.current_end * 1000)
+      : null;
+    const periodLeft = !!paidEnd && paidEnd.getTime() > Date.now() + 60_000;
+    const refunded = periodLeft
+      ? await this.currentPeriodRefunded(subscription.id)
+      : false;
+    const keepUntil = periodLeft && !refunded ? paidEnd : null;
+
+    if (keepUntil) {
+      await this._subscriptionService.scheduleCancellation(
+        orgId,
+        subscription.id,
+        keepUntil
+      );
+    } else {
+      await this._subscriptionService.deleteSubscriptionByOrg(orgId);
+    }
+
+    // Changing plan on a UPI mandate issues a new subscription and cancels the
+    // old one (see subscribe / retireSupersededSubscriptions). That customer
+    // is switching, not leaving, so "your plan is cancelled" would be wrong.
+    if (await this.hasReplacementSubscription(orgId, subscription)) {
+      this.logger.log(
+        `Cancellation of ${subscription.id} is a plan switch for org ${orgId}; no email.`
+      );
+      return { ok: true };
+    }
+
+    await this.sendOnce(`cancelled:${subscription.id}`, async () => {
+      const org = await this._organizationService.getOrgById(orgId);
+      return this.sendCustomerEmail(
+        orgId,
+        subscriptionCancelledEmail({
+          orgName: org?.name || 'your workspace',
+          billing: known.subscriptionTier,
+          period: known.period,
+          accessUntil: keepUntil,
+          endedAt: subscription.ended_at
+            ? new Date(subscription.ended_at * 1000)
+            : new Date(),
+        }),
+        'Hookpost Billing <support@hookstep.in>'
+      );
+    });
+    return { ok: true };
+  }
+
+  /**
+   * refund.processed, and refund.created when Razorpay already reports the
+   * refund as processed (a refund.processed for the same refund follows or
+   * has already arrived; the email goes out once per refund id either way).
+   * Never throws: a failure here must not make Razorpay redeliver.
+   *
+   * Only refunds of a Hookpost subscription charge qualify, found through the
+   * payment's invoice to a subscription tagged notes.service = 'hookpost'. The
+   * Rs 5 mandate-authorisation payment Razorpay refunds by itself at every
+   * checkout has no invoice and no notes, so it never produces an email.
+   */
+  async handleRefund(type: string, refund: any, payment?: any) {
+    try {
+      if (!refund?.id || !refund.payment_id) return;
+      if (type === 'refund.created' && refund.status !== 'processed') return;
+
+      const pay =
+        payment?.id === refund.payment_id
+          ? payment
+          : await this.client
+              .request('GET', `/payments/${refund.payment_id}`)
+              .catch(() => null);
+      const payService = pay?.notes?.service;
+      if (payService && payService !== 'hookpost') return;
+
+      let sub: any = null;
+      if (pay?.invoice_id) {
+        const invoice = await this.client
+          .request('GET', `/invoices/${pay.invoice_id}`)
+          .catch(() => null);
+        if (invoice?.subscription_id) {
+          sub = await this.client
+            .request('GET', `/subscriptions/${invoice.subscription_id}`)
+            .catch(() => null);
+        }
+      }
+
+      let orgId: string | undefined;
+      if (sub) {
+        if (sub.notes?.service !== 'hookpost' || !sub.notes?.orgId) return;
+        orgId = sub.notes.orgId;
+      } else if (payService === 'hookpost' && pay?.notes?.orgId) {
+        orgId = pay.notes.orgId;
+      }
+      if (!orgId) return;
+
+      const local = await this._subscriptionService.getSubscription(orgId);
+      // No row, or a row without a paid tier, means no active plan.
+      const localTier: string | null = local?.subscriptionTier
+        ? String(local.subscriptionTier)
+        : null;
+      let billing: string | null =
+        (sub && (await this.resolveTierFromPlan(sub.plan_id))?.billing) ||
+        localTier;
+
+      let plan: 'active' | 'cancelled' | 'none' = 'none';
+      let nextChargeAt: Date | null = null;
+      if (sub && ENDED_STATES.includes(sub.status)) {
+        if (local?.identifier === sub.id) {
+          // The refunded subscription was only still on because of the
+          // cancellation grace period. A refund ends that.
+          await this._subscriptionService.deleteSubscriptionByOrg(orgId);
+          plan = 'cancelled';
+        } else {
+          plan = localTier ? 'active' : 'cancelled';
+          if (localTier) billing = localTier;
+        }
+      } else if (sub) {
+        plan = 'active';
+        const next = Number(sub.charge_at || sub.current_end || 0);
+        nextChargeAt = next > 0 ? new Date(next * 1000) : null;
+      } else if (localTier) {
+        plan = 'active';
+      }
+
+      await this.sendOnce(`refund:${refund.id}`, async () => {
+        const org = await this._organizationService.getOrgById(orgId!);
+        return this.sendCustomerEmail(
+          orgId!,
+          refundEmail({
+            orgName: org?.name || 'your workspace',
+            amount: Number(refund.amount || 0) / 100,
+            currency: refund.currency || pay?.currency || 'INR',
+            refundId: refund.id,
+            paymentId: refund.payment_id,
+            refundedAt: new Date(
+              (Number(refund.created_at) || Math.floor(Date.now() / 1000)) * 1000
+            ),
+            billing,
+            plan,
+            nextChargeAt,
+          }),
+          'Hookpost Billing <support@hookstep.in>'
+        );
+      });
+    } catch (e) {
+      this.logger.error(`Refund handling failed for ${refund?.id}: ${e}`);
+    }
+  }
+
+  /**
+   * Close grace periods left by handleCancelled once their paid time is up.
+   * Only rows whose Razorpay subscription is really `cancelled` and ours, so a
+   * row carrying an old or odd cancelAt is never downgraded on a guess.
+   */
+  async endLapsedCancellations(now = new Date()) {
+    const rows = await this._subscriptionService.getLapsedCancellations(now);
+    let ended = 0;
+    for (const row of rows) {
+      const remote = await this.client
+        .request('GET', `/subscriptions/${row.identifier}`)
+        .catch(() => null);
+      if (
+        remote?.status !== 'cancelled' ||
+        remote?.notes?.service !== 'hookpost'
+      ) {
+        continue;
+      }
+      const end = Number(remote.current_end || 0) * 1000;
+      if (end > now.getTime() + 60_000) continue;
+      await this._subscriptionService.deleteSubscriptionByOrg(row.organizationId);
+      ended++;
+      this.logger.log(
+        `Cancellation grace ended for org ${row.organizationId} (${row.identifier}).`
+      );
+    }
+    return { checked: rows.length, ended };
+  }
+
+  /** Was the payment for the subscription's current, unfinished period refunded? */
+  private async currentPeriodRefunded(subscriptionId: string) {
+    try {
+      const res = await this.client.request(
+        'GET',
+        `/invoices?subscription_id=${encodeURIComponent(subscriptionId)}&count=10`
+      );
+      const nowSec = Date.now() / 1000;
+      for (const inv of res?.items || []) {
+        if (!inv?.payment_id || Number(inv.billing_end || 0) <= nowSec) continue;
+        const pay = await this.client
+          .request('GET', `/payments/${inv.payment_id}`)
+          .catch(() => null);
+        if (Number(pay?.amount_refunded || 0) > 0) return true;
+      }
+    } catch (e) {
+      this.logger.warn(`Could not check refunds on ${subscriptionId}: ${e}`);
+    }
+    return false;
+  }
+
+  /** Does this org hold a newer Hookpost subscription that is still live? */
+  private async hasReplacementSubscription(orgId: string, cancelled: any) {
+    try {
+      const all = await this.getCustomerSubscriptions(orgId);
+      return (all?.items || []).some(
+        (s: any) =>
+          s?.id &&
+          s.id !== cancelled.id &&
+          LIVE_STATES.includes(s.status) &&
+          s.notes?.service === 'hookpost' &&
+          s.notes?.orgId === orgId &&
+          Number(s.created_at || 0) >= Number(cancelled.created_at || 0)
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Run `send` at most once per key. The key is claimed in Redis first
+   * (SET NX), because Razorpay retries webhooks and sends two refund events
+   * per refund. A failed send releases the claim so a redelivery can retry.
+   * If Redis cannot be reached nothing is sent: a missing email is easier to
+   * put right than a customer told twice about one refund.
+   */
+  private async sendOnce(key: string, send: () => Promise<boolean>) {
+    const redisKey = `razorpay:customer-email:${key}`;
+    let claimed = false;
+    try {
+      claimed =
+        (await (ioRedis as any).set(
+          redisKey,
+          new Date().toISOString(),
+          'EX',
+          EMAIL_ONCE_TTL_SECONDS,
+          'NX'
+        )) === 'OK';
+    } catch (e) {
+      this.logger.error(`Could not claim ${redisKey}; email not sent: ${e}`);
+      return false;
+    }
+    if (!claimed) {
+      this.logger.log(`Skipping ${key}: that email already went out.`);
+      return false;
+    }
+    const ok = await send().catch(() => false);
+    if (!ok) await (ioRedis as any).del(redisKey).catch(() => undefined);
+    return ok;
+  }
+
+  /** Send a rendered email to the workspace's billing contact (its first member). */
+  private async sendCustomerEmail(
+    orgId: string,
+    email: RenderedEmail,
+    from: string
+  ): Promise<boolean> {
+    try {
+      const apiKey = process.env.RESEND_API_KEY || '';
+      if (!apiKey) return false;
+      const team = await this._organizationService.getTeam(orgId);
+      const to = team?.users?.[0]?.user?.email;
+      if (!to || !to.includes('@')) return false;
+
+      const { Resend } = await import('resend');
+      const result: any = await new Resend(apiKey).emails.send({
+        from,
+        to,
+        reply_to: 'support@hookstep.in',
+        subject: email.subject,
+        html: email.html,
+        text: email.text,
+      });
+      if (result?.error) {
+        throw new Error(result.error.message || JSON.stringify(result.error));
+      }
+      this.logger.log(`"${email.subject}" sent to ${to} for org ${orgId}`);
+      return true;
+    } catch (e) {
+      this.logger.error(`Billing email to org ${orgId} failed: ${e}`);
+      return false;
+    }
   }
 
   /**

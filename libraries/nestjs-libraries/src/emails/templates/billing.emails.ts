@@ -153,3 +153,136 @@ export function paymentFailedEmail(params: {
       }),
   });
 }
+
+/** "30 Sep 2026", in India time like the rest of the billing emails. */
+export function formatBillingDate(date: Date): string {
+  return date.toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'Asia/Kolkata',
+  });
+}
+
+const FREE_PLAN_LINE =
+  'the Free plan (2 channels, 30 posts a month). Your posts and connected accounts stay; channels beyond the first 2 are paused until you subscribe again';
+
+/**
+ * Razorpay webhook: subscription.cancelled, whoever cancelled it (the customer
+ * from Billing, or us from the Razorpay dashboard).
+ *
+ * `accessUntil` is the end of the period already paid for (Razorpay's
+ * current_end) when the workspace keeps the plan until then. It is null when
+ * the plan has already ended: the period ran out, or its payment was refunded.
+ */
+export function subscriptionCancelledEmail(params: {
+  orgName: string;
+  billing: string;
+  period?: 'MONTHLY' | 'YEARLY' | string | null;
+  accessUntil: Date | null;
+  endedAt?: Date;
+}): RenderedEmail {
+  const { orgName, billing, period, accessUntil, endedAt = new Date() } = params;
+  const tier = tierLabel(billing);
+  const until = accessUntil ? formatBillingDate(accessUntil) : '';
+
+  const rows: Array<[string, string]> = [
+    ['Workspace', escapeHtml(orgName)],
+    ['Plan', `${escapeHtml(tier)}${period ? ` &middot; ${period === 'YEARLY' ? 'Yearly' : 'Monthly'}` : ''}`],
+    accessUntil
+      ? ['Paid access until', until]
+      : ['Plan ended', formatBillingDate(endedAt)],
+    ['Future charges', 'None'],
+  ];
+
+  return buildEmail('Your Hookpost plan is cancelled', {
+    preheader: accessUntil
+      ? `${tier} stays active until ${until}. You won't be charged again.`
+      : `Your ${tier} plan has ended. You won't be charged again.`,
+    kind: 'transactional',
+    body:
+      heading('Your plan is cancelled') +
+      paragraph(
+        `Your Hookpost ${escapeHtml(tier)} plan for ${strong(escapeHtml(orgName))} is cancelled, and you won't be charged again.`
+      ) +
+      details(rows) +
+      paragraph(
+        accessUntil
+          ? `Everything keeps working as it does now until ${strong(until)}: your channels, scheduled posts and AI credits. After that the workspace moves to ${FREE_PLAN_LINE}.`
+          : `The workspace is now on ${FREE_PLAN_LINE}.`
+      ) +
+      button('Resubscribe', `${appUrl()}/billing`) +
+      paragraph(
+        "Cancelled by mistake, or is there something we could have done better? Reply to this email; a person reads every reply.",
+        { muted: true, small: true }
+      ),
+  });
+}
+
+/**
+ * Razorpay webhook: refund.processed (or refund.created when Razorpay already
+ * marks the refund processed). One email per refund id.
+ *
+ * `plan` says what happened to the subscription, so the customer is never left
+ * guessing whether a refund also switched their plan off:
+ *   - active: the plan continues and renews as normal
+ *   - cancelled: the plan is cancelled and access has ended
+ *   - none: the payment was not for a plan we can name
+ */
+export function refundEmail(params: {
+  orgName: string;
+  /** Major units, e.g. 599 for Rs 599. */
+  amount: number;
+  currency: string;
+  refundId: string;
+  paymentId?: string | null;
+  refundedAt: Date;
+  billing?: string | null;
+  plan: 'active' | 'cancelled' | 'none';
+  /** Next renewal, when the plan stays active and Razorpay reports one. */
+  nextChargeAt?: Date | null;
+}): RenderedEmail {
+  const { orgName, amount, currency, refundId, paymentId, refundedAt, billing, plan, nextChargeAt } = params;
+  const money = formatMoney(amount, currency);
+  const tier = billing ? tierLabel(billing) : '';
+  const planName = tier ? `${tier} plan` : 'plan';
+
+  const rows: Array<[string, string]> = [
+    ['Amount', money],
+    ['Refund ID', escapeHtml(refundId)],
+  ];
+  if (paymentId) rows.push(['Original payment', escapeHtml(paymentId)]);
+  rows.push(['Date', formatBillingDate(refundedAt)]);
+  if (plan !== 'none') {
+    rows.push([
+      'Your plan',
+      plan === 'active' ? `${escapeHtml(tier || 'Plan')} &middot; still active` : `${escapeHtml(tier || 'Plan')} &middot; cancelled`,
+    ]);
+  }
+
+  const planLine =
+    plan === 'active'
+      ? `Your ${escapeHtml(planName)} for ${strong(escapeHtml(orgName))} stays active${
+          nextChargeAt ? ` and renews on ${strong(formatBillingDate(nextChargeAt))}` : ''
+        }. Nothing else changes.`
+      : plan === 'cancelled'
+      ? `Your ${escapeHtml(planName)} for ${strong(escapeHtml(orgName))} is cancelled, so you won't be charged again. The workspace is now on ${FREE_PLAN_LINE}.`
+      : '';
+
+  return buildEmail(`Your refund of ${money} is on its way`, {
+    preheader: `${money} is going back to your original payment method. It usually reaches your bank in 5–7 working days.`,
+    kind: 'transactional',
+    body:
+      heading(`Your refund of ${money} is on its way`) +
+      paragraph(
+        `We've refunded ${strong(money)} to the payment method you paid with. It usually reaches your bank in 5–7 working days; the exact time depends on your bank.`
+      ) +
+      details(rows) +
+      (planLine ? paragraph(planLine) : '') +
+      (plan === 'cancelled' ? button('Resubscribe', `${appUrl()}/billing`) : '') +
+      paragraph(
+        `Not in your account after 7 working days? Reply with the refund ID above and we'll chase it with Razorpay.`,
+        { muted: true, small: true }
+      ),
+  });
+}

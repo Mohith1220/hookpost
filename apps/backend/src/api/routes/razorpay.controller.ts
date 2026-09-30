@@ -10,6 +10,10 @@ import {
 import { RazorpayService } from '@hookpost/nestjs-libraries/services/razorpay.service';
 import { RazorpayClient } from '@hookpost/nestjs-libraries/services/razorpay.client';
 import { ApiTags } from '@nestjs/swagger';
+import {
+  eventService,
+  forwardToTablamigo,
+} from '@hookpost/nestjs-libraries/services/tablamigo.forward';
 
 @ApiTags('Razorpay')
 @Controller('/razorpay')
@@ -44,8 +48,21 @@ export class RazorpayController {
       throw new HttpException('Invalid signature', 400);
     }
 
+    // Tablamigo shares this Razorpay account but has no webhook of its own:
+    // hand its events over. Not awaited, and it never throws, so Tablamigo
+    // being slow or down cannot delay or fail this response.
+    void forwardToTablamigo(req.rawBody!, event, {
+      fetchPayment: (id) => this.client.request('GET', `/payments/${id}`),
+      log: (m) => this.logger.warn(m),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      eventId: req.headers['x-razorpay-event-id'],
+    });
+
     // Ignore events originating from a different product sharing this account.
-    const service = event?.payload?.subscription?.entity?.notes?.service;
+    // Payment notes count too: a payment.failed for another product used to
+    // reach handlePaymentFailedWebhook, which resolves an org by customer id.
+    const service = eventService(event);
     if (service && service !== 'hookpost') {
       return { ok: true };
     }

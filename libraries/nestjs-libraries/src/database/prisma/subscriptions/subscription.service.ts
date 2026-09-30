@@ -102,6 +102,19 @@ export class SubscriptionService {
     );
   }
 
+  /** A cancelled subscription keeps its plan until the paid period ends. */
+  scheduleCancellation(organizationId: string, identifier: string, cancelAt: Date) {
+    return this._subscriptionRepository.scheduleCancellation(
+      organizationId,
+      identifier,
+      cancelAt
+    );
+  }
+
+  getLapsedCancellations(now: Date) {
+    return this._subscriptionRepository.getLapsedCancellations(now);
+  }
+
   updateCustomerId(organizationId: string, customerId: string) {
     return this._subscriptionRepository.updateCustomerId(
       organizationId,

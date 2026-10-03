@@ -11,7 +11,18 @@ import { useToaster } from '@hookpost/react/toaster/toaster';
 import { useRouter } from 'next/navigation';
 import { useFireEvents } from '@hookpost/helpers/utils/use.fire.events';
 import { useT } from '@hookpost/react/translation/get.transation.service.client';
+import {
+  TwaPlanNotice,
+  useIsTwa,
+} from '@hookpost/frontend/components/layout/twa.component';
+// Google Play app: no "Next Package" upsell there, only the plain plan line
+// (see layout/twa.ts). Direct URL only; nothing in the app links here.
 export const LifetimeDeal = () => {
+  const isTwa = useIsTwa();
+  return isTwa ? <TwaPlanNotice /> : <LifetimeDealInner />;
+};
+
+const LifetimeDealInner = () => {
   const t = useT();
   const fetch = useFetch();
   const user = useUser();

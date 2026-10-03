@@ -249,6 +249,9 @@ export const useMenuItem = () => {
       ),
       path: '/affiliate',
       role: ['ADMIN', 'USER', 'SUPERADMIN'],
+      // The page quotes the web plan prices ("Standard is Rs 599 a month")
+      // and links to the public programme page, which lists them too.
+      hideInTwa: true,
     },
     {
       name: t('settings', 'Settings'),

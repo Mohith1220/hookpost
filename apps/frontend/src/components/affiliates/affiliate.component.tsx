@@ -6,6 +6,10 @@ import copy from 'copy-to-clipboard';
 import { useFetch } from '@hookpost/helpers/utils/custom.fetch';
 import { useToaster } from '@hookpost/react/toaster/toaster';
 import { LoadingComponent } from '@hookpost/frontend/components/layout/loading';
+import {
+  TwaPlanNotice,
+  useIsTwa,
+} from '@hookpost/frontend/components/layout/twa.component';
 
 type Money = Record<string, number>;
 
@@ -56,7 +60,15 @@ const Stat: FC<{ label: string; value: string; hint?: string }> = ({
   </div>
 );
 
+// Google Play app: the dashboard quotes web plan prices and links to the public
+// programme page, so it is not shown there (see layout/twa.ts). The menu item
+// is hidden too; this covers a direct URL.
 export const AffiliateComponent: FC = () => {
+  const isTwa = useIsTwa();
+  return isTwa ? <TwaPlanNotice /> : <AffiliateDashboard />;
+};
+
+const AffiliateDashboard: FC = () => {
   const fetch = useFetch();
   const toaster = useToaster();
   const [payout, setPayout] = useState('');

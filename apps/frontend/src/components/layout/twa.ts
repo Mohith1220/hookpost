@@ -142,20 +142,43 @@ export const TWA_BOOTSTRAP_SCRIPT = `(function () {
 })();`;
 
 /**
+ * Marketing pages whose point is prices or a plan sale. The Play app's own
+ * links to them are hidden (site nav and footer), but Android opens any link to
+ * this domain in the Play app once it is installed - an email's "see pricing"
+ * link, for one - so inside the app they go to /auth as well. Exact paths and
+ * everything under them.
+ */
+export const TWA_PRICED_PAGES = [
+  '/pricing',
+  '/free-social-media-scheduler',
+  '/social-media-scheduler-india',
+  '/best-social-media-scheduler-india',
+  '/affiliates',
+  '/alternatives',
+  '/compare',
+  '/vs',
+];
+
+/**
  * Inlined in (landing)/layout.tsx right after TWA_BOOTSTRAP_SCRIPT. The Play
  * app starts at /, the marketing homepage, which lists the web prices and says
  * payment goes through Razorpay. Inside the Play app that is messaging about
  * another way to pay, which Play's Payments policy does not allow, so there /
  * goes straight to /auth: sign-up, and the middleware forwards a signed-in
- * user on to /launches. Only /, the page the app opens on; other marketing
- * pages are left alone. Plain ES5, like the bootstrap.
+ * user on to /launches. The same for TWA_PRICED_PAGES. Every other marketing
+ * page (policies, docs, free tools) is left alone. Plain ES5, like the
+ * bootstrap.
  */
 export const TWA_HOME_REDIRECT_SCRIPT = `(function () {
   try {
-    if (
-      window.location.pathname === '/' &&
-      document.documentElement.hasAttribute(${JSON.stringify(TWA_HTML_ATTR)})
-    ) {
+    if (!document.documentElement.hasAttribute(${JSON.stringify(TWA_HTML_ATTR)})) return;
+    var path = window.location.pathname;
+    var priced = ${JSON.stringify(TWA_PRICED_PAGES)};
+    var hit = path === '/';
+    for (var i = 0; !hit && i < priced.length; i++) {
+      hit = path === priced[i] || path.indexOf(priced[i] + '/') === 0;
+    }
+    if (hit) {
       window.location.replace('/auth' + window.location.search);
     }
   } catch (e) {}

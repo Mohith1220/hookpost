@@ -26,6 +26,7 @@ import {
   TWA_HOME_REDIRECT_SCRIPT,
   TWA_HTML_ATTR,
   TWA_PLAN_NOTICE,
+  TWA_PRICED_PAGES,
   TWA_STORAGE_KEY,
   twaLimitMessage,
 } from '@hookpost/frontend/components/layout/twa';
@@ -309,7 +310,35 @@ describe('TWA_HOME_REDIRECT_SCRIPT (the Play app skips the marketing homepage)',
   it('leaves every other page alone, even in the Play app', () => {
     newPageLoad(PLAY_REFERRER, '/');
     runBootstrap();
-    for (const path of ['/pricing', '/privacy', '/terms', '/docs', '/auth']) {
+    for (const path of [
+      '/privacy',
+      '/terms',
+      '/refund-policy',
+      '/docs',
+      '/auth',
+      '/tools/character-counter',
+      '/pricingx',
+      '/vsx',
+    ]) {
+      expect(runRedirect(path)).not.toHaveBeenCalled();
+    }
+  });
+
+  it('sends the priced marketing pages to /auth too (an email link opens in the app)', () => {
+    newPageLoad(PLAY_REFERRER, '/');
+    runBootstrap();
+    for (const path of TWA_PRICED_PAGES.concat(['/alternatives/buffer', '/vs/zoho-social'])) {
+      expect(runRedirect(path)).toHaveBeenCalledWith('/auth');
+    }
+    expect(runRedirect('/pricing', '?utm_source=email')).toHaveBeenCalledWith(
+      '/auth?utm_source=email'
+    );
+  });
+
+  it('leaves the priced pages alone in a normal browser', () => {
+    newPageLoad('https://www.google.com/', '/pricing');
+    runBootstrap();
+    for (const path of TWA_PRICED_PAGES) {
       expect(runRedirect(path)).not.toHaveBeenCalled();
     }
   });

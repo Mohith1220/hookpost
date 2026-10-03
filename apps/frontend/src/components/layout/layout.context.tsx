@@ -5,6 +5,8 @@ import { FetchWrapperComponent } from '@hookpost/helpers/utils/custom.fetch';
 import { deleteDialog } from '@hookpost/react/helpers/delete.dialog';
 import { useReturnUrl } from '@hookpost/frontend/app/(app)/auth/return.url.component';
 import { useVariables } from '@hookpost/react/helpers/variable.context';
+import { isTwaClient } from '@hookpost/frontend/components/layout/twa';
+import { twaPlanDialog } from '@hookpost/frontend/components/layout/twa.component';
 export default function LayoutContext(params: { children: ReactNode }) {
   if (params?.children) {
     // eslint-disable-next-line react/no-children-prop
@@ -114,6 +116,14 @@ function LayoutContextInner(params: { children: ReactNode }) {
         }
       }
       if (response.status === 406) {
+        // Google Play app: no route to checkout (see layout/twa.ts).
+        if (isTwaClient()) {
+          await twaPlanDialog(
+            'This feature needs a paid plan, and your trial has not ended yet.',
+            'Trial'
+          );
+          return false;
+        }
         if (
           await deleteDialog(
             'You are currently on trial, in order to use the feature you must finish the trial',
@@ -130,6 +140,14 @@ function LayoutContextInner(params: { children: ReactNode }) {
 
       if (response.status === 402) {
         const body = await response.json().catch(() => ({}) as any);
+        if (isTwaClient()) {
+          await twaPlanDialog(
+            typeof body?.message === 'string'
+              ? body.message
+              : 'You have reached a limit of your plan.'
+          );
+          return true;
+        }
         if (
           await deleteDialog(
             body?.message || 'You have reached a limit of your plan.',

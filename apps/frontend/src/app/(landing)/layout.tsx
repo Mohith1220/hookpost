@@ -43,6 +43,7 @@ import { GoogleOneTap } from '@hookpost/frontend/components/auth/google-one-tap'
 import { RefCapture } from '@hookpost/frontend/components/affiliates/ref-capture';
 import { PUBLISHABLE_CHANNEL_COUNT } from './channels/channel-count';
 import { SiteFooter } from './site-footer';
+import { TWA_BOOTSTRAP_SCRIPT } from '@hookpost/frontend/components/layout/twa';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://hookpost.hookstep.in'),
@@ -324,7 +325,13 @@ export default function LandingLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" style={{ ['--new-bgColor' as any]: '#05070a' }}>
+    // suppressHydrationWarning: the TWA bootstrap below may add data-hp-twa to
+    // <html> before React hydrates it.
+    <html
+      lang="en"
+      style={{ ['--new-bgColor' as any]: '#05070a' }}
+      suppressHydrationWarning
+    >
       <head>
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png" />
@@ -354,6 +361,12 @@ export default function LandingLayout({
         <meta name="apple-mobile-web-app-title" content="Hookpost" />
         <meta name="application-name" content="Hookpost" />
         <meta name="format-detection" content="telephone=no" />
+        {/* Must stay above the signed-in redirect below: the Play app opens /
+            with an android-app:// referrer that the redirect to /launches
+            loses, so it has to be recorded first. Marks <html> so the Play
+            badges hide inside the Play app (TWA_HIDE_CSS). These pages are
+            cached by Cloudflare, so this cannot be decided on the server. */}
+        <script dangerouslySetInnerHTML={{ __html: TWA_BOOTSTRAP_SCRIPT }} />
         <script
           dangerouslySetInnerHTML={{
             __html: `

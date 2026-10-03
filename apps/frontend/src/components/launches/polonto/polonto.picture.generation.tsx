@@ -13,6 +13,7 @@ import { Button } from '@hookpost/react/form/button';
 import { useToaster } from '@hookpost/react/toaster/toaster';
 import { useVariables } from '@hookpost/react/helpers/variable.context';
 import { useT } from '@hookpost/react/translation/get.transation.service.client';
+import { isTwaClient, TWA_PLAN_NOTICE } from '@hookpost/frontend/components/layout/twa';
 const GenerateTab = observer(({ store }: any) => {
   const inputRef = React.useRef<any>(null);
   const [image, setImage] = React.useState(null);
@@ -37,6 +38,11 @@ const GenerateTab = observer(({ store }: any) => {
 
   const handleGenerate = async () => {
     if (data?.credits <= 0) {
+      // Google Play app: no route to /billing (see layout/twa.ts).
+      if (isTwaClient()) {
+        toast.show(`No image credits left. ${TWA_PLAN_NOTICE}`, 'warning');
+        return;
+      }
       window.open('/billing', '_blank');
       return;
     }
@@ -92,7 +98,11 @@ const GenerateTab = observer(({ store }: any) => {
           marginBottom: '40px',
         }}
       >
-        {data?.credits <= 0 ? 'Click to purchase more credits' : 'Generate'}
+        {data?.credits <= 0
+          ? isTwaClient()
+            ? 'No credits left'
+            : 'Click to purchase more credits'
+          : 'Generate'}
       </Button>
       {image && (
         <ImagesGrid

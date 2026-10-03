@@ -43,6 +43,7 @@ import { newDayjs } from '@hookpost/frontend/components/layout/set.timezone';
 import { useDubClickId } from '@hookpost/frontend/components/layout/dubAnalytics';
 import { LogoutComponent } from '@hookpost/frontend/components/layout/logout.component';
 import { openRazorpayCheckout } from '@hookpost/frontend/components/billing/razorpay.billing';
+import { isTwaClient } from '@hookpost/frontend/components/layout/twa';
 
 export const Prorate: FC<{
   period: 'MONTHLY' | 'YEARLY';
@@ -321,6 +322,12 @@ export const MainBillingComponent: FC<{
   const moveToCheckout = useCallback(
     (billing: 'STANDARD' | 'PRO' | 'FREE', reactivate = false) =>
       async () => {
+        // BillingComponent never renders this inside the Google Play app.
+        // This is the backstop: there, openRazorpayCheckout returns false and
+        // the code below would fall through to Razorpay's hosted page.
+        if (isTwaClient()) {
+          return;
+        }
         if (reactivate) {
           setLoading(true);
           const { cancel_at } = await (

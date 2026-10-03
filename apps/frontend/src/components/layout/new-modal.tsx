@@ -379,6 +379,7 @@ export const areYouSure = ({
   description = 'Are you sure you want to close this modal?' as any,
   approveLabel = 'Yes',
   cancelLabel = 'No',
+  onlyApprove = false,
 } = {}): Promise<boolean> => {
   return new Promise<boolean>((newRes) => {
     decisionModalEmitter.emit('open', {
@@ -386,6 +387,7 @@ export const areYouSure = ({
       description,
       approveLabel,
       cancelLabel,
+      onlyApprove,
       newRes,
     });
   });

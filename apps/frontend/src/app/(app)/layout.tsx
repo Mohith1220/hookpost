@@ -24,6 +24,7 @@ import {
 import { HtmlComponent } from '@hookpost/frontend/components/layout/html.component';
 import Script from 'next/script';
 import { ChangeDirClient } from '@hookpost/frontend/components/new-layout/change.dir.client';
+import { TWA_BOOTSTRAP_SCRIPT } from '@hookpost/frontend/components/layout/twa';
 
 const jakartaSans = Plus_Jakarta_Sans({
   weight: ['600', '500'],
@@ -93,8 +94,13 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     ? PlausibleProvider
     : Fragment;
   return (
-    <html lang={language}>
+    // suppressHydrationWarning: the TWA bootstrap below may add data-hp-twa to
+    // <html> before React hydrates it.
+    <html lang={language} suppressHydrationWarning>
       <head>
+        {/* Recognises the Google Play app before anything renders, so the
+            paywall and checkout never show there. See components/layout/twa.ts. */}
+        <script dangerouslySetInnerHTML={{ __html: TWA_BOOTSTRAP_SCRIPT }} />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="48x48" href="/favicon.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

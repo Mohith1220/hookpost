@@ -10,6 +10,7 @@ import {
   pricingINR,
   pricingUSD,
 } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/pricing';
+import { isTwaClient } from '@hookpost/frontend/components/layout/twa';
 
 const CHECKOUT_SCRIPT = 'https://checkout.razorpay.com/v1/checkout.js';
 
@@ -22,10 +23,15 @@ declare global {
 /**
  * Loads Razorpay's checkout.js once per page and resolves when it is ready.
  * Concurrent callers share the same in-flight load.
+ *
+ * Never inside the Google Play app: Play's Payments policy allows only Play
+ * Billing there, so the script is not even fetched (see layout/twa.ts). That
+ * also makes openRazorpayCheckout return false there.
  */
 let scriptPromise: Promise<boolean> | null = null;
 export function loadRazorpayScript(): Promise<boolean> {
   if (typeof window === 'undefined') return Promise.resolve(false);
+  if (isTwaClient()) return Promise.resolve(false);
   if (window.Razorpay) return Promise.resolve(true);
   if (scriptPromise) return scriptPromise;
 
@@ -160,6 +166,10 @@ export const RazorpayBilling: FC<{
   }, []);
 
   const pay = useCallback(async () => {
+    // Google Play app: do not even create the Razorpay subscription.
+    if (isTwaClient()) {
+      return;
+    }
     setError(null);
     setBusy(true);
 

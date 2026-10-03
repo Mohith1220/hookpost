@@ -7,6 +7,7 @@ import { useT } from '@hookpost/react/translation/get.transation.service.client'
 import { MenuItem } from '@hookpost/frontend/components/new-layout/menu-item';
 import { useModals } from '@hookpost/frontend/components/layout/new-modal';
 import { AgentMediaModal } from '@hookpost/frontend/components/layout/agent.media.modal';
+import { useIsTwa } from '@hookpost/frontend/components/layout/twa.component';
 
 interface MenuItemInterface {
   name: string;
@@ -15,6 +16,11 @@ interface MenuItemInterface {
   role?: string[];
   hide?: boolean;
   requireBilling?: boolean;
+  /**
+   * Hidden inside the Google Play app, where Play's Payments policy allows no
+   * checkout and no priced link-outs (see layout/twa.ts).
+   */
+  hideInTwa?: boolean;
   onClick?: () => void;
 }
 
@@ -191,6 +197,9 @@ export const useMenuItem = () => {
       path: '#',
       role: ['ADMIN', 'SUPERADMIN', 'USER'],
       requireBilling: true,
+      // Opens a modal listing AgentMedia's $39-$129 plans with a button out to
+      // buy them.
+      hideInTwa: true,
       onClick: handleAgentMediaClick,
     },
     {
@@ -215,6 +224,7 @@ export const useMenuItem = () => {
       path: '/billing',
       role: ['ADMIN', 'SUPERADMIN'],
       requireBilling: true,
+      hideInTwa: true,
     },
     {
       name: t('earn_30', 'Earn 30%'),
@@ -307,6 +317,7 @@ export const TopMenu: FC = () => {
   const user = useUser();
   const { firstMenu, secondMenu } = useMenuItem();
   const { isGeneral, billingEnabled } = useVariables();
+  const isTwa = useIsTwa();
   return (
     <>
       <div className="flex flex-1 flex-col minCustom:gap-[16px] blurMe">
@@ -321,6 +332,9 @@ export const TopMenu: FC = () => {
                   return false;
                 }
                 if (f.requireBilling && !billingEnabled) {
+                  return false;
+                }
+                if (f.hideInTwa && isTwa) {
                   return false;
                 }
                 if (f.name === 'Billing' && user?.isLifetime) {
@@ -349,6 +363,9 @@ export const TopMenu: FC = () => {
               return false;
             }
             if (f.requireBilling && !billingEnabled) {
+              return false;
+            }
+            if (f.hideInTwa && isTwa) {
               return false;
             }
             if (f.name === 'Billing' && user?.isLifetime) {

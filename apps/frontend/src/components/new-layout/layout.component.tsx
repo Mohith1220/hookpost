@@ -43,6 +43,8 @@ import { AttachToFeedbackIcon } from '@hookpost/frontend/components/new-layout/s
 import { FirstBillingComponent } from '@hookpost/frontend/components/billing/first.billing.component';
 import { TrialTracker } from '@hookpost/frontend/components/layout/gtm.component';
 import { setSentryUser } from '@hookpost/react/sentry/initialize.sentry.client';
+import { showFirstBilling } from '@hookpost/frontend/components/layout/twa';
+import { useIsTwa } from '@hookpost/frontend/components/layout/twa.component';
 
 const jakartaSans = Plus_Jakarta_Sans({
   weight: ['600', '500', '700'],
@@ -54,6 +56,8 @@ export const LayoutComponent = ({ children }: { children: ReactNode }) => {
   const fetch = useFetch();
 
   const { backendUrl, billingEnabled, isGeneral } = useVariables();
+  // Google Play app: never the Razorpay plans screen (see layout/twa.ts).
+  const isTwa = useIsTwa();
 
   // Feedback icon component attaches Sentry feedback to a top-bar icon when DSN is present
   const searchParams = useSearchParams();
@@ -115,7 +119,14 @@ export const LayoutComponent = ({ children }: { children: ReactNode }) => {
               )}
             >
               <div>{user?.admin ? <Impersonate /> : <div />}</div>
-              {user.tier === 'FREE' && isGeneral && billingEnabled && !user?.admin && !continueFree ? (
+              {showFirstBilling({
+                tier: user.tier,
+                admin: user?.admin,
+                isGeneral,
+                billingEnabled,
+                continueFree,
+                isTwa,
+              }) ? (
                 <FirstBillingComponent />
               ) : (
                 <>

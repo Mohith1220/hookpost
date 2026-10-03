@@ -22,6 +22,8 @@ import { Select } from '@hookpost/react/form/select';
 import { useT } from '@hookpost/react/translation/get.transation.service.client';
 import { AddEditModal } from '@hookpost/frontend/components/new-launch/add.edit.modal';
 import { useToaster } from '@hookpost/react/toaster/toaster';
+import { isTwaClient } from '@hookpost/frontend/components/layout/twa';
+import { twaPlanDialog } from '@hookpost/frontend/components/layout/twa.component';
 
 const FirstStep: FC = (props) => {
   const { integrations, reloadCalendarView } = useCalendar();
@@ -327,6 +329,11 @@ export const GeneratorComponent = () => {
   const all = useCalendar();
   const generate = useCallback(async () => {
     if (!user?.tier?.ai) {
+      // Google Play app: no route to /billing (see layout/twa.ts).
+      if (isTwaClient()) {
+        await twaPlanDialog('AI post generation is not included in your plan.');
+        return;
+      }
       if (
         await deleteDialog(
           t('upgrade_required', 'You need to upgrade to use this feature'),

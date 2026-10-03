@@ -13,6 +13,7 @@ import {
   isIndianRegion,
   SupportedCurrency,
 } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/pricing';
+import { detectTwaLaunch } from '@hookpost/frontend/components/layout/twa';
 acceptLanguage.languages(languages);
 
 // This function can be marked `async` if using `await` inside
@@ -210,7 +211,15 @@ export async function proxy(request: NextRequest) {
     if (!authCookie) {
       return topResponse;
     }
-    return NextResponse.redirect(new URL(`/launches${url}`, nextUrl.href));
+    const launches = new URL(`/launches${url}`, nextUrl.href);
+    // The Google Play app opens / with an android-app:// referrer, and this
+    // redirect would lose it before the page's own script could record it.
+    // Carry it over as ?source=twa (see components/layout/twa.ts). A
+    // redirect, so never cached - unlike a cookie set on /.
+    if (detectTwaLaunch(request.headers.get('referer') || '', '')) {
+      launches.searchParams.set('source', 'twa');
+    }
+    return NextResponse.redirect(launches);
   }
 
   if (!nextUrl.pathname.startsWith('/auth') && !authCookie) {

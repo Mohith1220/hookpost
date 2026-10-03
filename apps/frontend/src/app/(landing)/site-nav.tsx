@@ -2,11 +2,17 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { TWA_HIDE_CLASS } from '@hookpost/frontend/components/layout/twa';
 
 // The only interactive thing on the homepage was this menu toggle, and one
 // useState was forcing the whole 588-line page to ship as a client component.
 // Isolating it here lets the page render on the server, so none of the marketing
 // copy, pricing tables or channel lists reach the browser as JavaScript.
+// Inside the Google Play app the Pricing link is hidden (TWA_HIDE_CLASS, see
+// components/layout/twa.ts): Play's Payments policy keeps web plan prices out of
+// the app. The nav stays reachable there from the policy pages.
+const hideInTwa = (href: string) => (href === '/pricing' ? TWA_HIDE_CLASS : undefined);
+
 const LINKS: [string, string][] = [
   ['AI agents & MCP', '/mcp'],
   ['Channels', '/channels'],
@@ -134,7 +140,7 @@ export const SiteNav = () => {
         */}
         <ul className="hidden items-center gap-9 lg:flex text-[15px]">
           {LINKS.map(([label, href]) => (
-            <li key={href}>
+            <li key={href} className={hideInTwa(href)}>
               {href.startsWith('#') ? (
                 <a href={href} className="hover:text-[#FF4CE2] transition-colors">
                   {label}
@@ -236,7 +242,7 @@ export const SiteNav = () => {
               </li>
             )}
             {[...LINKS, ...(!isLoggedIn ? [['Log in', '/auth/login'] as [string, string]] : [])].map(([label, href]) => (
-              <li key={href}>
+              <li key={href} className={hideInTwa(href)}>
                 {/*
                   Same LINKS array as the desktop nav, so it has to handle an
                   external href too - otherwise the GitHub entry opens in the

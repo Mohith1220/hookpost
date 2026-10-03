@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ReactNode } from 'react';
 import { GooglePlayBadge } from './google-play-badge';
+import { TWA_HIDE_CLASS } from '@hookpost/frontend/components/layout/twa';
 
 // The one footer for every marketing page, rendered from (landing)/layout.tsx.
 //
@@ -102,21 +103,35 @@ const POLICIES: LinkGroup = [
   ],
 ];
 
+// Inside the Google Play app (TWA_HIDE_CLASS, see components/layout/twa.ts) the
+// footer drops everything that sells or prices a plan: the Product group
+// (Pricing, Free plan, For India with rupee prices), every Compare page (they
+// are price comparisons) and the affiliate programme. Policies, Company and
+// Developers stay, because the app links to its policy pages.
+const HIDDEN_IN_TWA = ['/affiliates'];
+
 const Group = ({
   group: [heading, links],
   wide,
   extra,
+  hideInTwa,
 }: {
   group: LinkGroup;
   wide?: boolean;
+  /** The whole group is hidden inside the Google Play app. */
+  hideInTwa?: boolean;
   /** Rendered as a last list item, after the links. */
   extra?: ReactNode;
 }) => (
-  <div className={wide ? 'sm:col-span-2' : undefined}>
+  <div
+    className={[wide ? 'sm:col-span-2' : '', hideInTwa ? TWA_HIDE_CLASS : '']
+      .filter(Boolean)
+      .join(' ') || undefined}
+  >
     <h2 className="text-xs font-bold uppercase tracking-wider text-white/60">{heading}</h2>
     <ul className={`mt-4 grid gap-2.5 text-sm ${wide ? 'sm:grid-cols-2 sm:gap-x-6' : ''}`}>
       {links.map(([label, href]) => (
-        <li key={href}>
+        <li key={href} className={HIDDEN_IN_TWA.includes(href) ? TWA_HIDE_CLASS : undefined}>
           <Link href={href} prefetch={false} className="text-white/65 transition-colors hover:text-[#FF4CE2]">
             {label}
           </Link>
@@ -147,6 +162,7 @@ export const SiteFooter = () => (
       <div className="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-7">
         <Group
           group={PRODUCT}
+          hideInTwa
           extra={
             // Fills the column up to 140px: at lg the seven columns are only
             // about 100px wide, and a fixed height squashed the image.
@@ -157,7 +173,7 @@ export const SiteFooter = () => (
             />
           }
         />
-        <Group group={COMPARE} wide />
+        <Group group={COMPARE} wide hideInTwa />
         <Group group={TOOLS} />
         <Group group={DEVELOPERS} />
         <Group group={COMPANY} />

@@ -47,6 +47,7 @@ import {
   PLAY_STORE_URL,
   TWA_BOOTSTRAP_SCRIPT,
   TWA_HIDE_CSS,
+  TWA_HOME_REDIRECT_SCRIPT,
 } from '@hookpost/frontend/components/layout/twa';
 
 export const metadata: Metadata = {
@@ -386,6 +387,8 @@ export default function LandingLayout({
             badges hide inside the Play app (TWA_HIDE_CSS). These pages are
             cached by Cloudflare, so this cannot be decided on the server. */}
         <script dangerouslySetInnerHTML={{ __html: TWA_BOOTSTRAP_SCRIPT }} />
+        {/* Inside the Play app, / (prices, "via Razorpay") goes to /auth. */}
+        <script dangerouslySetInnerHTML={{ __html: TWA_HOME_REDIRECT_SCRIPT }} />
         <script
           dangerouslySetInnerHTML={{
             __html: `

@@ -30,6 +30,7 @@ import { useT } from '@hookpost/react/translation/get.transation.service.client'
 import { useIntegrationList } from '@hookpost/frontend/components/launches/helpers/use.integration.list';
 import useCookie from 'react-use-cookie';
 import { Onboarding } from '@hookpost/frontend/components/onboarding/onboarding';
+import { useIsTwa } from '@hookpost/frontend/components/layout/twa.component';
 
 export const SVGLine = () => {
   return (
@@ -239,6 +240,7 @@ export const MenuComponent: FC<
   } = props;
   const user = useUser();
   const t = useT();
+  const isTwa = useIsTwa();
   const [collected, drag, dragPreview] = useDrag(() => ({
     type: 'menu',
     item: {
@@ -323,10 +325,13 @@ export const MenuComponent: FC<
         totalNonDisabledChannels === user?.totalChannels
           ? {
               'data-tooltip-id': 'tooltip',
-              'data-tooltip-content': t(
-                'channel_disabled_upgrade_plan',
-                'This channel is disabled, please upgrade your plan to enable it.'
-              ),
+              // Google Play app: no "upgrade" prompt (see layout/twa.ts).
+              'data-tooltip-content': isTwa
+                ? 'This channel is disabled on your current plan.'
+                : t(
+                    'channel_disabled_upgrade_plan',
+                    'This channel is disabled, please upgrade your plan to enable it.'
+                  ),
             }
           : {})}
         role="Handle"

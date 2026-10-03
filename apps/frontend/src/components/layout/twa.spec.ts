@@ -23,9 +23,11 @@ import {
   showFirstBilling,
   TWA_BOOTSTRAP_SCRIPT,
   TWA_COOKIE,
+  TWA_HOME_REDIRECT_SCRIPT,
   TWA_HTML_ATTR,
   TWA_PLAN_NOTICE,
   TWA_STORAGE_KEY,
+  twaLimitMessage,
 } from '@hookpost/frontend/components/layout/twa';
 import {
   twaPlanDialog,
@@ -249,6 +251,90 @@ describe('Play listing URLs', () => {
     expect(url.searchParams.get('id')).toBe('in.hookstep.hookpost.twa');
     expect(url.searchParams.get('referrer')).toBe(
       'utm_source=site&utm_medium=hero'
+    );
+  });
+});
+
+describe('TWA_HOME_REDIRECT_SCRIPT (the Play app skips the marketing homepage)', () => {
+  // jsdom cannot navigate, so the script runs against a stand-in `window`
+  // whose location records the replace() call. `document` is the real one.
+  const runRedirect = (pathname: string, search = '') => {
+    const replace = jest.fn();
+    new Function('window', TWA_HOME_REDIRECT_SCRIPT)({
+      location: { pathname, search, replace },
+    });
+    return replace;
+  };
+
+  it('sends the Play app from / to /auth, keeping the query string', () => {
+    newPageLoad(PLAY_REFERRER, '/');
+    runBootstrap();
+    expect(runRedirect('/')).toHaveBeenCalledWith('/auth');
+    expect(runRedirect('/', '?utm_source=x')).toHaveBeenCalledWith(
+      '/auth?utm_source=x'
+    );
+  });
+
+  it('leaves every other page alone, even in the Play app', () => {
+    newPageLoad(PLAY_REFERRER, '/');
+    runBootstrap();
+    for (const path of ['/pricing', '/privacy', '/terms', '/docs', '/auth']) {
+      expect(runRedirect(path)).not.toHaveBeenCalled();
+    }
+  });
+
+  it('never redirects a normal browser', () => {
+    newPageLoad('https://www.google.com/', '/');
+    runBootstrap();
+    expect(runRedirect('/')).not.toHaveBeenCalled();
+  });
+
+  it('stops redirecting after ?source=web', () => {
+    newPageLoad(PLAY_REFERRER, '/');
+    runBootstrap();
+    newPageLoad('', '/?source=web');
+    runBootstrap();
+    expect(runRedirect('/', '?source=web')).not.toHaveBeenCalled();
+  });
+});
+
+describe('twaLimitMessage (402 dialogs inside the Play app)', () => {
+  // The shapes the backend sends: SubscriptionExceptionFilter for Free and
+  // paid workspaces, and IntegrationService's channel-count check.
+  it.each([
+    [
+      'The Free plan includes 5 channels. Upgrade to Standard to get up to 10 channels.',
+      'The Free plan includes 5 channels.',
+    ],
+    [
+      'The Free plan includes 5 channels. Start a 7-day free trial of Standard to get up to 10 channels - no charge until the trial ends, cancel anytime.',
+      'The Free plan includes 5 channels.',
+    ],
+    [
+      "You've used all 30 posts on the Free plan this month. Upgrade to Standard to get 500 posts a month.",
+      "You've used all 30 posts on the Free plan this month.",
+    ],
+    [
+      'You have reached the maximum number of posts for your subscription. Please upgrade your subscription to add more posts.',
+      'You have reached the maximum number of posts for your subscription.',
+    ],
+    [
+      'Your plan allows 5 channels and 5 are in use, so you can add 0 more. You selected 2.',
+      'Your plan allows 5 channels and 5 are in use, so you can add 0 more. You selected 2.',
+    ],
+  ])('%j -> %j', (message, expected) => {
+    expect(twaLimitMessage(message)).toBe(expected);
+  });
+
+  it('falls back to a plain line when nothing is left, or there is no message', () => {
+    expect(twaLimitMessage('Upgrade to keep going.')).toBe(
+      'You have reached a limit of your plan.'
+    );
+    expect(twaLimitMessage(undefined)).toBe(
+      'You have reached a limit of your plan.'
+    );
+    expect(twaLimitMessage({ section: 'channel' })).toBe(
+      'You have reached a limit of your plan.'
     );
   });
 });

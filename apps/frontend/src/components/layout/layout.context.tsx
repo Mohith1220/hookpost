@@ -5,7 +5,10 @@ import { FetchWrapperComponent } from '@hookpost/helpers/utils/custom.fetch';
 import { deleteDialog } from '@hookpost/react/helpers/delete.dialog';
 import { useReturnUrl } from '@hookpost/frontend/app/(app)/auth/return.url.component';
 import { useVariables } from '@hookpost/react/helpers/variable.context';
-import { isTwaClient } from '@hookpost/frontend/components/layout/twa';
+import {
+  isTwaClient,
+  twaLimitMessage,
+} from '@hookpost/frontend/components/layout/twa';
 import { twaPlanDialog } from '@hookpost/frontend/components/layout/twa.component';
 export default function LayoutContext(params: { children: ReactNode }) {
   if (params?.children) {
@@ -140,12 +143,10 @@ function LayoutContextInner(params: { children: ReactNode }) {
 
       if (response.status === 402) {
         const body = await response.json().catch(() => ({}) as any);
+        // Google Play app: the limit, without the backend's "Upgrade to ..."
+        // or "Start a 7-day free trial ..." sentence, and no route to /billing.
         if (isTwaClient()) {
-          await twaPlanDialog(
-            typeof body?.message === 'string'
-              ? body.message
-              : 'You have reached a limit of your plan.'
-          );
+          await twaPlanDialog(twaLimitMessage(body?.message));
           return true;
         }
         if (

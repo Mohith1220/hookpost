@@ -121,6 +121,46 @@ export const TWA_BOOTSTRAP_SCRIPT = `(function () {
   } catch (e) {}
 })();`;
 
+/**
+ * Inlined in (landing)/layout.tsx right after TWA_BOOTSTRAP_SCRIPT. The Play
+ * app starts at /, the marketing homepage, which lists the web prices and says
+ * payment goes through Razorpay. Inside the Play app that is messaging about
+ * another way to pay, which Play's Payments policy does not allow, so there /
+ * goes straight to /auth: sign-up, and the middleware forwards a signed-in
+ * user on to /launches. Only /, the page the app opens on; other marketing
+ * pages are left alone. Plain ES5, like the bootstrap.
+ */
+export const TWA_HOME_REDIRECT_SCRIPT = `(function () {
+  try {
+    if (
+      window.location.pathname === '/' &&
+      document.documentElement.hasAttribute(${JSON.stringify(TWA_HTML_ATTR)})
+    ) {
+      window.location.replace('/auth' + window.location.search);
+    }
+  } catch (e) {}
+})();`;
+
+const TWA_LIMIT_FALLBACK = 'You have reached a limit of your plan.';
+
+/**
+ * A plan-limit message as the Play app may show it: what the limit is, but not
+ * how to buy past it. The backend's 402 messages end with a sentence such as
+ * "Upgrade to Standard to get 500 posts a month." or "Start a 7-day free trial
+ * of Standard ...", so any sentence about upgrading, a trial or buying is
+ * dropped. No lookbehind in the regex: older Safari cannot parse it, and this
+ * module ships in the main app bundle.
+ */
+export const twaLimitMessage = (message: unknown): string => {
+  if (typeof message !== 'string') {
+    return TWA_LIMIT_FALLBACK;
+  }
+  const kept = (message.match(/[^.!?]+(?:[.!?]+|$)/g) || [])
+    .map((s) => s.trim())
+    .filter((s) => s && !/\b(upgrade|trial|buy|purchase|checkout)/i.test(s));
+  return kept.length ? kept.join(' ') : TWA_LIMIT_FALLBACK;
+};
+
 /** Hides anything marked TWA_HIDE_CLASS inside the Play app, with no flash. */
 export const TWA_HIDE_CSS = `html[${TWA_HTML_ATTR}] .${TWA_HIDE_CLASS} { display: none !important; }`;
 

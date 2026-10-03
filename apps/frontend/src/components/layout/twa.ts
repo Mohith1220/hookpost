@@ -46,9 +46,19 @@ export const playStoreUrl = (medium: string) =>
     `utm_source=site&utm_medium=${medium}`
   )}`;
 
+/**
+ * The Play app's own package, exactly: android-app://in.hookstep.hookpost.twa
+ * with an optional path. A bare prefix test would also accept a sibling
+ * package such as in.hookstep.hookpost.twa2.
+ */
+export const isTwaReferrer = (referrer: string): boolean => {
+  const r = referrer || '';
+  return r === TWA_REFERRER_PREFIX || r.indexOf(`${TWA_REFERRER_PREFIX}/`) === 0;
+};
+
 /** True when this page load is the Play app's launch (referrer or ?source=twa). */
 export const detectTwaLaunch = (referrer: string, search: string): boolean => {
-  if ((referrer || '').indexOf(TWA_REFERRER_PREFIX) === 0) {
+  if (isTwaReferrer(referrer)) {
     return true;
   }
   return new URLSearchParams(search || '').get('source') === 'twa';
@@ -105,9 +115,9 @@ export const TWA_BOOTSTRAP_SCRIPT = `(function () {
       html.removeAttribute(${JSON.stringify(TWA_HTML_ATTR)});
       return;
     }
-    var twa =
-      (document.referrer || '').indexOf(${JSON.stringify(TWA_REFERRER_PREFIX)}) === 0 ||
-      source === 'twa';
+    var ref = document.referrer || '';
+    var pkg = ${JSON.stringify(TWA_REFERRER_PREFIX)};
+    var twa = ref === pkg || ref.indexOf(pkg + '/') === 0 || source === 'twa';
     if (!twa) {
       try { twa = window.localStorage.getItem(key) === '1'; } catch (e) {}
     }
@@ -117,7 +127,17 @@ export const TWA_BOOTSTRAP_SCRIPT = `(function () {
     if (!twa) return;
     try { window.localStorage.setItem(key, '1'); } catch (e) {}
     document.cookie = cookieName + '=1; path=/; max-age=31536000; SameSite=Lax' + secure;
-    html.setAttribute(${JSON.stringify(TWA_HTML_ATTR)}, '');
+    var attr = ${JSON.stringify(TWA_HTML_ATTR)};
+    html.setAttribute(attr, '');
+    // A hydration mismatch makes React re-render the whole document on the
+    // client, and that drops attributes it did not render, this one included
+    // (seen on /auth in local testing). The CSS that hides the Play badges
+    // keys off the attribute, so put it back whenever it disappears.
+    if (typeof MutationObserver === 'function') {
+      new MutationObserver(function () {
+        if (!html.hasAttribute(attr)) html.setAttribute(attr, '');
+      }).observe(html, { attributes: true, attributeFilter: [attr] });
+    }
   } catch (e) {}
 })();`;
 

@@ -39,9 +39,17 @@ import {
   TWA_PLAN_NOTICE,
 } from '@hookpost/frontend/components/layout/twa';
 
+import {
+  endPageLoad,
+  trackObservers,
+} from '@hookpost/frontend/components/layout/twa.testing';
+
+trackObservers();
+
 const CHECKOUT_JS = 'script[src="https://checkout.razorpay.com/v1/checkout.js"]';
 
 const launch = (referrer: string) => {
+  endPageLoad();
   window.localStorage.clear();
   document.cookie = `${TWA_COOKIE}=; path=/; max-age=0`;
   document.documentElement.removeAttribute(TWA_HTML_ATTR);

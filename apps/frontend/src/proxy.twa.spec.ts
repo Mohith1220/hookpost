@@ -44,6 +44,15 @@ describe('proxy: / for a signed-in visitor', () => {
     );
   });
 
+  it('does not treat a sibling package as the Play app', async () => {
+    const res = await signedInHome({
+      referer: 'android-app://in.hookstep.hookpost.twa2/',
+    });
+    expect(res.headers.get('location')).toBe(
+      'https://hookpost.hookstep.in/launches'
+    );
+  });
+
   it('still serves the homepage to anonymous visitors, TWA or not', async () => {
     const res = await proxy(
       new NextRequest('https://hookpost.hookstep.in/', {

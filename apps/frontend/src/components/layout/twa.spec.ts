@@ -34,6 +34,13 @@ import {
   useIsTwa,
 } from '@hookpost/frontend/components/layout/twa.component';
 
+import {
+  endPageLoad,
+  trackObservers,
+} from '@hookpost/frontend/components/layout/twa.testing';
+
+trackObservers();
+
 const PLAY_REFERRER = 'android-app://in.hookstep.hookpost.twa';
 
 const setReferrer = (value: string) =>
@@ -54,6 +61,7 @@ const freshBrowser = () => {
 
 /** A new document in the same browser: storage and cookies survive. */
 const newPageLoad = (referrer: string, pathAndQuery: string) => {
+  endPageLoad();
   document.documentElement.removeAttribute(TWA_HTML_ATTR);
   setReferrer(referrer);
   setUrl(pathAndQuery);
@@ -79,6 +87,10 @@ describe('detectTwaLaunch', () => {
     [`${PLAY_REFERRER}/`, '', true],
     ['android-app://com.android.chrome/', '', false],
     ['android-app://in.hookstep.tablamigo/', '', false],
+    // A sibling package must not count as the Play app.
+    ['android-app://in.hookstep.hookpost.twa2/', '', false],
+    ['android-app://in.hookstep.hookpost.twa.evil', '', false],
+    [`${PLAY_REFERRER}/https/hookpost.hookstep.in`, '', true],
     ['https://hookpost.hookstep.in/', '', false],
     ['https://www.google.com/', '', false],
     ['', '', false],
@@ -161,10 +173,29 @@ describe('TWA_BOOTSTRAP_SCRIPT (the inline script in both layouts)', () => {
     expect(isTwaClient()).toBe(false);
   });
 
+  it('puts the flag back if a hydration re-render strips it from <html>', async () => {
+    newPageLoad(PLAY_REFERRER, '/auth');
+    runBootstrap();
+    document.documentElement.removeAttribute(TWA_HTML_ATTR);
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(document.documentElement.hasAttribute(TWA_HTML_ATTR)).toBe(true);
+  });
+
+  it('does not fight ?source=web, and sets no observer in a normal browser', async () => {
+    newPageLoad('', '/?source=web');
+    runBootstrap();
+    document.documentElement.setAttribute(TWA_HTML_ATTR, '');
+    document.documentElement.removeAttribute(TWA_HTML_ATTR);
+    await Promise.resolve();
+    expect(document.documentElement.hasAttribute(TWA_HTML_ATTR)).toBe(false);
+  });
+
   it.each([
     [PLAY_REFERRER, '/'],
     [`${PLAY_REFERRER}/`, '/launches'],
     ['android-app://com.android.chrome/', '/'],
+    ['android-app://in.hookstep.hookpost.twa2/', '/'],
     ['https://www.google.com/', '/'],
     ['', '/?source=twa'],
     ['', '/?utm_source=twa'],

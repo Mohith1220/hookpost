@@ -43,7 +43,11 @@ import { GoogleOneTap } from '@hookpost/frontend/components/auth/google-one-tap'
 import { RefCapture } from '@hookpost/frontend/components/affiliates/ref-capture';
 import { PUBLISHABLE_CHANNEL_COUNT } from './channels/channel-count';
 import { SiteFooter } from './site-footer';
-import { TWA_BOOTSTRAP_SCRIPT } from '@hookpost/frontend/components/layout/twa';
+import {
+  PLAY_STORE_URL,
+  TWA_BOOTSTRAP_SCRIPT,
+  TWA_HIDE_CSS,
+} from '@hookpost/frontend/components/layout/twa';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://hookpost.hookstep.in'),
@@ -287,12 +291,7 @@ const globalJsonLd = {
       },
     },
     {
-      // Hookpost ships as a web app. The Android TWA is built (assetlinks.json
-      // is served) but is NOT on the Play Store yet, so this stays a
-      // WebApplication: markup must describe what a visitor can actually get.
-      // Re-add a MobileApplication node with the Play URLs only once the
-      // listing resolves — pointing installUrl at a 404 risks the whole
-      // site's rich results.
+      // The web app. The Android app has its own MobileApplication node below.
       '@type': 'WebApplication',
       '@id': 'https://hookpost.hookstep.in/#app',
       name: 'Hookpost: AI Social Scheduler',
@@ -315,6 +314,26 @@ const globalJsonLd = {
         { '@type': 'Offer', price: String(pricingINR.STANDARD.month_price), priceCurrency: 'INR', eligibleRegion: 'IN', name: 'Standard (India - UPI / NetBanking / card via Razorpay)' },
         { '@type': 'Offer', price: String(pricingINR.PRO.month_price), priceCurrency: 'INR', eligibleRegion: 'IN', name: 'Pro (India)' },
       ],
+    },
+    {
+      // The Android app on Google Play: a Trusted Web Activity of this site.
+      // The listing is public (HTTP 200 logged out, checked 3 Oct 2026); it
+      // used to 404, which is why this node was left out until now.
+      //
+      // The offer is the install, which is free. Paid plans are not sold in
+      // the Play app at all - see components/layout/twa.ts - so they are not
+      // offered here. Still no aggregateRating: there are no reviews yet.
+      '@type': 'MobileApplication',
+      '@id': 'https://hookpost.hookstep.in/#android-app',
+      name: 'Hookpost',
+      operatingSystem: 'ANDROID',
+      applicationCategory: 'BusinessApplication',
+      installUrl: PLAY_STORE_URL,
+      url: PLAY_STORE_URL,
+      publisher: {
+        '@id': 'https://hookpost.hookstep.in/#organization',
+      },
+      offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
     },
   ],
 };
@@ -409,6 +428,7 @@ export default function LandingLayout({
               img, svg { max-width: 100%; height: auto; }
               nav img, header img, [class*="logo"] img, .brand-logo { max-width: 42px !important; max-height: 42px !important; object-fit: contain; }
               a { color: inherit; text-decoration: none; }
+              ${TWA_HIDE_CSS}
             `,
           }}
         />

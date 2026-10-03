@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { ReactNode } from 'react';
+import { GooglePlayBadge } from './google-play-badge';
 
 // The one footer for every marketing page, rendered from (landing)/layout.tsx.
 //
@@ -100,7 +102,16 @@ const POLICIES: LinkGroup = [
   ],
 ];
 
-const Group = ({ group: [heading, links], wide }: { group: LinkGroup; wide?: boolean }) => (
+const Group = ({
+  group: [heading, links],
+  wide,
+  extra,
+}: {
+  group: LinkGroup;
+  wide?: boolean;
+  /** Rendered as a last list item, after the links. */
+  extra?: ReactNode;
+}) => (
   <div className={wide ? 'sm:col-span-2' : undefined}>
     <h2 className="text-xs font-bold uppercase tracking-wider text-white/60">{heading}</h2>
     <ul className={`mt-4 grid gap-2.5 text-sm ${wide ? 'sm:grid-cols-2 sm:gap-x-6' : ''}`}>
@@ -111,6 +122,7 @@ const Group = ({ group: [heading, links], wide }: { group: LinkGroup; wide?: boo
           </Link>
         </li>
       ))}
+      {extra ? <li>{extra}</li> : null}
     </ul>
   </div>
 );
@@ -133,7 +145,18 @@ export const SiteFooter = () => (
       </p>
 
       <div className="mt-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-7">
-        <Group group={PRODUCT} />
+        <Group
+          group={PRODUCT}
+          extra={
+            // Fills the column up to 140px: at lg the seven columns are only
+            // about 100px wide, and a fixed height squashed the image.
+            <GooglePlayBadge
+              medium="footer"
+              lazy
+              className="h-auto w-full max-w-[140px] -ml-[6px]"
+            />
+          }
+        />
         <Group group={COMPARE} wide />
         <Group group={TOOLS} />
         <Group group={DEVELOPERS} />

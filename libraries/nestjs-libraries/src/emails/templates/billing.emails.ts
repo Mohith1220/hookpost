@@ -13,10 +13,12 @@ import {
   strong,
 } from '@hookpost/nestjs-libraries/emails/layout/email.layout';
 
-// No Android app link: the Play listing for in.hookstep.hookpost.twa returns
-// 404 to the public (checked 29 Sep 2026), so it is not live. Add it back
-// only once https://play.google.com/store/apps/details?id=in.hookstep.hookpost.twa
-// loads in a logged-out browser.
+// No Android app link in these emails yet. The Play listing
+// (https://play.google.com/store/apps/details?id=in.hookstep.hookpost.twa)
+// is public now - HTTP 200 logged out, checked 3 Oct 2026; it was a 404 on
+// 29 Sep - so one can be added. The Play app is consumption-only: it hides
+// all checkout (apps/frontend/src/components/layout/twa.ts), so an email may
+// point people to the app for using Hookpost, never for paying.
 
 /** "STANDARD" -> "Standard" */
 export function tierLabel(billing?: string | null): string {

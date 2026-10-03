@@ -19,6 +19,7 @@ import AeoAnswerCapsule from "./AeoAnswerCapsule";
 import LandingFaq from "./LandingFaq";
 import { PricingPlans } from './PricingPlans';
 import { PricingContrast } from './PricingContrast';
+import { GooglePlayBadge } from './google-play-badge';
 import { PUBLISHABLE_CHANNEL_COUNT } from './channels/channel-count';
 import { SupportedCurrency, pricingINR as pricing, getPricing, CURRENCY_CONFIG } from '@hookpost/nestjs-libraries/database/prisma/subscriptions/pricing';
 
@@ -104,6 +105,7 @@ export default async function HomePage() {
               >
                 Set up the MCP server
               </Link>
+              <GooglePlayBadge medium="hero" className="h-[72px] w-auto -my-[10px] -mx-[10px]" />
             </div>
 
             <p className="mt-5 text-sm text-white/60">

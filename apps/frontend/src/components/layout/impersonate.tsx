@@ -1148,10 +1148,10 @@ export const Impersonate = () => {
   }, [data]);
   return (
     <div>
-      <div className="bg-forth h-[52px] flex justify-center items-center border-input border rounded-[8px] text-white">
+      <div className="bg-forth h-[52px] flex items-center border-input border rounded-[8px] text-white overflow-x-auto overflow-y-hidden">
         <div
           className={`relative flex flex-col ${
-            user?.impersonate ? 'w-full px-[20px]' : 'w-[600px]'
+            user?.impersonate ? 'w-full px-[20px]' : 'w-full max-w-[600px] lg:w-max lg:max-w-none mx-auto min-w-0 px-[8px]'
           }`}
         >
           <div className="relative z-[1]">
@@ -1174,8 +1174,8 @@ export const Impersonate = () => {
                 <SwitchUser />
               </div>
             ) : (
-              <div className="flex flex-wrap items-center gap-[8px] py-[2px]">
-                <div className="flex-1 min-w-[200px]">
+              <div className="flex flex-nowrap items-center gap-[8px] py-[2px]">
+                <div className="flex-1 min-w-[160px] lg:min-w-[240px]">
                   <Input
                     autoComplete="off"
                     placeholder="Write the user details"
@@ -1187,7 +1187,7 @@ export const Impersonate = () => {
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
-                <div className="flex items-center gap-[6px] flex-wrap">
+                <div className="flex items-center gap-[6px] shrink-0">
                   <ViewUsers />
                   <ImportDebugPost />
                   <AddAnnouncement />

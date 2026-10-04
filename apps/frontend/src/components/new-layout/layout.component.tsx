@@ -141,7 +141,7 @@ export const LayoutComponent = ({ children }: { children: ReactNode }) => {
                           user?.admin && 'pt-[60px] max-h-[1000px]:w-[500px]'
                         )}
                       >
-                        <div className="flex flex-col h-full gap-[32px] flex-1 py-[12px]">
+                        <div className="flex flex-col h-full gap-[32px] flex-1 py-[12px] overflow-y-auto overflow-x-hidden min-h-0">
                           <Logo />
                           <TopMenu />
                         </div>

@@ -43,13 +43,13 @@ export const OrganizationSelector: FC<{ asOpenSelect?: boolean }> = ({
   }
   return (
     <>
-      <div className="hover:text-newTextColor">
-        <div className="group text-[12px] relative">
+      <div className="hover:text-newTextColor min-w-0">
+        <div className="group text-[12px] relative min-w-0">
           {asOpenSelect && (
             <div className="bg-btnPrimary !flex !relative max-w-[500px] mx-auto py-[12px] px-[12px]">Select Organization</div>
           )}
           {!asOpenSelect && (
-            <div className="flex items-center gap-[6px]">
+            <div className="flex items-center gap-[6px] min-w-0" title={current?.name}>
               <svg
                 className={user?.tier.current === 'FREE' ? 'animate-bounce drop-shadow-glow': ''}
                 width="24"
@@ -64,7 +64,7 @@ export const OrganizationSelector: FC<{ asOpenSelect?: boolean }> = ({
                 />
               </svg>
               {!!current?.name && (
-                <div className="max-w-[240px] truncate">{current?.name}</div>
+                <div className="hidden lg:block max-w-[240px] truncate">{current?.name}</div>
               )}
             </div>
           )}

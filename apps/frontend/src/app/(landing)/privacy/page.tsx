@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Hookpost & Hookstep',
-  description: 'Hookpost Privacy Policy. Understand how Hookstep collects, protects, and handles personal data and connected social media tokens.',
+  title: 'Privacy Policy | Hookpost & JR Consulting Co.',
+  description: 'Hookpost Privacy Policy. Understand how JR Consulting Co. collects, protects, and handles personal data and connected social media tokens.',
   alternates: {
     canonical: 'https://hookpost.hookstep.in/privacy',
   },
@@ -68,7 +68,7 @@ export default function PrivacyPolicyPage() {
           </div>
 
           <p>
-            This Privacy Policy explains how <strong>Hookpost</strong> (&quot;Hookpost&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;), operated by <strong>Hookstep</strong>, collects, uses, shares, and protects personal data in connection with the Hookpost social-media scheduling, publishing, analytics, and team-collaboration platform (the &quot;Service&quot;), the website at <a href="https://hookpost.hookstep.in" className="text-[#FF4CE2] underline underline-offset-2 decoration-[#FF4CE2]/40 hover:decoration-[#FF4CE2]">hookpost.hookstep.in</a> and related sub-domains (the &quot;Site&quot;). It applies to visitors to the Site, account holders, members of customer workspaces, and anyone else who interacts with us. By using the Site or the Service, you acknowledge this Policy. For our contractual terms, see our <Link href="/terms" className="text-[#FF4CE2] underline underline-offset-2 decoration-[#FF4CE2]/40 hover:decoration-[#FF4CE2]">Terms of Service</Link>.
+            This Privacy Policy explains how <strong>Hookpost</strong> (&quot;Hookpost&quot;, &quot;we&quot;, &quot;us&quot;, or &quot;our&quot;), operated by <strong>JR Consulting Co.</strong>, collects, uses, shares, and protects personal data in connection with the Hookpost social-media scheduling, publishing, analytics, and team-collaboration platform (the &quot;Service&quot;), the website at <a href="https://hookpost.hookstep.in" className="text-[#FF4CE2] underline underline-offset-2 decoration-[#FF4CE2]/40 hover:decoration-[#FF4CE2]">hookpost.hookstep.in</a> and related sub-domains (the &quot;Site&quot;). It applies to visitors to the Site, account holders, members of customer workspaces, and anyone else who interacts with us. By using the Site or the Service, you acknowledge this Policy. For our contractual terms, see our <Link href="/terms" className="text-[#FF4CE2] underline underline-offset-2 decoration-[#FF4CE2]/40 hover:decoration-[#FF4CE2]">Terms of Service</Link>.
           </p>
 
           {/* 1. Who We Are */}
@@ -77,10 +77,10 @@ export default function PrivacyPolicyPage() {
               1. Who We Are (Data Controllers)
             </h2>
             <p>
-              Hookpost is owned and operated by <strong>Hookstep</strong> Hookstep is the contracting party for paid subscriptions, the recipient of subscription revenue, and the primary data controller for account, billing, customer-support, marketing, and Service-usage data.
+              Hookpost is owned and operated by <strong>JR Consulting Co.</strong> JR Consulting Co. is the contracting party for paid subscriptions, the recipient of subscription revenue, and the primary data controller for account, billing, customer-support, marketing, and Service-usage data.
             </p>
             <p>
-              Hookstep also holds the developer accounts, OAuth integrations, and platform-side approvals with third-party social media platforms whose APIs the Service uses (including X / Twitter, Meta / Facebook / Instagram / Threads, LinkedIn, YouTube, Pinterest, Bluesky, Discord, Slack, Telegram, and GitHub).
+              JR Consulting Co. also holds the developer accounts, OAuth integrations, and platform-side approvals with third-party social media platforms whose APIs the Service uses (including X / Twitter, Meta / Facebook / Instagram / Threads, LinkedIn, YouTube, Pinterest, Bluesky, Discord, Slack, Telegram, and GitHub).
             </p>
             <p>
               For all privacy questions, requests, and data inquiries, you can reach us at <a href="mailto:support@hookstep.in" className="text-[#FF4CE2] underline underline-offset-2 decoration-[#FF4CE2]/40 hover:decoration-[#FF4CE2] font-medium">support@hookstep.in</a>.
@@ -226,7 +226,7 @@ export default function PrivacyPolicyPage() {
             <p>Depending on your jurisdiction, you have statutory rights concerning your personal data:</p>
             <ul className="list-disc pl-6 space-y-1.5 text-[#ccc]">
               <li><strong>GDPR (Europe) &amp; CCPA (California):</strong> Right to access, rectify, or erase personal data, object to or restrict processing, data portability, and non-discrimination.</li>
-              <li><strong>Digital Personal Data Protection Act, 2023 (India):</strong> As an Indian enterprise operated by Hookstep, we recognize your rights as a Data Principal under the DPDP Act 2023, including the right to access summaries of personal data processed, the right to correction and erasure, the right of grievance redressal, and the right to nominate an individual in the event of death or incapacity.</li>
+              <li><strong>Digital Personal Data Protection Act, 2023 (India):</strong> As an Indian enterprise operated by JR Consulting Co., we recognize your rights as a Data Principal under the DPDP Act 2023, including the right to access summaries of personal data processed, the right to correction and erasure, the right of grievance redressal, and the right to nominate an individual in the event of death or incapacity.</li>
             </ul>
             <p>To exercise any of these rights, email our Data Privacy team at <a href="mailto:support@hookstep.in" className="text-[#FF4CE2] underline underline-offset-2 decoration-[#FF4CE2]/40 hover:decoration-[#FF4CE2] font-medium">support@hookstep.in</a>. Requests are addressed within statutory timelines (and no later than 30 days).</p>
           </section>
@@ -238,7 +238,7 @@ export default function PrivacyPolicyPage() {
             </h2>
             <p>For questions or privacy requests, contact:</p>
             <div className="bg-[#141414] border border-[#262626] rounded-xl p-5 text-sm space-y-1 text-[#bbb]">
-              <p className="font-bold text-white text-base">Hookstep (Hookpost)</p>
+              <p className="font-bold text-white text-base">JR Consulting Co. (Hookpost)</p>
               <p>Email: <a href="mailto:support@hookstep.in" className="text-[#FF4CE2]">support@hookstep.in</a></p>
               <p>Website: <a href="https://hookpost.hookstep.in" className="text-[#FF4CE2]">https://hookpost.hookstep.in</a></p>
             </div>
@@ -258,7 +258,7 @@ export default function PrivacyPolicyPage() {
           Start with Hookpost
         </Link>
         <div className="pt-8 text-xs text-[#666]">
-          &copy; 2026 Hookstep / Hookpost. All rights reserved. &bull; <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
+          &copy; 2026 JR Consulting Co. / Hookpost. All rights reserved. &bull; <Link href="/terms" className="hover:underline text-[#888]">Terms of Service</Link>
         </div>
       </div>
 

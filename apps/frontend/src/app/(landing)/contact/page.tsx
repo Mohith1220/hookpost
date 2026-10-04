@@ -44,7 +44,7 @@ export default function ContactPage() {
     mainEntity: {
       '@type': 'Organization',
       name: 'Hookpost',
-      legalName: 'Hookstep',
+      legalName: 'JR Consulting Co.',
       email: SUPPORT_EMAIL,
       address: {
         '@type': 'PostalAddress',
@@ -111,7 +111,7 @@ export default function ContactPage() {
             Office
           </span>
           <address className="mt-3 not-italic text-[15px] leading-relaxed text-white/70">
-            Hookstep
+            JR Consulting Co.
             <br />
             Ghatkopar, Mumbai
             <br />
@@ -173,7 +173,7 @@ export default function ContactPage() {
               className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.02] px-6 py-4 transition-colors hover:border-[#FF4CE2]/40"
             >
               <span className="font-semibold">About the company</span>
-              <span className="text-sm text-white/50">Hookstep</span>
+              <span className="text-sm text-white/50">JR Consulting Co.</span>
             </Link>
             <Link
               href="/docs/public-api"
@@ -188,7 +188,7 @@ export default function ContactPage() {
         {/* legal-adjacent, kept plain */}
         <div className="mt-14 border-t border-white/10 pt-8 text-[15px] leading-relaxed text-white/50">
           <p>
-            Hookpost is operated by <strong className="text-white/70">Hookstep</strong>{' '}
+            Hookpost is operated by <strong className="text-white/70">JR Consulting Co.</strong>{' '}
             To delete your account and data, follow the steps on the{' '}
             <Link href="/data-deletion" className="text-[#FF4CE2] underline underline-offset-2 decoration-[#FF4CE2]/40 hover:decoration-[#FF4CE2]">
               data deletion

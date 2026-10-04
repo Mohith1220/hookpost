@@ -32,7 +32,7 @@ export default function RefundPolicyPage() {
           Refund Policy
         </h1>
         <p className="mt-4 text-[15px] text-white/50">
-          Operated by Hookstep Last updated 8 September 2026.
+          Operated by JR Consulting Co. Last updated 8 September 2026.
         </p>
 
         <div className="mt-12 space-y-8 text-[16px] leading-relaxed text-white/70">

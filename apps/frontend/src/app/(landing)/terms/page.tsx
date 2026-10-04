@@ -4,8 +4,8 @@ import { Metadata } from 'next';
 import { CHANNEL_COUNT } from '../channels/channel-count';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | Hookpost & Hookstep',
-  description: 'Hookpost Terms of Service. Understand your rights and responsibilities when using Hookpost social media management tools operated by Hookstep',
+  title: 'Terms of Service | Hookpost & JR Consulting Co.',
+  description: 'Hookpost Terms of Service. Understand your rights and responsibilities when using Hookpost social media management tools operated by JR Consulting Co.',
   alternates: {
     canonical: 'https://hookpost.hookstep.in/terms',
   },
@@ -78,7 +78,7 @@ export default function TermsOfServicePage() {
               1. The Company Behind Hookpost
             </h2>
             <p>
-              Hookpost is operated by <strong>Hookstep</strong> Hookstep is the contracting party for paid subscriptions, the counterparty for billing and invoicing, and the entity holding the developer accounts and OAuth registrations with connected third-party social media platforms.
+              Hookpost is operated by <strong>JR Consulting Co.</strong> JR Consulting Co. is the contracting party for paid subscriptions, the counterparty for billing and invoicing, and the entity holding the developer accounts and OAuth registrations with connected third-party social media platforms.
             </p>
           </section>
 
@@ -185,7 +185,7 @@ export default function TermsOfServicePage() {
               10. Limitation of Liability
             </h2>
             <p className="text-sm text-[#aaa]">
-              TO THE MAXIMUM EXTENT PERMITTED BY LAW, Hookstep SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES. OUR TOTAL AGGREGATE LIABILITY SHALL NOT EXCEED THE TOTAL FEES PAID BY YOU IN THE TWELVE (12) MONTHS PRECEDING THE EVENT GIVING RISE TO LIABILITY.
+              TO THE MAXIMUM EXTENT PERMITTED BY LAW, JR CONSULTING CO. SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, OR CONSEQUENTIAL DAMAGES. OUR TOTAL AGGREGATE LIABILITY SHALL NOT EXCEED THE TOTAL FEES PAID BY YOU IN THE TWELVE (12) MONTHS PRECEDING THE EVENT GIVING RISE TO LIABILITY.
             </p>
           </section>
 
@@ -225,7 +225,7 @@ export default function TermsOfServicePage() {
           Start with Hookpost
         </Link>
         <div className="pt-8 text-xs text-[#666]">
-          &copy; 2026 Hookstep / Hookpost. All rights reserved. &bull; <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
+          &copy; 2026 JR Consulting Co. / Hookpost. All rights reserved. &bull; <Link href="/privacy" className="hover:underline text-[#888]">Privacy Policy</Link>
         </div>
       </div>
 

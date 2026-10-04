@@ -287,10 +287,14 @@ export const Filters = () => {
   }, [calendar]);
 
   return (
-    <div className="text-textColor flex flex-col md:flex-row flex-wrap gap-[8px] items-stretch md:items-center select-none w-full min-w-0">
+    // Below md this is two rows: the date navigation on its own row, then the
+    // customer picker, Day/Week/Month and the calendar/list switch together.
+    // It used to be a column of four full-width rows, which on a phone left the
+    // week grid about 250px of height.
+    <div className="text-textColor flex flex-row flex-wrap gap-[8px] items-center select-none w-full min-w-0">
       {!isListView && (
-        <div className="flex flex-grow flex-row items-center gap-[8px] md:gap-[10px] min-w-0">
-          <div className="border h-[42px] border-newTableBorder bg-newTableBorder gap-[1px] flex items-center rounded-[8px] overflow-hidden">
+        <div className="flex flex-grow basis-full md:basis-auto flex-row items-center gap-[8px] md:gap-[10px] min-w-0">
+          <div className="border h-[42px] border-newTableBorder bg-newTableBorder gap-[1px] flex items-center rounded-[8px] overflow-hidden flex-1 min-w-0 md:flex-none">
             <div
               onClick={previous}
               className="cursor-pointer text-textColor rtl:rotate-180 px-[9px] bg-newBgColorInner h-full flex items-center justify-center hover:text-textItemFocused hover:bg-boxFocused"
@@ -337,7 +341,7 @@ export const Filters = () => {
               </svg>
             </div>
           </div>
-          <div className="flex-1 text-[14px] font-[500]">
+          <div className="flex-none md:flex-1 text-[14px] font-[500]">
             <div className="text-center flex h-[42px]">
               <div
                 onClick={setToday}
@@ -350,8 +354,8 @@ export const Filters = () => {
         </div>
       )}
       {isListView && (
-        <div className="flex flex-grow flex-col md:flex-row items-stretch md:items-center gap-[8px] md:gap-[10px] min-w-0 w-full">
-          <div className="border h-[42px] border-newTableBorder bg-newTableBorder gap-[1px] flex items-center rounded-[8px] overflow-hidden">
+        <div className="contents md:flex flex-grow items-stretch md:items-center gap-[8px] md:gap-[10px] min-w-0 w-full">
+          <div className="border h-[42px] border-newTableBorder bg-newTableBorder gap-[1px] flex items-center rounded-[8px] overflow-hidden order-1 flex-1 min-w-0 md:order-none md:flex-none">
             <div
               onClick={previousPage}
               className={clsx(
@@ -408,7 +412,7 @@ export const Filters = () => {
               </svg>
             </div>
           </div>
-          <div className="flex flex-row p-[4px] border border-newTableBorder rounded-[8px] text-[14px] font-[500] min-w-0 overflow-x-auto">
+          <div className="flex flex-row p-[4px] border border-newTableBorder rounded-[8px] text-[14px] font-[500] min-w-0 overflow-x-auto order-4 basis-full md:basis-auto md:order-none">
             {listStateOptions.map((option) => (
               <div
                 key={option.value}
@@ -423,19 +427,26 @@ export const Filters = () => {
               </div>
             ))}
           </div>
-          <div className="flex-1" />
+          <div className="hidden md:block flex-1" />
         </div>
       )}
       <SelectCustomer
         customer={calendar.customer as string}
         onChange={(customer: string) => setCustomer(customer)}
         integrations={calendar.integrations}
+        className={isListView ? 'order-2 md:order-none' : ''}
+        compact
       />
+      {/* From md the Day/Week/Month switch and the calendar/list switch wrap as
+          one unit (a lone list switch on a second row looked broken). Below md
+          they are separate items of the row so a phone can fit them beside the
+          customer picker. In the list view only the list switch is left. */}
+      <div className="contents md:flex md:items-center md:gap-[8px] md:min-w-0">
       {!isListView && (
-        <div className="flex flex-row p-[4px] border border-newTableBorder rounded-[8px] text-[14px] font-[500] min-w-0 overflow-x-auto">
+        <div className="flex flex-row p-[4px] border border-newTableBorder rounded-[8px] text-[14px] font-[500] overflow-x-auto flex-1 min-w-fit md:min-w-0 md:flex-none">
           <div
             className={clsx(
-              'pt-[6px] pb-[5px] cursor-pointer flex-1 md:flex-none w-auto md:w-[74px] px-[10px] text-center rounded-[6px] whitespace-nowrap',
+              'pt-[6px] pb-[5px] cursor-pointer flex-1 md:flex-none w-auto md:w-[74px] px-[5px] md:px-[10px] text-center rounded-[6px] whitespace-nowrap',
               calendar.display === 'day' && 'text-textItemFocused bg-boxFocused'
             )}
             onClick={setDay}
@@ -444,7 +455,7 @@ export const Filters = () => {
           </div>
           <div
             className={clsx(
-              'pt-[6px] pb-[5px] cursor-pointer flex-1 md:flex-none w-auto md:w-[74px] px-[10px] text-center rounded-[6px] whitespace-nowrap',
+              'pt-[6px] pb-[5px] cursor-pointer flex-1 md:flex-none w-auto md:w-[74px] px-[5px] md:px-[10px] text-center rounded-[6px] whitespace-nowrap',
               calendar.display === 'week' && 'text-textItemFocused bg-boxFocused'
             )}
             onClick={setWeek}
@@ -453,7 +464,7 @@ export const Filters = () => {
           </div>
           <div
             className={clsx(
-              'pt-[6px] pb-[5px] cursor-pointer flex-1 md:flex-none w-auto md:w-[74px] px-[10px] text-center rounded-[6px] whitespace-nowrap',
+              'pt-[6px] pb-[5px] cursor-pointer flex-1 md:flex-none w-auto md:w-[74px] px-[5px] md:px-[10px] text-center rounded-[6px] whitespace-nowrap',
               calendar.display === 'month' && 'text-textItemFocused bg-boxFocused'
             )}
             onClick={setMonth}
@@ -462,11 +473,16 @@ export const Filters = () => {
           </div>
         </div>
       )}
-      <div className="flex flex-row p-[4px] border border-newTableBorder rounded-[8px] text-[14px] font-[500] min-w-0 overflow-x-auto">
+      <div
+        className={clsx(
+          'flex flex-row p-[4px] border border-newTableBorder rounded-[8px] text-[14px] font-[500] min-w-0 overflow-x-auto shrink-0',
+          isListView && 'order-3 md:order-none'
+        )}
+      >
         <div
           onClick={setCalendarView}
           className={clsx(
-            'pt-[6px] pb-[5px] cursor-pointer flex justify-center items-center w-[34px] text-center rounded-[6px]',
+            'pt-[6px] pb-[5px] cursor-pointer flex justify-center items-center w-[30px] md:w-[34px] text-center rounded-[6px]',
             !isListView && 'text-textItemFocused bg-boxFocused'
           )}
         >
@@ -490,7 +506,7 @@ export const Filters = () => {
         <div
           onClick={setList}
           className={clsx(
-            'pt-[6px] pb-[5px] flex justify-center items-center cursor-pointer w-[34px] text-center rounded-[6px]',
+            'pt-[6px] pb-[5px] flex justify-center items-center cursor-pointer w-[30px] md:w-[34px] text-center rounded-[6px]',
             isListView && 'text-textItemFocused bg-boxFocused'
           )}
         >
@@ -511,6 +527,7 @@ export const Filters = () => {
             />
           </svg>
         </div>
+      </div>
       </div>
     </div>
   );

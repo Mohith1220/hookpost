@@ -15,8 +15,19 @@ export const SelectCustomer: FC<{
   onChange: (value: string) => void;
   integrations: Integrations[];
   customer?: string;
+  className?: string;
+  // The calendar toolbar on a phone: just the icon, no dropdown arrow, so it
+  // can share a row with the Day/Week/Month switch. The composer keeps the
+  // full trigger.
+  compact?: boolean;
 }> = (props) => {
-  const { onChange, integrations, customer: currentCustomer } = props;
+  const {
+    onChange,
+    integrations,
+    customer: currentCustomer,
+    className,
+    compact,
+  } = props;
   const { setCurrent } = useLaunchStore(
     useShallow((state) => ({
       setCurrent: state.setCurrent,
@@ -52,20 +63,30 @@ export const SelectCustomer: FC<{
   }
 
   return (
-    <div className="relative select-none z-[500]" ref={ref}>
+    <div
+      className={clsx(
+        'relative select-none z-[500]',
+        compact && 'shrink-0',
+        className
+      )}
+      ref={ref}
+    >
       <div
         data-tooltip-id="tooltip"
         data-tooltip-content={t('select_customer_tooltip', 'Select Customer')}
         onClick={openClose}
         className={clsx(
-          'relative z-[20] cursor-pointer h-[42px] rounded-[8px] pl-[16px] pr-[12px] gap-[8px] border flex items-center',
+          'relative z-[20] cursor-pointer h-[42px] rounded-[8px] gap-[8px] border flex items-center',
+          compact
+            ? 'px-[10px] md:pl-[16px] md:pr-[12px]'
+            : 'pl-[16px] pr-[12px]',
           open ? 'border-[#612BD3]' : 'border-newColColor'
         )}
       >
         <div>
           <UserIcon />
         </div>
-        <div>
+        <div className={clsx(compact && 'hidden md:block')}>
           <DropdownArrowIcon rotated={open} />
         </div>
       </div>

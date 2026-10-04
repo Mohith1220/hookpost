@@ -381,14 +381,19 @@ export const WeekView = () => {
           {localizedDays.map((day, index) => (
             <div
               key={day.name}
-              className="p-2 text-center bg-newTableHeader flex justify-center items-center flex-col h-[62px] rounded-[8px] sticky top-0 z-[20]"
+              className="px-1 py-2 xl:p-2 text-center bg-newTableHeader flex justify-center items-center flex-col h-[62px] rounded-[8px] sticky top-0 z-[20]"
             >
-              <div className="text-[12px] md:text-[14px] font-[500] text-newTableText truncate max-w-full">
+              {/* Below xl the columns sit on their 88px floor, and "Wednesday"
+                  at 14px is 80px wide against 72px of room once the cell has
+                  its 8px side padding, so it was cut to "Wednes...". Slimmer
+                  padding and 13px type fit it; from xl up the columns are 100px
+                  or more and nothing changes. */}
+              <div className="text-[12px] md:text-[13px] xl:text-[14px] font-[500] text-newTableText truncate max-w-full">
                 {day.name}
               </div>
               <div
                 className={clsx(
-                  'text-[12px] md:text-[14px] font-[600] flex items-center justify-center gap-[4px] md:gap-[6px] whitespace-nowrap',
+                  'text-[12px] md:text-[13px] xl:text-[14px] font-[600] flex items-center justify-center gap-[4px] md:gap-[6px] whitespace-nowrap',
                   day.day === newDayjs().format('L') &&
                     'text-newTableTextFocused'
                 )}

@@ -56,6 +56,7 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           ALERT_EMAIL: ${{ vars.ALERT_EMAIL }}
           ALERT_FROM: ${{ vars.ALERT_FROM }}
+          ORIGIN_IP: ${{ secrets.ORIGIN_IP }}
 
       - name: Save state
         if: always()

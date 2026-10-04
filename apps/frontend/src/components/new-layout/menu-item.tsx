@@ -14,14 +14,19 @@ export const MenuItem: FC<{ label: string; icon: ReactNode; path: string; onClic
   const isActive = currentPath.indexOf(path) === 0;
 
   const className = clsx(
-    'group w-full minCustom:h-[54px] custom:h-[44px] py-[8px] px-[6px] minCustom:gap-[4px] custom:gap-[2px] flex flex-col font-[600] items-center justify-center rounded-[12px] hover:text-textItemFocused hover:bg-boxFocused transition-colors',
+    'group w-full minCustom:h-[54px] custom:h-[44px] py-[8px] px-[2px] minCustom:gap-[4px] custom:gap-[2px] flex flex-col font-[600] items-center justify-center rounded-[12px] hover:text-textItemFocused hover:bg-boxFocused transition-colors',
     isActive ? 'text-textItemFocused bg-boxFocused' : 'text-textItemBlur'
   );
 
   const inner = (
     <>
       <div className="custom:scale-90 transition-transform">{icon}</div>
-      <div className="custom:text-[9px] minCustom:text-[10px] leading-[1.1] text-center w-full [overflow-wrap:anywhere]">
+      {/* "Integrations" is 52.7px wide at 9px and 58.5px at 10px. The rail gives a
+          label 46px on phones (58px rail) and 52px from md up (64px rail) when the
+          link has 6px side padding, so the word broke mid-way ("Integratio / ns").
+          Side padding is now 2px (54px / 60px of room) and phones use 8.5px
+          (49.7px). The 9px / 10px height-based sizes still apply from md up. */}
+      <div className="text-[8.5px] md:custom:text-[9px] md:minCustom:text-[10px] tracking-[-0.1px] leading-[1.1] text-center w-full [overflow-wrap:anywhere]">
         {label}
       </div>
     </>

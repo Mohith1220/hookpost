@@ -21,6 +21,7 @@ import ImageWithFallback from '@hookpost/react/helpers/image.with.fallback';
 import { useToaster } from '@hookpost/react/toaster/toaster';
 import { useFireEvents } from '@hookpost/helpers/utils/use.fire.events';
 import { Calendar } from './calendar';
+import { ChannelStrip } from '@hookpost/frontend/components/launches/channel.strip';
 import { useDrag, useDrop } from 'react-dnd';
 import { DNDProvider } from '@hookpost/frontend/components/launches/helpers/dnd.provider';
 import { GeneratorComponent } from './generator/generator';
@@ -358,6 +359,23 @@ export const MenuComponent: FC<
     </div>
   );
 };
+// True from `px` wide up. It is read synchronously on the first render (this
+// tree is only rendered in the browser, after the user has loaded) so a desktop
+// window never paints the phone layout for a frame.
+const useMinWidth = (px: number) => {
+  const query = `(min-width: ${px}px)`;
+  const [matches, setMatches] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(query).matches
+  );
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    const onChange = () => setMatches(media.matches);
+    onChange();
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, [query]);
+  return matches;
+};
 export const LaunchesComponent = () => {
   const fetch = useFetch();
   const user = useUser();
@@ -370,6 +388,11 @@ export const LaunchesComponent = () => {
   const modal = useModals();
   const [reload, setReload] = useState(false);
   const [collapseMenu, setCollapseMenu] = useCookie('collapseMenu', '0');
+  // From lg the channel panel sits beside the calendar (260px, or the 100px icon
+  // sidebar). Below lg it is one 64px strip above the calendar; the chevron in
+  // the strip opens the full panel, and its own chevron closes it again.
+  const isLg = useMinWidth(1024);
+  const [channelsOpen, setChannelsOpen] = useState(false);
   const [mode] = useCookie('mode', 'dark');
   const { isLoading, data: integrations, mutate } = useIntegrationList();
 
@@ -412,6 +435,14 @@ export const LaunchesComponent = () => {
       ['desc', 'asc', 'asc']
     );
   }, [integrations]);
+  const hasChannels = sortedIntegrations.length > 0;
+  // The icon-only sidebar is a lg+ layout. Below lg the panel always shows
+  // channel names, whatever the desktop cookie says.
+  const sidebarMode = isLg && collapseMenu === '1';
+  // Below lg the full panel only shows when opened from the strip, or when
+  // there are no channels yet (then it holds the Add Channel button and the
+  // hint for a new account).
+  const panelBelowLg = channelsOpen || !hasChannels;
   const menuIntegrations = useMemo(() => {
     return orderBy(
       Object.values(
@@ -529,21 +560,31 @@ export const LaunchesComponent = () => {
     <DNDProvider>
       <Onboarding />
       <CalendarWeekProvider integrations={sortedIntegrations}>
+        {/* One flex item for the layout's children row, so this page chooses its
+            own breakpoint (lg) for putting the channel panel beside the
+            calendar instead of the layout's md. */}
+        <div className="flex flex-col lg:flex-row flex-1 gap-[1px] min-w-0">
+        {!isLg && hasChannels && !channelsOpen && (
+          <ChannelStrip
+            integrations={sortedIntegrations}
+            onOpen={() => setChannelsOpen(true)}
+            update={() => update(true)}
+            refreshChannel={refreshChannel}
+            continueIntegration={continueIntegration}
+          />
+        )}
         <div
           className={clsx(
-            'flex relative flex-col shrink-0',
-            // Below md the channel list sits above the calendar instead of
-            // beside it. Sharing one narrow row squeezed this panel to 40px,
-            // which is why the channel names and avatars were clipped.
-            //
-            // The height has to be explicit, not a max-height: this panel's
-            // only child is absolutely positioned, so in a column flex the
-            // wrapper collapses to zero and the absolute child paints over the
-            // calendar toolbar. In a row (md+) it stretches and needs nothing.
-            'w-full h-[210px] md:h-auto',
-            collapseMenu === '1'
-              ? 'group sidebar md:w-[100px]'
-              : 'md:w-[260px]'
+            'relative flex-col shrink-0 w-full lg:flex lg:h-auto',
+            // Below lg the open panel sits above the calendar. The height has to
+            // be explicit, not a max-height: this panel's only child is
+            // absolutely positioned, so in a column flex the wrapper collapses
+            // to zero and the absolute child paints over the calendar toolbar.
+            // In a row (lg+) it stretches and needs nothing.
+            panelBelowLg
+              ? clsx('flex', hasChannels ? 'h-[min(320px,55vh)]' : 'h-[210px]')
+              : 'hidden',
+            sidebarMode ? 'group sidebar lg:w-[100px]' : 'lg:w-[260px]'
           )}
         >
           <div
@@ -557,9 +598,18 @@ export const LaunchesComponent = () => {
               </h2>
               <div
                 onClick={() =>
-                  setCollapseMenu(collapseMenu === '1' ? '0' : '1')
+                  isLg
+                    ? setCollapseMenu(collapseMenu === '1' ? '0' : '1')
+                    : setChannelsOpen(false)
                 }
-                className="group-[.sidebar]:rotate-[180deg] group-[.sidebar]:mx-auto text-btnText bg-btnSimple rounded-[6px] w-[24px] h-[24px] flex items-center justify-center cursor-pointer select-none"
+                className={clsx(
+                  'group-[.sidebar]:rotate-[180deg] group-[.sidebar]:mx-auto text-btnText bg-btnSimple rounded-[6px] flex items-center justify-center cursor-pointer select-none',
+                  // lg and up: the 24px sidebar toggle. Below lg: a 36px button
+                  // pointing up that folds the panel back into the strip.
+                  isLg ? 'w-[24px] h-[24px]' : 'w-[36px] h-[36px] rotate-90',
+                  // Nothing to collapse to until the first channel is connected.
+                  !isLg && !hasChannels && 'hidden'
+                )}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -588,7 +638,7 @@ export const LaunchesComponent = () => {
               </div>
             </div>
             <div className="gap-[32px] flex flex-col select-none flex-1">
-              {sortedIntegrations.length === 0 && collapseMenu === '0' && (
+              {sortedIntegrations.length === 0 && !sidebarMode && (
                 <div className="flex-1 max-h-[500px] justify-center items-center flex">
                   <div className="flex flex-col gap-[12px] text-center">
                     {/* Was an illustration of Reddit and Instagram - one we
@@ -626,7 +676,7 @@ export const LaunchesComponent = () => {
               )}
               {menuIntegrations.map((menu) => (
                 <MenuGroupComponent
-                  collapsed={collapseMenu === '1'}
+                  collapsed={sidebarMode}
                   changeItemGroup={changeItemGroup}
                   key={menu.name}
                   group={menu}
@@ -652,9 +702,12 @@ export const LaunchesComponent = () => {
         </div>
         <div className="bg-newBgColorInner flex-1 flex-col flex min-w-0 p-[12px] md:p-[20px] gap-[12px]">
           <Filters />
-          <div className="flex-1 flex">
+          {/* The grid is absolutely positioned inside this box, so on a short
+              window it would otherwise collapse to nothing under the toolbar. */}
+          <div className="flex-1 flex min-h-[240px] lg:min-h-0">
             <Calendar />
           </div>
+        </div>
         </div>
       </CalendarWeekProvider>
     </DNDProvider>

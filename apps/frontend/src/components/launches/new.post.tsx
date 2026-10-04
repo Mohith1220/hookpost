@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+import React, { FC, useCallback } from 'react';
+import clsx from 'clsx';
 import { useModals } from '@hookpost/frontend/components/layout/new-modal';
 import dayjs from 'dayjs';
 import { useCalendar } from '@hookpost/frontend/components/launches/calendar.context';
@@ -8,7 +9,11 @@ import { SetSelectionModal } from '@hookpost/frontend/components/launches/calend
 import { AddEditModal } from '@hookpost/frontend/components/new-launch/add.edit.modal';
 import { ModalWrapperComponent } from '@hookpost/frontend/components/new-launch/modal.wrapper.component';
 
-export const NewPost = () => {
+export const NewPost: FC<{
+  // The one-row channel strip (launches/channel.strip.tsx): a 44px icon button
+  // on a phone, with its label from md up.
+  compact?: boolean;
+}> = ({ compact }) => {
   const fetch = useFetch();
   const modal = useModals();
   const { integrations, reloadCalendarView, sets } = useCalendar();
@@ -77,7 +82,16 @@ export const NewPost = () => {
   return (
     <button
       onClick={createAPost}
-      className="text-white flex-1 pt-[12px] pb-[14px] ps-[16px] pe-[20px] group-[.sidebar]:p-0 min-h-[44px] max-h-[44px] rounded-md bg-btnPrimary flex justify-center items-center gap-[5px] outline-none"
+      {...(compact && {
+        'aria-label': t('create_new_post', 'Create Post'),
+        title: t('create_new_post', 'Create Post'),
+      })}
+      className={clsx(
+        'text-white min-h-[44px] max-h-[44px] rounded-md bg-btnPrimary flex justify-center items-center gap-[5px] outline-none',
+        compact
+          ? 'shrink-0 min-w-[44px] px-[10px] md:px-[16px]'
+          : 'flex-1 pt-[12px] pb-[14px] ps-[16px] pe-[20px] group-[.sidebar]:p-0'
+      )}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -95,7 +109,14 @@ export const NewPost = () => {
           strokeLinejoin="round"
         />
       </svg>
-      <div className="flex-1 text-start text-[14px] group-[.sidebar]:hidden">
+      <div
+        className={clsx(
+          'text-start text-[14px]',
+          compact
+            ? 'hidden md:block whitespace-nowrap'
+            : 'flex-1 group-[.sidebar]:hidden'
+        )}
+      >
         {t('create_new_post', 'Create Post')}
       </div>
     </button>

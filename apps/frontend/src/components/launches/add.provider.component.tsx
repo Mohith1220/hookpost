@@ -56,13 +56,48 @@ export const useAddProvider = (update?: () => void, invite?: boolean) => {
     });
   }, []);
 };
+const AddChannelIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+  >
+    <path
+      d="M1.66675 10.0417C3.35907 10.2299 4.93698 10.9884 6.14101 12.1924C7.34504 13.3964 8.10353 14.9743 8.29175 16.6667M1.66675 13.4167C2.46749 13.58 3.20253 13.9751 3.7804 14.553C4.35827 15.1309 4.75344 15.8659 4.91675 16.6667M1.66675 16.6667H1.67508M11.6667 17.5H14.3334C15.7335 17.5 16.4336 17.5 16.9684 17.2275C17.4388 16.9878 17.8212 16.6054 18.0609 16.135C18.3334 15.6002 18.3334 14.9001 18.3334 13.5V6.5C18.3334 5.09987 18.3334 4.3998 18.0609 3.86502C17.8212 3.39462 17.4388 3.01217 16.9684 2.77248C16.4336 2.5 15.7335 2.5 14.3334 2.5H5.66675C4.26662 2.5 3.56655 2.5 3.03177 2.77248C2.56137 3.01217 2.17892 3.39462 1.93923 3.86502C1.66675 4.3998 1.66675 5.09987 1.66675 6.5V6.66667"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const AddProviderButton: FC<{
   update?: () => void;
+  // The one-row channel strip (launches/channel.strip.tsx): just the Add
+  // Channel button, icon only. The invite-link button stays in the full panel.
+  compact?: boolean;
 }> = (props) => {
-  const { update } = props;
+  const { update, compact } = props;
   const add = useAddProvider(update);
   const invite = useAddProvider(update, true);
   const t = useT();
+
+  if (compact) {
+    return (
+      <button
+        type="button"
+        onClick={add}
+        aria-label={t('add_channel', 'Add Channel')}
+        title={t('add_channel', 'Add Channel')}
+        className="shrink-0 text-btnText bg-btnSimple h-[44px] min-w-[44px] justify-center items-center flex rounded-[8px]"
+      >
+        <AddChannelIcon />
+      </button>
+    );
+  }
 
   return (
     <div className="flex group-[.sidebar]:block gap-[8px]">
@@ -71,21 +106,7 @@ export const AddProviderButton: FC<{
         onClick={add}
       >
         <div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 20 20"
-            fill="none"
-          >
-            <path
-              d="M1.66675 10.0417C3.35907 10.2299 4.93698 10.9884 6.14101 12.1924C7.34504 13.3964 8.10353 14.9743 8.29175 16.6667M1.66675 13.4167C2.46749 13.58 3.20253 13.9751 3.7804 14.553C4.35827 15.1309 4.75344 15.8659 4.91675 16.6667M1.66675 16.6667H1.67508M11.6667 17.5H14.3334C15.7335 17.5 16.4336 17.5 16.9684 17.2275C17.4388 16.9878 17.8212 16.6054 18.0609 16.135C18.3334 15.6002 18.3334 14.9001 18.3334 13.5V6.5C18.3334 5.09987 18.3334 4.3998 18.0609 3.86502C17.8212 3.39462 17.4388 3.01217 16.9684 2.77248C16.4336 2.5 15.7335 2.5 14.3334 2.5H5.66675C4.26662 2.5 3.56655 2.5 3.03177 2.77248C2.56137 3.01217 2.17892 3.39462 1.93923 3.86502C1.66675 4.3998 1.66675 5.09987 1.66675 6.5V6.66667"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <AddChannelIcon />
         </div>
         <div className="text-start text-[14px] group-[.sidebar]:hidden">
           {t('add_channel', 'Add Channel')}

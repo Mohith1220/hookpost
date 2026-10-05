@@ -4,32 +4,29 @@ Contributions are welcome - code, docs, whatever it might be! If this is your fi
 
 ## Read the developers guide
 
-The main documentation site has a [developer guide](https://docs.hookpost.com/developer-guide) . That guide provides you a good understanding of the project structure, and how to setup your development environment. Read this document after you have read that guide. This document is intended to provide you a good understanding of how to submit your first contribution.
+Start with the [README](./README.md) for the project structure and how to run Hookpost locally. This document explains how to submit your first contribution.
 
-## Apply via the contribution form
+## How to contribute
 
-To submit your contribution, please fill out the [contribution form](https://contribute.hookpost.com/p/hookpost). This helps us evaluate whether your contribution is a good fit for the project. We will review your submission and get back to you as soon as possible.
+1. Pick an open issue (look for `good first issue` and `hacktoberfest`) and comment that you'd like to take it. We assign it to you; if there is no pull request within 7 days it goes back to the pool.
+2. Fork the repo, create a branch, make the change, and run the build and tests for the package you touched.
+3. Open a pull request that links the issue (`Closes #123`) and says how you tested it.
 
-## Sign the Contributor License Agreement (CLA)
+No separate form or CLA is needed. Hookpost is licensed under AGPL-3.0, and by opening a pull request you agree that your contribution is licensed under the same terms.
 
-Before we can merge your contribution, you must agree to our Contributor License Agreement (CLA). This documents the rights you grant us and helps ensure that Hookpost can always remain Free and Open Source Software.
-
-- Contributing as an individual? The [Individual Contributor License Agreement (ICLA)](./ICLA.md) applies.
-- Contributing on behalf of a company or other legal entity? The [Entity Contributor License Agreement (CCLA)](./CCLA.md) applies.
-
-You accept the agreement by following the instructions on the [CLA page](https://contribute.hookpost.com/p/hookpost/cla). You only need to do this once, and it covers your present and future contributions to Hookpost.
+**Hacktoberfest:** merged or approved pull requests get the `hacktoberfest-accepted` label. Spam or low-effort pull requests are labelled `spam` or `invalid` and closed.
 
 ## Write code with others
 
 This is an open source project, with an open and welcoming community that is always keen to welcome new contributors. We recommend the two best ways to interact with the community are:
 
 - **GitHub issues**: To discuss more slowly, or longer-written messages.
-- **[Discord chat](https://discord.hookpost.com)**: To chat with people [Discord chat](https://discord.hookpost.com/) and a quicker feedback.
+- **[GitHub Issues](https://github.com/jatinder14/hookpost/issues)**: ask questions or propose changes there.
 
 As a general rule;
 
 - **If a change is less than 3 lines**: You're probably safe just to submit the change without a discussion. This includes typos, dependency changes, and quick fixes, etc.
-- **If a change is more than 3 lines**: It's probably best to discuss the change in an issue or on discord first. This is simply because you might not be aware of the roadmap for the project, or understand the impact this change might have. We're just trying to save you time here, and importantly, avoid you being disappointed if your change isn't accepted.
+- **If a change is more than 3 lines**: It's probably best to discuss the change in an issue first. This is simply because you might not be aware of the roadmap for the project, or understand the impact this change might have. We're just trying to save you time here, and importantly, avoid you being disappointed if your change isn't accepted.
 
 ## Types of Contributions
 
@@ -67,6 +64,6 @@ This project follows a Fork/Feature Branch/Pull Request model. If you're not fam
 
 # Need Help?
 
-Again, do check the [developer guide](https://docs.hookpost.com/developer-guide). Much of what you probably need to know is in there.
+Again, do check the [README](./README.md). Much of what you probably need to know is in there.
 
-If you encounter any issues, please visit our [support page](https://docs.hookpost.com/support) or check the community forums. Your contributions help make Hookpost better!
+If you get stuck, open an issue or email support@hookstep.in. Your contributions help make Hookpost better!
